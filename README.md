@@ -29,6 +29,148 @@ ember install ember-modifier
 ```
 
 
+Philosophy
+------------------------------------------------------------------------------
+
+Modifiers are a basic primitive for interacting with the DOM in Ember. For
+example, Ember ships with a built-in modifier, `{{on}}`:
+
+```hbs
+<button {{on "click" @onClick}}>
+  {{@text}}
+</button>
+```
+
+All modifiers get applied to elements directly this way (if you see a similar
+value that _isn't_ in an element, it is probably a _helper_ instead), and they
+are passed the element when applying their effects.
+
+Conceptually, modifiers take _tracked, derived state_, and turn it into some
+sort of _side effect_ - usually, mutating the DOM node they are applied to in
+some way, but they might also trigger other types of side effects.
+
+### Woah woah woah, hold on, what's a _"side effect"_?
+
+A "side effect" is something that happens in programming all the time. Here's an
+example of one in an Ember component that attempts to make a button like in the
+first example, but without modifiers:
+
+```js
+// 🛑 DO NOT COPY THIS 🛑
+import Component from '@glimmer/component';
+
+export default class MyButton extends Component {
+  get setupEventHandler() {
+    document.querySelector('#my-button').addEventListener(this.args.onClick);
+
+    return undefined;
+  }
+}
+```
+```hbs
+<button id="#my-button">
+  {{this.setupEventHandler}}
+
+  {{@text}}
+</button>
+```
+
+We can see by looking at the `setupEventListener` getter that it isn't actually
+returning a value, instead it always returns `undefined`. However, it also adds
+the `@onClick` argument as an _event listener_ to the button in the template
+when the getter is run, as the template is rendering, which is a _side effect_
+- it is an effect of running the code that doesn't have anything to do with the
+"main" purpose of that code, in this case to return a dynamically computed
+value. In fact, this code doesn't compute a value at all, so this component is
+_misusing_ the getter in order to run its side effect whenever it is rendered in
+the template.
+
+Side effects can make code very difficult to reason about, since any function
+could be updating a value elsewhere. In fact, the code above is very buggy:
+
+1. If the `@onClick` argument ever changes, it won't remove the old event
+   listener, it'll just keep adding new ones.
+2. It won't remove the old event listener when the component is removed.
+3. It uses a document element selector that may not be unique, and it has no
+   guarantee that the element will exist when it runs.
+4. It _will_ run in Fastboot/Server Side Rendering, where no DOM exists at all,
+   and it'll throw errors because of this.
+
+However, there are lots of times where its difficult to write code that
+_doesn't_ have side effects. Sometimes it would mean having to rewrite a large
+portion of an application. Sometimes, like in the case of modifying DOM, there
+isn't a clear way to do it at _all_ with just getters and components.
+
+This is where _modifiers_ come in. Modifiers exist as a way to bridge the gap
+between derived state and side effects in way that is _contained_ and
+_consistent_, so that users of a modifier don't have to think about them.
+
+### Managing "side effects" effectively
+
+Let's look again at our original example:
+
+```hbs
+<button {{on "click" @onClick}}>
+  {{@text}}
+</button>
+```
+
+We can see pretty clearly from this template that Ember will:
+
+1. Create a `<button>` element
+2. Append the contents of the `@text` argument to that button
+3. Add a click event handler to the button that runs the `@onClick` argument
+
+If `@text` or `@onClick` ever change, Ember will keep everything in sync for us.
+We don't ever have to manually set `element.textContent` or update anything
+ourselves. In this way, we can say the template is _declarative_ - it tells
+Ember what we want the output to be, and Ember handles all of the bookkeeping
+itself.
+
+Here's how we could _implement_ the `{{on}}` modifier so that it always keeps
+things in sync correctly:
+
+```js
+import { modifier } from 'ember-modifier';
+
+export default modifier((element, [eventName, handler]) => {
+  element.addEventListener(eventName, handler);
+
+  return () => {
+    element.removeEventListener(eventName, handler);
+  }
+});
+```
+
+Here, we setup the event listener using the positional parameters passed to the
+modifier. Then, we return a _destructor_ - a function that _undoes_ our setup,
+and is effectively the _opposite_ side effect. This way, if the `@onClick`
+handler ever changes, we first teardown the first event listener we added -
+leaving the element in its _original_ state before the modifier ever ran - and
+then setup the new handler.
+
+This is what allows us to treat the `{{on}}` modifier as if it were just like
+the `{{@text}}` value we put in the template. While it _is_ side effecting, it
+knows how to setup and teardown that side effect and manage its state. The side
+effect is _contained_ - it doesn't escape into the rest of our application, it
+doesn't cause other unrelated changes, and we can think about it as another
+piece of declarative, derived state. Just another part of the template!
+
+In general, when writing modifiers, especially general purpose/reusable
+modifiers, they should be designed with this in mind. Which specific effects are
+they trying to accomplish, how to manage them effectively, and how to do it in
+a way that is _transparent_ to the user of the modifier.
+
+### Should modifiers _always_ be self-contained?
+
+Sometimes modifiers won't be completely self-contained. For instance, the
+[`@ember/render-modifiers`](https://github.com/emberjs/ember-render-modifiers)
+package provides modifiers that call component methods directly, giving the
+component the ability to manage the side effect. This is ok, but it limits the
+reusability of whatever the component is doing, so breaking those effects out
+into individual modifiers is generally preferable.
+
+
 Usage
 ------------------------------------------------------------------------------
 
