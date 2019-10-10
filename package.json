@@ -21,8 +21,10 @@
     "test:all": "ember try:each"
   },
   "dependencies": {
+    "ember-class-based-modifier": "^0.10.0",
     "ember-cli-babel": "^7.11.1",
-    "ember-cli-htmlbars": "^4.0.0"
+    "ember-cli-htmlbars": "^4.0.0",
+    "ember-functional-modifiers": "^0.5.0"
   },
   "devDependencies": {
     "@ember/optional-features": "^1.0.0",
