@@ -1,2 +1,2 @@
-export { default } from 'ember-class-based-modifier';
-export { default as modifier } from './-private/functional-modifier';
+export { default } from './-private/class/modifier';
+export { default as modifier } from './-private/functional/modifier';
