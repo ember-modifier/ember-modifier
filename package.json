@@ -1,11 +1,11 @@
 {
   "name": "ember-modifier",
   "version": "1.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "A library for writing Ember modifiers",
   "keywords": [
     "ember-addon"
   ],
-  "repository": "",
+  "repository": "https://github.com/ember-modifier/ember-modifier",
   "license": "MIT",
   "author": "",
   "directories": {
