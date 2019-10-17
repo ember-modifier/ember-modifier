@@ -7,6 +7,9 @@ ember-modifier
 > Some breaking changes to the APIs have been made, for a list of difference,
 > see the [API differences](#api-differences) section.
 
+> Huge thanks to @sukima and @spencer516 for their contributions! This project
+> is based on their work, and wouldn't have been possible without them.
+
 
 This addon provides an API for authoring [element modifiers](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html)
 in Ember. It mirrors Ember's [helper](https://octane-guides-preview.emberjs.com/release/templates/writing-helpers)

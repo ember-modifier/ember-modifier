@@ -1,5 +1,5 @@
 import { setModifierManager } from '@ember/modifier';
-import FunctionalModifierManager from './functional-modifier-manager';
+import FunctionalModifierManager from './modifier-manager';
 
 const MANAGERS = new WeakMap();
 
