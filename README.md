@@ -219,7 +219,7 @@ will set the element's `scrollTop` property to the value of its argument.
 ```js
 // app/modifiers/scroll-position.js
 
-import Modifier from 'ember-class-based-modifier';
+import Modifier from 'ember-modifier';
 
 export default class ScrollPositionModifier extends Modifier {
   get scrollPosition() {
@@ -303,7 +303,7 @@ was removed, you could do this:
 // app/modifiers/move-randomly.js
 
 import { action } from '@ember/object';
-import Modifier from 'ember-class-based-modifier';
+import Modifier from 'ember-modifier';
 
 const { random, round } = Math;
 const DEFAULT_DELAY = 1000;
@@ -360,7 +360,7 @@ For example, suppose you wanted to track click events with `ember-metrics`:
 
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import Modifier from 'ember-class-based-modifier';
+import Modifier from 'ember-modifier';
 
 export default class TrackClickModifier extends Modifier {
   @service metrics;
@@ -510,7 +510,7 @@ Using the class API, you can use `.ts` instead of `.js` and it'll just work, as 
 
 ```ts
 // app/modifiers/scroll-position.ts
-import Modifier from 'ember-class-based-modifier';
+import Modifier from 'ember-modifier';
 
 export default class ScrollPositionModifier extends Modifier {
   // ...
@@ -521,7 +521,7 @@ But to avoid writing runtime checks, you can extend `Modifier` with your own arg
 
 ```ts
 // app/modifiers/scroll-position.ts
-import Modifier from 'ember-class-based-modifier';
+import Modifier from 'ember-modifier';
 
 interface ScrollPositionModifierArgs {
   positional: [number],
