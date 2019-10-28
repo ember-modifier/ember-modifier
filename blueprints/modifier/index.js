@@ -6,7 +6,22 @@ const normalizeEntityName = require('ember-cli-normalize-entity-name');
 const path = require('path');
 
 module.exports = {
-  description: 'Generates a modifier function.',
+  description: 'Generates a modifier.',
+
+  availableOptions: [
+    {
+      name: 'modifier-type',
+      type: ['function', 'class'],
+      default: 'function',
+      aliases: [
+        { f: 'function' },
+        { s: 'class' },
+        { function: 'function' },
+        { functional: 'function' },
+        { class: 'class' }
+      ]
+    }
+  ],
 
   filesPath() {
     let rootPath = isModuleUnificationProject(this.project) ? 'mu-files' : 'files';
@@ -48,9 +63,14 @@ module.exports = {
     }
   },
 
-  normalizeEntityName: function(entityName) {
+  normalizeEntityName(entityName) {
     return normalizeEntityName(
       entityName.replace(/\.js$/, '') //Prevent generation of ".js.js" files
     );
   },
+
+  locals(options) {
+    let modifierType = options.modifierType || 'function';
+    return { modifierType };
+  }
 };
