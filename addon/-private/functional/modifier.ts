@@ -1,9 +1,10 @@
 import { setModifierManager } from '@ember/modifier';
 import FunctionalModifierManager from './modifier-manager';
+import ApplicationInstance from '@ember/application/instance';
 
 const MANAGERS = new WeakMap();
 
-function managerFor(owner) {
+function managerFor(owner: ApplicationInstance) {
   let manager = MANAGERS.get(owner);
 
   if (manager === undefined) {
@@ -13,6 +14,6 @@ function managerFor(owner) {
   return manager;
 }
 
-export default function modifier(fn) {
+export default function modifier(fn: Function) {
   return setModifierManager(managerFor, fn);
 }
