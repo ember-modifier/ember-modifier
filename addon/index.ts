@@ -1,2 +1,2 @@
-export { default } from './-private/class/modifier';
+export { default } from './-private/class';
 export { default as modifier } from './-private/functional/modifier';
