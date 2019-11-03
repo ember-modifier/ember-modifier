@@ -1,12 +1,10 @@
 import { setOwner } from '@ember/application';
-import { setModifierManager } from '@ember/modifier';
-import Manager from './modifier-manager';
 import ApplicationInstance from '@ember/application/instance';
 
 export const DESTROYING = Symbol('destroying');
 export const DESTROYED = Symbol('destroyed');
 
-interface ModifierArgs {
+export interface ModifierArgs {
   positional: unknown[];
   named: { [key: string]: unknown };
 }
@@ -39,4 +37,3 @@ export default class ClassBasedModifier<Args extends ModifierArgs> {
   }
 }
 
-setModifierManager(() => Manager, ClassBasedModifier);

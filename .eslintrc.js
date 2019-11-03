@@ -15,6 +15,7 @@ module.exports = {
     browser: true
   },
   rules: {
+    'prefer-const': 'off',
     'ember/no-jquery': 'error',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/no-empty-function': 'off',
