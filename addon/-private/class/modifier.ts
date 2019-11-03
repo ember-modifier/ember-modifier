@@ -1,5 +1,6 @@
 import { setOwner } from '@ember/application';
 import ApplicationInstance from '@ember/application/instance';
+import { ModifierArgs } from 'ember-modifier/types';
 
 export const DESTROYING = Symbol('destroying');
 export const DESTROYED = Symbol('destroyed');
