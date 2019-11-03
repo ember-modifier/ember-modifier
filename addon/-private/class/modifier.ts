@@ -4,11 +4,6 @@ import ApplicationInstance from '@ember/application/instance';
 export const DESTROYING = Symbol('destroying');
 export const DESTROYED = Symbol('destroyed');
 
-export interface ModifierArgs {
-  positional: unknown[];
-  named: { [key: string]: unknown };
-}
-
 export default class ClassBasedModifier<Args extends ModifierArgs> {
   [DESTROYING] = false;
   [DESTROYED] = false;

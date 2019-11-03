@@ -3,18 +3,14 @@ import { capabilities } from '@ember/modifier';
 import { set } from '@ember/object';
 import { schedule } from '@ember/runloop';
 
-import ClassBasedModifier, { DESTROYING, DESTROYED, ModifierArgs } from './modifier';
-import ApplicationInstance from '@ember/application/instance';
+import { ModifierArgs, ModifierFactory } from 'ember-modifier/types';
 
-interface ModifierFactory {
-  class: typeof ClassBasedModifier;
-  owner: ApplicationInstance;
-}
+import ClassBasedModifier, { DESTROYING, DESTROYED } from './modifier';
 
 class ClassBasedModifierManager {
   capabilities = capabilities('3.13');
 
-  createModifier<Args extends ModifierArgs>(factory: ModifierFactory, args: Args) {
+  createModifier<Args extends ModifierArgs>(factory: ModifierFactory<typeof ClassBasedModifier>, args: Args) {
     let { owner, class: modifier } = factory;
 
     return new modifier(owner, args);
