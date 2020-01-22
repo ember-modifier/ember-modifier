@@ -1,9 +1,10 @@
 import { setOwner } from '@ember/application';
 import { setModifierManager } from '@ember/modifier';
 import Manager from './modifier-manager';
+import { symbol } from '../utils/symbol';
 
-export const DESTROYING = Symbol('destroying');
-export const DESTROYED = Symbol('destroyed');
+export const DESTROYING = symbol('destroying');
+export const DESTROYED = symbol('destroyed');
 
 export default class ClassBasedModifier {
   [DESTROYING] = false;
