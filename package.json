@@ -63,12 +63,32 @@
     "expect-type": "^0.7.3",
     "loader.js": "^4.7.0",
     "qunit-dom": "^0.9.0",
+    "release-it": "^13.6.0",
+    "release-it-lerna-changelog": "^2.3.0",
     "typescript": "^3.7.5"
   },
   "engines": {
     "node": "10.* || >= 12.*"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "ember-addon": {
     "configPath": "tests/dummy/config"
+  },
+  "release-it": {
+    "plugins": {
+      "release-it-lerna-changelog": {
+        "infile": "CHANGELOG.md",
+        "launchEditor": true
+      }
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "tokenRef": "GITHUB_AUTH"
+    }
   }
 }
