@@ -178,7 +178,7 @@ export default class OnModifier extends Modifier {
   }
 
   removeEventListener() {
-    let [event, handler] = this;
+    let [event, handler] = this.args.positional;
 
     if (event && handler) {
       this.element.removeEventListener(event, handler);
