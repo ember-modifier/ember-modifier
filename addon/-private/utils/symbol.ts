@@ -11,7 +11,7 @@
  * https://github.com/emberjs/data/blob/master/packages/store/addon/-private/ts-interfaces/utils/symbol.ts
  *
  */
-export const symbol =
-  typeof Symbol !== 'undefined'
+export const symbol: (key: string) => symbol | string =
+  typeof Symbol !== "undefined"
     ? Symbol
-    : (key) => `__${key}${Math.floor(Math.random() * Date.now())}__`;
+    : (key: string) => `__${key}${Math.floor(Math.random() * Date.now())}__`;
