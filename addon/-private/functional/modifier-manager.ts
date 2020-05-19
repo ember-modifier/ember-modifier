@@ -1,17 +1,27 @@
-import { capabilities } from '@ember/modifier';
+import { capabilities } from "@ember/modifier";
+import { FunctionalModifier } from "./modifier";
+import { ModifierArgs } from "../interfaces";
+
+interface Factory {
+  class: FunctionalModifier;
+}
 
 const MODIFIER_ELEMENTS = new WeakMap();
-const MODIFIER_TEARDOWNS = new WeakMap();
+const MODIFIER_TEARDOWNS: WeakMap<FunctionalModifier, unknown> = new WeakMap();
 
-function teardown(modifier) {
+function teardown(modifier: FunctionalModifier) {
   const teardown = MODIFIER_TEARDOWNS.get(modifier);
 
-  if (teardown && typeof teardown === 'function') {
+  if (teardown && typeof teardown === "function") {
     teardown();
   }
 }
 
-function setup(modifier, element, args) {
+function setup(
+  modifier: FunctionalModifier,
+  element: Element,
+  args: ModifierArgs
+) {
   const { positional, named } = args;
   const teardown = modifier(element, positional, named);
 
@@ -19,9 +29,11 @@ function setup(modifier, element, args) {
 }
 
 export default class FunctionalModifierManager {
-  capabilities = capabilities('3.13');
+  capabilities = capabilities("3.13");
 
-  createModifier(factory) {
+  constructor(_owner: unknown) {}
+
+  createModifier(factory: Factory): FunctionalModifier {
     const { class: fn } = factory;
 
     // This looks superfluous, but this is creating a new instance
@@ -31,19 +43,23 @@ export default class FunctionalModifierManager {
     return (...args) => fn(...args);
   }
 
-  installModifier(modifier, element, args) {
+  installModifier(
+    modifier: FunctionalModifier,
+    element: Element,
+    args: ModifierArgs
+  ) {
     MODIFIER_ELEMENTS.set(modifier, element);
     setup(modifier, element, args);
   }
 
-  updateModifier(modifier, args) {
+  updateModifier(modifier: FunctionalModifier, args: ModifierArgs) {
     const element = MODIFIER_ELEMENTS.get(modifier);
 
     teardown(modifier);
     setup(modifier, element, args);
   }
 
-  destroyModifier(modifier) {
+  destroyModifier(modifier: FunctionalModifier) {
     teardown(modifier);
   }
 }

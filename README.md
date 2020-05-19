@@ -1,20 +1,50 @@
 ember-modifier
 ==============================================================================
 
-> This addon is the next iteration of both
-> [ember-class-based-modifier](https://github.com/sukima/ember-class-based-modifier)
-> and [ember-functional-modifiers](https://github.com/spencer516/ember-functional-modifiers).
-> Some breaking changes to the APIs have been made, for a list of difference,
-> see the [API differences](#api-differences) section.
+This addon provides an API for authoring [element modifiers] in Ember. It
+mirrors Ember's [helper] API, with variations for writing simple _functional_
+modifiers and for writing more complicated _class_ modifiers.
 
-> Huge thanks to @sukima and @spencer516 for their contributions! This project
-> is based on their work, and wouldn't have been possible without them.
+[element modifiers]: https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html
+[helper]: https://octane-guides-preview.emberjs.com/release/templates/writing-helpers
 
+<i>This addon is the next iteration of both [ember-class-based-modifier] and
+[ember-functional-modifiers]. Some breaking changes to the APIs have been made.
+For a list of differences, see the [API differences](#api-differences) section.</i>
 
-This addon provides an API for authoring [element modifiers](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html)
-in Ember. It mirrors Ember's [helper](https://octane-guides-preview.emberjs.com/release/templates/writing-helpers)
-API, with a form for writing simple _functional_ modifiers, and form for writing
-more complicated _class_ modifiers.
+<i>Huge thanks to @sukima and @spencer516 for their contributions! This project
+is based on their work, and wouldn't have been possible without them.</i>
+
+[ember-class-based-modifier]: https://github.com/sukima/ember-class-based-modifier
+[ember-functional-modifiers]: https://github.com/spencer516/ember-functional-modifiers
+
+- [Compatibility](#compatibility)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Functional Modifiers](#functional-modifiers)
+    - [Generating a Functional Modifier](#generating-a-functional-modifier)
+    - [Example without Cleanup](#example-without-cleanup)
+    - [Example with Cleanup](#example-with-cleanup)
+  - [Class Modifiers](#class-modifiers)
+    - [Generating a Class Modifier](#generating-a-class-modifier)
+    - [Example without Cleanup](#example-without-cleanup-1)
+    - [Example with Cleanup](#example-with-cleanup-1)
+    - [Example with Service Injection](#example-with-service-injection)
+    - [API](#api)
+      - [Lifecycle Summary](#lifecycle-summary)
+- [TypeScript](#typescript)
+  - [Type safety tradeoffs](#type-safety-tradeoffs)
+  - [Lifecycle hooks and types](#lifecycle-hooks-and-types)
+  - [Examples with TypeScript](#examples-with-typescript)
+    - [Functional modifier](#functional-modifier)
+    - [Class-based](#class-based)
+  - [Additional reading](#additional-reading)
+- [API Differences](#api-differences)
+  - [API differences from ember-functional-modifiers](#api-differences-from-ember-functional-modifiers)
+  - [API differences from ember-class-based-modifier](#api-differences-from-ember-class-based-modifier)
+  - [API differences from ember-oo-modifiers](#api-differences-from-ember-oo-modifiers)
+- [Contributing](#contributing)
+- [License](#license)
 
 Compatibility
 ------------------------------------------------------------------------------
@@ -514,18 +544,56 @@ Usage:
 
 ## TypeScript
 
-Using the class API, you can use `.ts` instead of `.js` and it'll just work, as long as you do runtime checks to narrow the types of your args when you access them.
+Both the functional and class APIs can be used with TypeScript.
+
+Before checking out the [Examples with Typescript](#examples-with-type-script) below, there are 2 important caveats you should understand about TypeScript usage:
+
+- [type safety tradeoffs](#type-safety-tradeoffs)
+- [lifecycle hooks and types](#lifecycle-hooks-and-types)
+
+### Type safety tradeoffs
+
+True type safety requires runtime checking, since templates are not currently type-checked: the arguments passed to your modifier can be *anything*. They’re typed as `unknown` by default, which means by default TypeScript will *require* you to work out the type passed to you at runtime. For example, with the `ScrollPositionModifier` shown above, you can combine TypeScript’s [type narrowing] with the default types for the class to provide runtime errors if the caller passes the wrong types, while providing safety throughout the rest of the body of the modifier. Here, `didReceiveArguments` would be *guaranteed* to have the correct types for `this.scrollPosition` and `this.isRelative`:
+
+[type narrowing]: https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types
 
 ```ts
-// app/modifiers/scroll-position.ts
 import Modifier from 'ember-modifier';
 
-export default class ScrollPositionModifier extends Modifier {
-  // ...
+export class ScrollPositionModifier extends ClassBasedModifier {
+  get scrollPosition(): number {
+    const scrollValue = this.args.positional[0];
+    if (typeof scrollValue !== "number") {
+      throw new Error(
+        `first argument to 'scroll-position' must be a number, but ${scrollValue} was ${typeof scrollValue}`
+      );
+    }
+
+    return scrollValue;
+  }
+
+  get isRelative(): boolean {
+    const { relative } = this.args.named;
+    if (typeof relative !== "boolean") {
+      throw new Error(
+        `'relative' argument to 'scroll-position' must be a boolean, but ${relative} was ${typeof relative}`
+      );
+    }
+
+    return relative;
+  }
+
+  didReceiveArguments() {
+    if (this.isRelative) {
+      this.element.scrollTop += this.scrollPosition;
+    } else {
+      this.element.scrollTop = this.scrollPosition;
+    }
+  }
 }
 ```
 
-But to avoid writing runtime checks, you can extend `Modifier` with your own args, similar to the way you would define your args for a Glimmer Component.
+You can also avoid writing these runtime checks by extending `Modifier` with predefined args, similar to the way you would define your args for a Glimmer Component:
 
 ```ts
 // app/modifiers/scroll-position.ts
@@ -567,7 +635,160 @@ export default class ScrollPositionModifier extends Modifier<ScrollPositionModif
 }
 ```
 
-See [this pull request comment](https://github.com/sukima/ember-class-based-modifier/pull/5#discussion_r326687943) for a full discussion about using TypeScript with your Modifiers.
+However, while doing so is slightly more convenient, it means you get *much worse* feedback in tests or at runtime if someone passes the wrong kind of arguments to your modifier.
+
+### Lifecycle hooks and types
+
+It is impossible to correctly type the `element` in the current design of the class-based modifier: as noted in [the lifecycle hooks discussion](#lifecycle-summary), `element` is unavailable during `constructor` and `willDestroy`. Currently, `element` is typed as `Element`, since that is correct for *most* places in the lifecycle of the app. However, this means that you must take care to remember that the type is *wrong* in `constructor` and `willDestroy`.
+
+We cannot fix this *at all* for `constructor` with the current definition. However, to work around this in `willDestroy`, we supply a utility type, `InTeardown`, which you can use to specify the type of `this`. For example:
+
+```ts
+import Modifier, { InTeardown } from 'ember-modifier';
+
+function doSomethingWithElement(el: Element) {
+  // ...
+}
+
+export default class CorrectlyTypedModifier extends Modifier {
+  willRemove(this: InTeardown<CorrectlyTypedModifier>) {
+    doSomethingWithElement(this.element); // TYPE ERROR!
+  }
+}
+```
+
+### Examples with TypeScript
+
+#### Functional modifier
+
+Let’s look at a variant of the `move-randomly` example from above, implemented in TypeScript, and now requiring a named argument, the maximum offset. Using the recommended runtime type-checking, it would look like this:
+
+```ts
+// app/modifiers/move-randomly.js
+import { modifier } from 'ember-modifier';
+
+const { random, round } = Math;
+
+export default modifier((element, _, named) => {
+  if (!(element instanceof HTMLElement)) {
+    throw new Error(`move-randomly can only be installed on HTML elements!`);
+  }
+
+  const { maxOffset } = named;
+  if (typeof maxOffset !== "number") {
+    throw new Error(
+      `The 'max-offset' argument to 'move-randomly' must be a number, but was ${typeof maxOffset}`
+    );
+  }
+
+  const id = setInterval(() => {
+    const top = round(random() * maxOffset);
+    const left = round(random() * maxOffset);
+    element.style.transform = `translate(${left}px, ${top}px)`;
+  }, 1000);
+
+  return () => clearInterval(id);
+});
+```
+
+A few things to notice here:
+
+1.  TypeScript correctly infers the types of the arguments for the function passed to the modifier; you don't need to specify what `element` or `positional` or `named` are.
+
+2.  If we returned a teardown function which had the wrong type signature, that would also be an error.
+
+    If we return a value instead of a function, for example:
+
+    ```ts
+    export default modifier((element, _, named) => {
+      // ...
+
+      return id;
+    });
+    ```
+
+    TypeScript will report:
+
+    > ```
+    > Argument of type '(element: Element, _: Positional, named: Record<string, unknown>) => Timeout' is not assignable to parameter of type 'FunctionalModifier<Positional, Record<string, unknown>>'.
+    >   Type 'Timeout' is not assignable to type 'void | Teardown'.
+    >     Type 'Timeout' is not assignable to type 'Teardown'.
+    >       Type 'Timeout' provides no match for the signature '(): void'.
+    > ```
+
+    Likewise, if we return a function with the wrong signature, we will see the same kinds of errors. If we expected to receive an argument in the teardown callback, like this:
+
+    ```ts
+    export default modifier((element, _, named) => {
+      // 
+
+      return (interval: number) => clearTimeout(interval);
+    });
+    ```
+
+    TypeScript will report:
+
+    > ```
+    > Argument of type '(element: Element, _: Positional, named: Record<string, unknown>) => (interval: number) => void' is not assignable to parameter of type 'FunctionalModifier<Positional, Record<string, unknown>>'.
+    >   Type '(interval: number) => void' is not assignable to type 'void | Teardown'.
+    >     Type '(interval: number) => void' is not assignable to type 'Teardown'.
+    > ```
+
+####  Class-based
+
+To support correctly typing `args` in the `constructor` for the case where you do runtime type checking, we supply a `ModifierArgs` interface import. Here’s what a fully typed modifier that alerts "This is a typesafe modifier!" an amount of time after receiving arguments that depends on the length of the first argument and an *optional* multiplier (a nonsensical thing to do, but one that illustrates a fully type-safe class-based modifier):
+
+```ts
+import Modifier, { ModifierArgs, Teardown } from 'ember-modifier';
+
+export default class NeatModifier extends Modifier {
+  interval?: number;
+
+  constructor(owner: unknown, args: ModifierArgs) {
+    super(owner, args);
+    // other setup you might do
+  }
+
+  get lengthOfInput(): number {
+    if (typeof this.args.positional[0] !== 'string') {
+      throw new Error(
+        `positional arg must be 'string' but was ${typeof this.args.positional[0]}`
+      );
+    }
+
+    return this.args.positional[0].length;
+  }
+
+  get multiplier(): number {
+    if (this.args.named.multiplier === undefined) {
+      return 1000;
+    }
+
+    if (typeof this.args.named.multiplier !== "number") {
+      throw new Error(
+        `'multiplier' arg must be a number but was ${typeof this.args.named
+          .multiplier}`
+      );
+    }
+
+    return this.args.named.multiplier;
+  }
+
+  didReceiveArguments() {
+    this.interval = setInterval(() => {
+      alert("this is a typesafe modifier!");
+    }, this.multiplier * this.lengthOfInput);
+  }
+
+  willDestroy(this: Teardown<NeatModifier>) {
+    clearInterval(this.interval);
+  }
+}
+```
+
+### Additional reading
+
+See [this pull request comment](https://github.com/sukima/ember-class-based-modifier/pull/5#discussion_r326687943) for background discussion about using TypeScript with your Modifiers.
 
 ## API Differences
 
