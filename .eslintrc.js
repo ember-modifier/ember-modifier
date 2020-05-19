@@ -3,20 +3,23 @@ module.exports = {
   parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 2018,
-    sourceType: 'module'
+    sourceType: 'module',
   },
   plugins: [
     'ember'
   ],
   extends: [
     'eslint:recommended',
-    'plugin:ember/recommended'
+    'plugin:ember/recommended',
   ],
   env: {
     browser: true
   },
   rules: {
-    'ember/no-jquery': 'error'
+    'ember/no-jquery': 'error',
+    'no-dupe-else-if': ['off'],
+    'no-import-assign': ['off'],
+    'no-setter-return': ['off'],
   },
   overrides: [
     // node files
@@ -45,9 +48,36 @@ module.exports = {
         node: true
       },
       plugins: ['node'],
-      rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
+      extends: ['plugin:node/recommended'],
+      rules: {
         // add your custom rules and overrides for node files here
-      })
-    }
+      },
+    },
+    {
+      files: ["**/*.ts"],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        // allows eslint from any dir
+        tsconfigRootDir: __dirname,
+        project: ['./tsconfig.json'],
+      },
+      plugins: [
+        '@typescript-eslint',
+        'ember'
+      ],
+      extends: [
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/recommended',
+      ],
+      rules: {
+        "@typescript-eslint/explicit-function-return-type": [
+          "error",
+          {
+            allowExpressions: true,
+            allowHigherOrderFunctions: true
+          }
+        ],
+      }
+    },
   ]
 };

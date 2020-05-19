@@ -124,7 +124,7 @@ module("Integration | Modifiers | functional modifier", function (hooks) {
     });
 
     test("teardown is invoked for each modifier instance", async function (this: TestContext, assert) {
-      let teardownCalls: string[] = [];
+      const teardownCalls: string[] = [];
       this.isRendered = true;
 
       this.registerModifier(

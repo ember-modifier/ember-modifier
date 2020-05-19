@@ -10,27 +10,38 @@ import ClassBasedModifier, {
 } from "./modifier";
 import { ModifierArgs } from "ember-modifier/-private/interfaces";
 
+function scheduleDestroy(modifier: ClassBasedModifier, meta: Ember.Meta): void {
+  if (modifier[DESTROYED]) {
+    return;
+  }
+
+  Ember.destroy(modifier);
+
+  meta.setSourceDestroyed();
+  modifier[DESTROYED] = true;
+}
+
 class ClassBasedModifierManager {
   capabilities = capabilities("3.13");
 
   createModifier(
     factory: { owner: unknown; class: typeof ClassBasedModifier },
     args: ModifierArgs
-  ) {
+  ): ClassBasedModifier {
     // TODO: stop getting the owner off the factory like this; it is *not* per
     // the spec. See https://github.com/ember-modifier/ember-modifier/issues/25
-    let { owner, class: modifier } = factory;
+    const { owner, class: modifier } = factory;
 
     return new modifier(owner, args);
   }
 
-  installModifier(instance: ClassBasedModifier, element: Element) {
+  installModifier(instance: ClassBasedModifier, element: Element): void {
     instance.element = element;
     instance.didReceiveArguments();
     instance.didInstall();
   }
 
-  updateModifier(instance: ClassBasedModifier, args: ModifierArgs) {
+  updateModifier(instance: ClassBasedModifier, args: ModifierArgs): void {
     // TODO: this should be an args proxy
     set(instance, "args", args);
     instance.didUpdateArguments();
@@ -40,7 +51,7 @@ class ClassBasedModifierManager {
   // Uses `InTeardown<ClassBasedModifier>` to correctly model the type of
   // `element` at this point in the lifecycle. This is safe because this manager
   // is what *defines* that lifecycle behavior.
-  destroyModifier(instance: InTeardown<ClassBasedModifier>) {
+  destroyModifier(instance: InTeardown<ClassBasedModifier>): void {
     instance.willRemove();
     instance.element = null;
 
@@ -48,7 +59,7 @@ class ClassBasedModifierManager {
       return;
     }
 
-    let meta = Ember.meta(instance);
+    const meta = Ember.meta(instance);
 
     meta.setSourceDestroying();
     instance[DESTROYING] = true;
@@ -56,17 +67,6 @@ class ClassBasedModifierManager {
     schedule("actions", instance, instance.willDestroy);
     schedule("destroy", undefined, scheduleDestroy, instance, meta);
   }
-}
-
-function scheduleDestroy(modifier: ClassBasedModifier, meta: Ember.Meta) {
-  if (modifier[DESTROYED]) {
-    return;
-  }
-
-  Ember.destroy(modifier);
-
-  meta.setSourceDestroyed();
-  modifier[DESTROYED] = true;
 }
 
 export default new ClassBasedModifierManager();

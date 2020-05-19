@@ -29,6 +29,7 @@ jobs:
   fail_fast: true
   allow_failures:
     - env: EMBER_TRY_SCENARIO=ember-canary
+    - env: EMBER_TRY_SCENARIO=typescript-next
 
   include:
     # runs linting and tests with current locked deps
@@ -41,6 +42,7 @@ jobs:
         - yarn lint:hbs
         - yarn lint:js
         - yarn test
+        - tsc --noEmit
 
     - name: "Floating Dependencies"
       script:
@@ -55,6 +57,11 @@ jobs:
     - env: EMBER_TRY_SCENARIO=ember-beta
     - env: EMBER_TRY_SCENARIO=ember-canary
     - env: EMBER_TRY_SCENARIO=ember-default-with-jquery
+
+    - stage: "Type tests"
+      env: EMBER_TRY_SCENARIO=typescript-3.6
+    - env: EMBER_TRY_SCENARIO=typescript-3.7
+    - env: EMBER_TRY_SCENARIO=typescript-next
 
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash

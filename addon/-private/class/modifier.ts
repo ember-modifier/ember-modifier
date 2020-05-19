@@ -4,11 +4,8 @@ import Manager from "./modifier-manager";
 import { symbol } from "../utils/symbol";
 import { ModifierArgs } from "ember-modifier/-private/interfaces";
 
-// SAFETY: we're lying to the compiler here about the result of `symbol(...)`,
-// and this only holds *because* the implementation of `symbol` guarantees
-// sufficient uniqueness for this to make sense.
-export const DESTROYING: unique symbol = symbol("destroying") as any;
-export const DESTROYED: unique symbol = symbol("destroyed") as any;
+export const DESTROYING: unique symbol = symbol("destroying");
+export const DESTROYED: unique symbol = symbol("destroyed");
 
 /**
  * A base class for modifiers which need more capabilities than function-based
@@ -47,6 +44,8 @@ export default class ClassBasedModifier<
    * @warning `element` is ***not*** available during `constructor` or
    *   `willDestroy`.
    */
+  // SAFETY: this is managed correctly by the class-based modifier.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   element: Element = null as any;
 
   constructor(owner: unknown, args: Args) {
@@ -58,25 +57,33 @@ export default class ClassBasedModifier<
    * Called when the modifier is installed **and** anytime the arguments are
    * updated.
    */
-  didReceiveArguments() {}
+  didReceiveArguments(): void {
+    /* no op, for subclassing */
+  }
 
   /**
    * Called anytime the arguments are updated but **not** on the initial
    * install. Called before `didReceiveArguments`.
    */
-  didUpdateArguments() {}
+  didUpdateArguments(): void {
+    /* no op, for subclassing */
+  }
 
   /**
    * Called when the modifier is installed on the DOM element. Called after
    * `didReceiveArguments`.
    */
-  didInstall() {}
+  didInstall(): void {
+    /* no op, for subclassing */
+  }
 
   /**
    * Called when the DOM element is about to be destroyed; use for removing
    * event listeners on the element and other similar clean-up tasks.
    */
-  willRemove() {}
+  willRemove(): void {
+    /* no op, for subclassing */
+  }
 
   /**
    * Called when the modifier itself is about to be destroyed; use for teardown
@@ -88,13 +95,15 @@ export default class ClassBasedModifier<
    *
    * [README]: https://github.com/ember-modifier/ember-modifier#lifecycle-hooks-and-types
    */
-  willDestroy() {}
+  willDestroy(): void {
+    /* no op, for subclassing */
+  }
 
-  get isDestroying() {
+  get isDestroying(): boolean {
     return this[DESTROYING];
   }
 
-  get isDestroyed() {
+  get isDestroyed(): boolean {
     return this[DESTROYED];
   }
 }

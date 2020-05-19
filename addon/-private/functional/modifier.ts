@@ -9,7 +9,7 @@ export type FunctionalModifier<
 
 const MANAGERS: WeakMap<object, FunctionalModifierManager> = new WeakMap();
 
-function managerFor(owner: object) {
+function managerFor(owner: object): FunctionalModifierManager {
   let manager = MANAGERS.get(owner);
 
   if (manager === undefined) {

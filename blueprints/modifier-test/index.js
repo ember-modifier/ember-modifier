@@ -48,7 +48,7 @@ module.exports = useTestFrameworkDetector({
   },
 
   locals: function(options) {
-    let friendlyTestName = ['Integration', 'Modifier', options.entity.name].join(' | ');
+    const friendlyTestName = ['Integration', 'Modifier', options.entity.name].join(' | ');
     let dasherizedModulePrefix;
 
     if (

@@ -7,6 +7,8 @@ import hbs from "htmlbars-inline-precompile";
 import Modifier, { ModifierArgs } from "ember-modifier";
 import ClassBasedModifier from "ember-modifier";
 
+// `any` required for the inference to work correctly here
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ConstructorFor<C> = new (...args: any[]) => C;
 
 type Factory = (
@@ -31,64 +33,6 @@ interface TestContext extends BaseContext {
   hook(assertions: (instance: ClassBasedModifier) => void): void;
 }
 
-export function testHooks(factory: Factory) {
-  testHook({
-    name: "constructor",
-    insert: true,
-    update: false,
-    destroy: false,
-    element: false,
-    factory,
-  });
-
-  testHook({
-    name: "didReceiveArguments",
-    insert: true,
-    update: true,
-    destroy: false,
-    element: true,
-    factory,
-  });
-
-  testHook({
-    name: "didUpdateArguments",
-    insert: false,
-    update: true,
-    destroy: false,
-    element: true,
-    factory,
-  });
-
-  testHook({
-    name: "didInstall",
-    insert: true,
-    update: false,
-    destroy: false,
-    element: true,
-    factory,
-  });
-
-  testHook({
-    name: "willRemove",
-    insert: false,
-    update: false,
-    destroy: true,
-    element: true,
-    factory,
-  });
-
-  testHook({
-    name: "willDestroy",
-    insert: false,
-    update: false,
-    destroy: true,
-    element: false,
-    factory,
-  });
-
-  testHooksOrdering(factory);
-}
-
 function testHook({
   name,
   insert,
@@ -96,17 +40,20 @@ function testHook({
   destroy,
   element,
   factory,
-}: HookSetup) {
+}: HookSetup): void {
   module(`\`${name}\` hook`, function (hooks) {
     hooks.beforeEach(function (this: TestContext, assert) {
       this.instance = null;
 
-      let called = () => {
+      let called = (): void => {
         assert.ok(false, `\`${name}\` hook was called unexpectedly`);
       };
 
       this.hook = (assertions) => {
-        let callback = (hookName: string, instance: ClassBasedModifier) => {
+        const callback = (
+          hookName: string,
+          instance: ClassBasedModifier
+        ): void => {
           this.instance = instance;
 
           if (hookName === name) {
@@ -128,7 +75,7 @@ function testHook({
 
       this.assertCalled = async (shouldCall, callback) => {
         let count = 0;
-        let _called = called;
+        const _called = called;
 
         if (shouldCall) {
           called = () => count++;
@@ -370,12 +317,12 @@ function testHook({
   });
 }
 
-function testHooksOrdering(factory: Factory) {
+function testHooksOrdering(factory: Factory): void {
   module("hooks ordering", function () {
     test("hooks are fired in the right order", async function (this: TestContext, assert) {
       let actualHooks: undefined | string[];
 
-      let callback = (name: string) => {
+      const callback = (name: string): void => {
         if (actualHooks) {
           actualHooks.push(name);
         } else {
@@ -386,7 +333,7 @@ function testHooksOrdering(factory: Factory) {
       async function assertHooks(
         expectedHooks: string[],
         callback: () => void | Promise<void>
-      ) {
+      ): Promise<void> {
         actualHooks = [];
 
         try {
@@ -453,6 +400,64 @@ function testHooksOrdering(factory: Factory) {
   });
 }
 
+export function testHooks(factory: Factory): void {
+  testHook({
+    name: "constructor",
+    insert: true,
+    update: false,
+    destroy: false,
+    element: false,
+    factory,
+  });
+
+  testHook({
+    name: "didReceiveArguments",
+    insert: true,
+    update: true,
+    destroy: false,
+    element: true,
+    factory,
+  });
+
+  testHook({
+    name: "didUpdateArguments",
+    insert: false,
+    update: true,
+    destroy: false,
+    element: true,
+    factory,
+  });
+
+  testHook({
+    name: "didInstall",
+    insert: true,
+    update: false,
+    destroy: false,
+    element: true,
+    factory,
+  });
+
+  testHook({
+    name: "willRemove",
+    insert: false,
+    update: false,
+    destroy: true,
+    element: true,
+    factory,
+  });
+
+  testHook({
+    name: "willDestroy",
+    insert: false,
+    update: false,
+    destroy: true,
+    element: false,
+    factory,
+  });
+
+  testHooksOrdering(factory);
+}
+
 module("Integration | Modifier Manager | class-based modifier", function (
   hooks
 ) {
@@ -466,23 +471,23 @@ module("Integration | Modifier Manager | class-based modifier", function (
           callback("constructor", this);
         }
 
-        didReceiveArguments() {
+        didReceiveArguments(): void {
           callback("didReceiveArguments", this);
         }
 
-        didUpdateArguments() {
+        didUpdateArguments(): void {
           callback("didUpdateArguments", this);
         }
 
-        didInstall() {
+        didInstall(): void {
           callback("didInstall", this);
         }
 
-        willRemove() {
+        willRemove(): void {
           callback("willRemove", this);
         }
 
-        willDestroy() {
+        willDestroy(): void {
           callback("willDestroy", this);
         }
       }
@@ -509,6 +514,7 @@ module("Integration | Modifier Manager | class-based modifier", function (
         // SAFETY: we're not using the registry here for convenience, because we
         // cannot extend it anywhere but at the top level of the module. The
         // cast is safe because of the registration of `service:bar` above.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         @service("bar" as any) baz!: Bar;
 
         constructor(owner: unknown, args: ModifierArgs) {
