@@ -10,8 +10,14 @@
  * This is inspired by:
  * https://github.com/emberjs/data/blob/master/packages/store/addon/-private/ts-interfaces/utils/symbol.ts
  *
+ * @warning ___SAFETY:___ this may *only* be used internally, and *only* to
+ *   construct something with the semantics of `unique symbol`. TypeScript
+ *   special-cases the APIs for `Symbol`; they're the *only* way to safely
+ *   construct a `unique symbol`, so we work around that by returning `any`
+ *   here.
  */
-export const symbol: (key: string) => symbol | string =
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const symbol: (key: string) => any =
   typeof Symbol !== "undefined"
     ? Symbol
     : (key: string) => `__${key}${Math.floor(Math.random() * Date.now())}__`;

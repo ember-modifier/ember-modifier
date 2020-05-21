@@ -10,7 +10,7 @@ module.exports = function(blueprint) {
   blueprint.filesPath = function() {
     let type;
 
-    let dependencies = this.project.dependencies();
+    const dependencies = this.project.dependencies();
 
     if ('ember-qunit' in dependencies) {
       type = 'qunit';

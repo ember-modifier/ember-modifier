@@ -24,7 +24,7 @@ module.exports = {
   ],
 
   filesPath() {
-    let rootPath = isModuleUnificationProject(this.project) ? 'mu-files' : 'files';
+    const rootPath = isModuleUnificationProject(this.project) ? 'mu-files' : 'files';
     return path.join(this.path, rootPath);
   },
 
@@ -70,7 +70,7 @@ module.exports = {
   },
 
   locals(options) {
-    let modifierType = options.modifierType || 'function';
+    const modifierType = options.modifierType || 'function';
     return { modifierType };
   }
 };
