@@ -57,9 +57,7 @@ jobs:
     - env: EMBER_TRY_SCENARIO=ember-beta
     - env: EMBER_TRY_SCENARIO=ember-canary
     - env: EMBER_TRY_SCENARIO=ember-default-with-jquery
-
-    - stage: "Type tests"
-      env: EMBER_TRY_SCENARIO=typescript-3.6
+    - env: EMBER_TRY_SCENARIO=typescript-3.6
     - env: EMBER_TRY_SCENARIO=typescript-3.7
     - env: EMBER_TRY_SCENARIO=typescript-next
 
