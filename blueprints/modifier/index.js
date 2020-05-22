@@ -1,6 +1,7 @@
 'use strict';
 
-const isModuleUnificationProject = require('../module-unification').isModuleUnificationProject;
+const isModuleUnificationProject = require('../module-unification')
+  .isModuleUnificationProject;
 const normalizeEntityName = require('ember-cli-normalize-entity-name');
 
 const path = require('path');
@@ -18,13 +19,15 @@ module.exports = {
         { s: 'class' },
         { function: 'function' },
         { functional: 'function' },
-        { class: 'class' }
-      ]
-    }
+        { class: 'class' },
+      ],
+    },
   ],
 
   filesPath() {
-    const rootPath = isModuleUnificationProject(this.project) ? 'mu-files' : 'files';
+    const rootPath = isModuleUnificationProject(this.project)
+      ? 'mu-files'
+      : 'files';
     return path.join(this.path, rootPath);
   },
 
@@ -33,7 +36,9 @@ module.exports = {
       return {
         __root__(options) {
           if (options.pod) {
-            throw new Error("Pods aren't supported within a module unification app");
+            throw new Error(
+              "Pods aren't supported within a module unification app"
+            );
           }
 
           if (options.inRepoAddon) {
@@ -48,7 +53,9 @@ module.exports = {
         },
         __collection__(options) {
           if (options.pod) {
-            throw new Error("Pods aren't supported within a module unification app");
+            throw new Error(
+              "Pods aren't supported within a module unification app"
+            );
           }
 
           return path.join('ui', 'components');
@@ -72,5 +79,5 @@ module.exports = {
   locals(options) {
     const modifierType = options.modifierType || 'function';
     return { modifierType };
-  }
+  },
 };

@@ -18,6 +18,6 @@
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const symbol: (key: string) => any =
-  typeof Symbol !== "undefined"
+  typeof Symbol !== 'undefined'
     ? Symbol
     : (key: string) => `__${key}${Math.floor(Math.random() * Date.now())}__`;

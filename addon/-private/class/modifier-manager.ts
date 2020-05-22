@@ -1,14 +1,14 @@
-import Ember from "ember";
-import { capabilities } from "@ember/modifier";
-import { set } from "@ember/object";
-import { schedule } from "@ember/runloop";
+import Ember from 'ember';
+import { capabilities } from '@ember/modifier';
+import { set } from '@ember/object';
+import { schedule } from '@ember/runloop';
 
 import ClassBasedModifier, {
   DESTROYING,
   DESTROYED,
   InTeardown,
-} from "./modifier";
-import { ModifierArgs } from "ember-modifier/-private/interfaces";
+} from './modifier';
+import { ModifierArgs } from 'ember-modifier/-private/interfaces';
 
 function scheduleDestroy(modifier: ClassBasedModifier, meta: Ember.Meta): void {
   if (modifier[DESTROYED]) {
@@ -22,7 +22,7 @@ function scheduleDestroy(modifier: ClassBasedModifier, meta: Ember.Meta): void {
 }
 
 class ClassBasedModifierManager {
-  capabilities = capabilities("3.13");
+  capabilities = capabilities('3.13');
 
   createModifier(
     factory: { owner: unknown; class: typeof ClassBasedModifier },
@@ -43,7 +43,7 @@ class ClassBasedModifierManager {
 
   updateModifier(instance: ClassBasedModifier, args: ModifierArgs): void {
     // TODO: this should be an args proxy
-    set(instance, "args", args);
+    set(instance, 'args', args);
     instance.didUpdateArguments();
     instance.didReceiveArguments();
   }
@@ -64,8 +64,8 @@ class ClassBasedModifierManager {
     meta.setSourceDestroying();
     instance[DESTROYING] = true;
 
-    schedule("actions", instance, instance.willDestroy);
-    schedule("destroy", undefined, scheduleDestroy, instance, meta);
+    schedule('actions', instance, instance.willDestroy);
+    schedule('destroy', undefined, scheduleDestroy, instance, meta);
   }
 }
 

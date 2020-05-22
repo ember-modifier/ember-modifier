@@ -1,10 +1,10 @@
-import { setModifierManager } from "@ember/modifier";
-import FunctionalModifierManager from "./modifier-manager";
-import { ModifierArgs } from "../interfaces";
+import { setModifierManager } from '@ember/modifier';
+import FunctionalModifierManager from './modifier-manager';
+import { ModifierArgs } from '../interfaces';
 
 export type FunctionalModifier<
-  P extends ModifierArgs["positional"] = ModifierArgs["positional"],
-  N extends ModifierArgs["named"] = ModifierArgs["named"]
+  P extends ModifierArgs['positional'] = ModifierArgs['positional'],
+  N extends ModifierArgs['named'] = ModifierArgs['named']
 > = (element: Element, positional: P, named: N) => unknown;
 
 const MANAGERS: WeakMap<object, FunctionalModifierManager> = new WeakMap();
