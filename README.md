@@ -33,8 +33,6 @@ is based on their work, and wouldn't have been possible without them.</i>
     - [API](#api)
       - [Lifecycle Summary](#lifecycle-summary)
 - [TypeScript](#typescript)
-  - [Type safety tradeoffs](#type-safety-tradeoffs)
-  - [Lifecycle hooks and types](#lifecycle-hooks-and-types)
   - [Examples with TypeScript](#examples-with-typescript)
     - [Functional modifier](#functional-modifier)
     - [Class-based](#class-based)
@@ -449,7 +447,7 @@ Usage:
 <dt><code>element</code></dt>
 <dd>The DOM element the modifier is attached to.</dd>
 <dt><code>args</code>: <code>{ positional: Array, named: Object }</code></dt>
-<dd>The arguments passed to the modifier. <code>args.positional</code> is an array of positional arguments, and <code>args.named</code> is an object containing the named arguments.</dd>
+<dd>The arguments passed to the modifier. <code>args.positional</code> is an array of positional arguments, and <code>args.named</code> is an object containing the named arguments. (See <a href='#typescript'>below</a> for a discussion of the types.)</dd>
 <dt><code>isDestroying</code></dt>
 <dd><code>true</code> if the modifier is in the process of being destroyed, or has already been destroyed.</dd>
 <dt><code>isDestroyed</code></dt>
@@ -463,9 +461,9 @@ Usage:
 <dt><code>didInstall()</code></dt>
 <dd>Called when the modifier is installed on the DOM element. Called after <code>didReceiveArguments</code>.</dd>
 <dt><code>willRemove()</code></dt>
-<dd>Called when the DOM element is about to be destroyed; use for removing event listeners on the element and other similar clean-up tasks.</dd>
+<dd>Called when the DOM element is about to be destroyed; use for removing event listeners on the element and other similar clean-up tasks. <em><strong>Deprecated since 2.0.</strong> Prefer <code>willDestroy()</code>.</em></dd>
 <dt><code>willDestroy()</code></dt>
-<dd>Called when the modifier itself is about to be destroyed; use for teardown code. Called after <code>willRemove</code>. The <code>element</code> is no longer available at this point (i.e. its value is <code>null</code> during teardown).</dd>
+<dd>Called when the modifier itself is about to be destroyed; use for teardown code. Called after <code>willRemove</code>.</dd>
 </dl>
 
 ##### Lifecycle Summary
@@ -532,7 +530,7 @@ Usage:
     <td>❌</td>
     <td>❌</td>
     <td>(2)</td>
-    <td>❌</td>
+    <td>✔️</td>
     <td>✔️</td>
   </tr>
 </tbody>
@@ -544,14 +542,9 @@ Usage:
 
 ## TypeScript
 
-Both the functional and class APIs can be used with TypeScript.
+Both the functional and class APIs can be used with TypeScript!
 
-Before checking out the [Examples with Typescript](#examples-with-type-script) below, there are 2 important caveats you should understand about TypeScript usage:
-
-- [type safety tradeoffs](#type-safety-tradeoffs)
-- [lifecycle hooks and types](#lifecycle-hooks-and-types)
-
-### Type safety tradeoffs
+Before checking out the [Examples with Typescript](#examples-with-type-script) below, there is an important caveat you should understand about type safety!
 
 True type safety requires runtime checking, since templates are not currently type-checked: the arguments passed to your modifier can be *anything*. They’re typed as `unknown` by default, which means by default TypeScript will *require* you to work out the type passed to you at runtime. For example, with the `ScrollPositionModifier` shown above, you can combine TypeScript’s [type narrowing] with the default types for the class to provide runtime errors if the caller passes the wrong types, while providing safety throughout the rest of the body of the modifier. Here, `didReceiveArguments` would be *guaranteed* to have the correct types for `this.scrollPosition` and `this.isRelative`:
 
@@ -608,20 +601,10 @@ interface ScrollPositionModifierArgs {
 
 export default class ScrollPositionModifier extends Modifier<ScrollPositionModifierArgs> {
   get scrollPosition(): number {
-    // get the first positional argument passed to the modifier
-    //
-    // {{scoll-position @someNumber relative=@someBoolean}}
-    //                  ~~~~~~~~~~~
-    //
     return this.args.positional[0];
   }
 
   get isRelative(): boolean {
-    // get the named argument "relative" passed to the modifier
-    //
-    // {{scoll-position @someNumber relative=@someBoolean}}
-    //                                       ~~~~~~~~~~~~
-    //
     return this.args.named.relative
   }
 
@@ -636,26 +619,6 @@ export default class ScrollPositionModifier extends Modifier<ScrollPositionModif
 ```
 
 However, while doing so is slightly more convenient, it means you get *much worse* feedback in tests or at runtime if someone passes the wrong kind of arguments to your modifier.
-
-### Lifecycle hooks and types
-
-It is impossible to correctly type the `element` in the current design of the class-based modifier: as noted in [the lifecycle hooks discussion](#lifecycle-summary), `element` is unavailable during `constructor` and `willDestroy`. Currently, `element` is typed as `Element`, since that is correct for *most* places in the lifecycle of the app. However, this means that you must take care to remember that the type is *wrong* in `constructor` and `willDestroy`.
-
-We cannot fix this *at all* for `constructor` with the current definition. However, to work around this in `willDestroy`, we supply a utility type, `InTeardown`, which you can use to specify the type of `this`. For example:
-
-```ts
-import Modifier, { InTeardown } from 'ember-modifier';
-
-function doSomethingWithElement(el: Element) {
-  // ...
-}
-
-export default class CorrectlyTypedModifier extends Modifier {
-  willRemove(this: InTeardown<CorrectlyTypedModifier>) {
-    doSomethingWithElement(this.element); // TYPE ERROR!
-  }
-}
-```
 
 ### Examples with TypeScript
 
@@ -739,7 +702,7 @@ A few things to notice here:
 To support correctly typing `args` in the `constructor` for the case where you do runtime type checking, we supply a `ModifierArgs` interface import. Here’s what a fully typed modifier that alerts "This is a typesafe modifier!" an amount of time after receiving arguments that depends on the length of the first argument and an *optional* multiplier (a nonsensical thing to do, but one that illustrates a fully type-safe class-based modifier):
 
 ```ts
-import Modifier, { ModifierArgs, Teardown } from 'ember-modifier';
+import Modifier, { ModifierArgs } from 'ember-modifier';
 
 export default class NeatModifier extends Modifier {
   interval?: number;
@@ -780,7 +743,7 @@ export default class NeatModifier extends Modifier {
     }, this.multiplier * this.lengthOfInput);
   }
 
-  willDestroy(this: Teardown<NeatModifier>) {
+  willDestroy() {
     clearInterval(this.interval);
   }
 }

@@ -44,7 +44,8 @@ export default class ClassBasedModifier<
    * @warning `element` is ***not*** available during `constructor` or
    *   `willDestroy`.
    */
-  // SAFETY: this is managed correctly by the class-based modifier.
+  // SAFETY: this is managed correctly by the class-based modifier. It is not
+  // available during the `constructor`.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   element: Element = null as any;
 
@@ -80,6 +81,10 @@ export default class ClassBasedModifier<
   /**
    * Called when the DOM element is about to be destroyed; use for removing
    * event listeners on the element and other similar clean-up tasks.
+   *
+   * @deprecated since 2.0.0: prefer to use `willDestroy`, since both it and
+   *   `willRemove` can perform all the same operations, including on the
+   *   `element`.
    */
   willRemove(): void {
     /* no op, for subclassing */
@@ -87,13 +92,7 @@ export default class ClassBasedModifier<
 
   /**
    * Called when the modifier itself is about to be destroyed; use for teardown
-   * code. Called after `willRemove`. The element is no longer available at this
-   * point (i.e. its value is `null` during teardown).
-   *
-   * @note TypeScript users can import the `InTeardown` type utility for safely
-   *   handling `null` here; see [the note in the README for details][README].
-   *
-   * [README]: https://github.com/ember-modifier/ember-modifier#lifecycle-hooks-and-types
+   * code. Called after `willRemove`.
    */
   willDestroy(): void {
     /* no op, for subclassing */
@@ -107,29 +106,5 @@ export default class ClassBasedModifier<
     return this[DESTROYED];
   }
 }
-
-/**
- * A utility for extra type safety in the `willDestroy` lifecycle hook in
- * classes which extend `ClassBasedModifier`: it types `element` as `null`.
- *
- * ## Usage
- *
- * ```ts
- * import Modifier, { InTeardown } from 'ember-modifier';
- *
- * function doSomethingWithElement(el: Element) {
- *   // ...
- * }
- *
- * export default class CorrectlyTypedModifier extends Modifier {
- *   willRemove(this: InTeardown<CorrectlyTypedModifier>) {
- *     doSomethingWithElement(this.element); // TYPE ERROR!
- *   }
- * }
- * ```
- */
-export type InTeardown<M extends ClassBasedModifier> = Omit<M, 'element'> & {
-  element: null;
-};
 
 setModifierManager(() => Manager, ClassBasedModifier);
