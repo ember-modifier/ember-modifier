@@ -5,15 +5,14 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: [
-    'ember'
-  ],
+  plugins: ['ember', 'prettier'],
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended',
+    'plugin:prettier/recommended',
   ],
   env: {
-    browser: true
+    browser: true,
   },
   rules: {
     'ember/no-jquery': 'error',
@@ -32,20 +31,20 @@ module.exports = {
         'testem.js',
         'blueprints/**/*.js',
         'config/**/*.js',
-        'tests/dummy/config/**/*.js'
+        'tests/dummy/config/**/*.js',
       ],
       excludedFiles: [
         'addon/**',
         'addon-test-support/**',
         'app/**',
-        'tests/dummy/app/**'
+        'tests/dummy/app/**',
       ],
       parserOptions: {
-        sourceType: 'script'
+        sourceType: 'script',
       },
       env: {
         browser: false,
-        node: true
+        node: true,
       },
       plugins: ['node'],
       extends: ['plugin:node/recommended'],
@@ -54,30 +53,28 @@ module.exports = {
       },
     },
     {
-      files: ["**/*.ts"],
+      files: ['**/*.ts'],
       parser: '@typescript-eslint/parser',
       parserOptions: {
         // allows eslint from any dir
         tsconfigRootDir: __dirname,
         project: ['./tsconfig.json'],
       },
-      plugins: [
-        '@typescript-eslint',
-        'ember'
-      ],
+      plugins: ['@typescript-eslint', 'ember'],
       extends: [
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
+        'prettier/@typescript-eslint',
       ],
       rules: {
-        "@typescript-eslint/explicit-function-return-type": [
-          "error",
+        '@typescript-eslint/explicit-function-return-type': [
+          'error',
           {
             allowExpressions: true,
-            allowHigherOrderFunctions: true
-          }
+            allowHigherOrderFunctions: true,
+          },
         ],
-      }
+      },
     },
-  ]
+  ],
 };

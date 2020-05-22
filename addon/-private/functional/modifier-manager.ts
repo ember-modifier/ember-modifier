@@ -1,6 +1,6 @@
-import { capabilities } from "@ember/modifier";
-import { FunctionalModifier } from "./modifier";
-import { ModifierArgs } from "../interfaces";
+import { capabilities } from '@ember/modifier';
+import { FunctionalModifier } from './modifier';
+import { ModifierArgs } from '../interfaces';
 
 interface Factory {
   class: FunctionalModifier;
@@ -12,7 +12,7 @@ const MODIFIER_TEARDOWNS: WeakMap<FunctionalModifier, unknown> = new WeakMap();
 function teardown(modifier: FunctionalModifier): void {
   const teardown = MODIFIER_TEARDOWNS.get(modifier);
 
-  if (teardown && typeof teardown === "function") {
+  if (teardown && typeof teardown === 'function') {
     teardown();
   }
 }
@@ -29,7 +29,7 @@ function setup(
 }
 
 export default class FunctionalModifierManager {
-  capabilities = capabilities("3.13");
+  capabilities = capabilities('3.13');
 
   // TODO: remove this entirely as part of #25
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

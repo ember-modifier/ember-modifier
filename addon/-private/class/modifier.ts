@@ -1,11 +1,11 @@
-import { setOwner } from "@ember/application";
-import { setModifierManager } from "@ember/modifier";
-import Manager from "./modifier-manager";
-import { symbol } from "../utils/symbol";
-import { ModifierArgs } from "ember-modifier/-private/interfaces";
+import { setOwner } from '@ember/application';
+import { setModifierManager } from '@ember/modifier';
+import Manager from './modifier-manager';
+import { symbol } from '../utils/symbol';
+import { ModifierArgs } from 'ember-modifier/-private/interfaces';
 
-export const DESTROYING: unique symbol = symbol("destroying");
-export const DESTROYED: unique symbol = symbol("destroyed");
+export const DESTROYING: unique symbol = symbol('destroying');
+export const DESTROYED: unique symbol = symbol('destroyed');
 
 /**
  * A base class for modifiers which need more capabilities than function-based
@@ -128,7 +128,7 @@ export default class ClassBasedModifier<
  * }
  * ```
  */
-export type InTeardown<M extends ClassBasedModifier> = Omit<M, "element"> & {
+export type InTeardown<M extends ClassBasedModifier> = Omit<M, 'element'> & {
   element: null;
 };
 

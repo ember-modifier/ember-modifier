@@ -2,9 +2,9 @@
 // *not* intended to be robust or shared; they're *minimal* to cover exactly and
 // only what is required for this addon.
 
-import Ember from "ember";
+import Ember from 'ember';
 
-declare module "ember" {
+declare module 'ember' {
   export namespace Ember {
     export interface Meta {
       setSourceDestroying(): void;

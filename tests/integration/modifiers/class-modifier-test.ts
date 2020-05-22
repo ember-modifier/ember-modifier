@@ -1,11 +1,11 @@
-import { module, test } from "qunit";
-import { setupRenderingTest } from "ember-qunit";
-import { render, settled } from "@ember/test-helpers";
-import { TestContext as BaseContext } from "ember-test-helpers";
-import Service, { inject as service } from "@ember/service";
-import hbs from "htmlbars-inline-precompile";
-import Modifier, { ModifierArgs } from "ember-modifier";
-import ClassBasedModifier from "ember-modifier";
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render, settled } from '@ember/test-helpers';
+import { TestContext as BaseContext } from 'ember-test-helpers';
+import Service, { inject as service } from '@ember/service';
+import hbs from 'htmlbars-inline-precompile';
+import Modifier, { ModifierArgs } from 'ember-modifier';
+import ClassBasedModifier from 'ember-modifier';
 
 // `any` required for the inference to work correctly here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,16 +61,16 @@ function testHook({
 
             assert.strictEqual(
               instance.isDestroying,
-              name === "willDestroy",
-              "isDestroying"
+              name === 'willDestroy',
+              'isDestroying'
             );
-            assert.strictEqual(instance.isDestroyed, false, "isDestroyed");
+            assert.strictEqual(instance.isDestroyed, false, 'isDestroyed');
 
             assertions(instance);
           }
         };
 
-        this.owner.register("modifier:songbird", factory(callback));
+        this.owner.register('modifier:songbird', factory(callback));
       };
 
       this.assertCalled = async (shouldCall, callback) => {
@@ -100,23 +100,23 @@ function testHook({
     hooks.afterEach(async function (this: TestContext, assert) {
       await settled();
 
-      assert.strictEqual(this.instance?.isDestroying, true, "isDestroying");
-      assert.strictEqual(this.instance?.isDestroyed, true, "isDestroyed");
+      assert.strictEqual(this.instance?.isDestroying, true, 'isDestroying');
+      assert.strictEqual(this.instance?.isDestroyed, true, 'isDestroyed');
     });
 
     if (element) {
-      test("it has access to the DOM element", async function (this: TestContext, assert) {
+      test('it has access to the DOM element', async function (this: TestContext, assert) {
         this.hook((instance) => {
-          assert.equal(instance.element.tagName, "H1", "this.element.tagName");
-          assert.equal(instance.element.id, "expected", "this.element.id");
+          assert.equal(instance.element.tagName, 'H1', 'this.element.tagName');
+          assert.equal(instance.element.id, 'expected', 'this.element.id');
         });
 
-        assert.step("no-op render");
+        assert.step('no-op render');
 
         await this.assertCalled(false, async () => {
           this.setProperties({
             isShowing: false,
-            foo: "foo",
+            foo: 'foo',
           });
 
           await render(hbs`
@@ -126,38 +126,38 @@ function testHook({
           `);
         });
 
-        assert.step("insert");
+        assert.step('insert');
 
         await this.assertCalled(insert, () => {
-          this.set("isShowing", true);
+          this.set('isShowing', true);
         });
 
-        assert.step("update");
+        assert.step('update');
 
         await this.assertCalled(update, () => {
-          this.set("foo", "FOO");
+          this.set('foo', 'FOO');
         });
 
-        assert.step("destroy");
+        assert.step('destroy');
 
         await this.assertCalled(destroy, () => {
-          this.set("isShowing", false);
+          this.set('isShowing', false);
         });
 
-        assert.verifySteps(["no-op render", "insert", "update", "destroy"]);
+        assert.verifySteps(['no-op render', 'insert', 'update', 'destroy']);
       });
     } else {
-      test("it does not have access to the DOM element", async function (this: TestContext, assert) {
+      test('it does not have access to the DOM element', async function (this: TestContext, assert) {
         this.hook((instance) => {
-          assert.strictEqual(instance.element, null, "this.element");
+          assert.strictEqual(instance.element, null, 'this.element');
         });
 
-        assert.step("no-op render");
+        assert.step('no-op render');
 
         await this.assertCalled(false, async () => {
           this.setProperties({
             isShowing: false,
-            foo: "foo",
+            foo: 'foo',
           });
 
           await render(hbs`
@@ -167,46 +167,46 @@ function testHook({
           `);
         });
 
-        assert.step("insert");
+        assert.step('insert');
 
         await this.assertCalled(insert, () => {
-          this.set("isShowing", true);
+          this.set('isShowing', true);
         });
 
-        assert.step("update");
+        assert.step('update');
 
         await this.assertCalled(update, () => {
-          this.set("foo", "FOO");
+          this.set('foo', 'FOO');
         });
 
-        assert.step("destroy");
+        assert.step('destroy');
 
         await this.assertCalled(destroy, () => {
-          this.set("isShowing", false);
+          this.set('isShowing', false);
         });
 
-        assert.verifySteps(["no-op render", "insert", "update", "destroy"]);
+        assert.verifySteps(['no-op render', 'insert', 'update', 'destroy']);
       });
     }
 
-    test("has access to positional arguments", async function (this: TestContext, assert) {
+    test('has access to positional arguments', async function (this: TestContext, assert) {
       let expected: string[];
 
       this.hook((instance) => {
         assert.deepEqual(
           instance.args.positional,
           expected,
-          "this.args.positional"
+          'this.args.positional'
         );
       });
 
-      assert.step("no-op render");
+      assert.step('no-op render');
 
       await this.assertCalled(false, async () => {
         this.setProperties({
           isShowing: false,
-          foo: "foo",
-          bar: "bar",
+          foo: 'foo',
+          bar: 'bar',
         });
 
         await render(hbs`
@@ -216,60 +216,60 @@ function testHook({
         `);
       });
 
-      assert.step("insert");
-      expected = ["foo", "bar"];
+      assert.step('insert');
+      expected = ['foo', 'bar'];
 
       await this.assertCalled(insert, () => {
-        this.set("isShowing", true);
+        this.set('isShowing', true);
       });
 
-      assert.step("update 1");
-      expected = ["FOO", "bar"];
+      assert.step('update 1');
+      expected = ['FOO', 'bar'];
 
       await this.assertCalled(update, () => {
-        this.set("foo", "FOO");
+        this.set('foo', 'FOO');
       });
 
-      assert.step("update 2");
-      expected = ["FOO", "BAR"];
+      assert.step('update 2');
+      expected = ['FOO', 'BAR'];
 
       await this.assertCalled(update, () => {
-        this.set("bar", "BAR");
+        this.set('bar', 'BAR');
       });
 
-      assert.step("destroy");
+      assert.step('destroy');
 
       await this.assertCalled(destroy, () => {
-        this.set("isShowing", false);
+        this.set('isShowing', false);
       });
 
       assert.verifySteps([
-        "no-op render",
-        "insert",
-        "update 1",
-        "update 2",
-        "destroy",
+        'no-op render',
+        'insert',
+        'update 1',
+        'update 2',
+        'destroy',
       ]);
     });
 
-    test("has access to named arguments", async function (this: TestContext, assert) {
+    test('has access to named arguments', async function (this: TestContext, assert) {
       let expected: Record<string, string>;
 
       this.hook((instance) => {
         assert.deepEqual(
           { ...instance.args.named },
           expected,
-          "this.args.named"
+          'this.args.named'
         );
       });
 
-      assert.step("no-op render");
+      assert.step('no-op render');
 
       await this.assertCalled(false, async () => {
         this.setProperties({
           isShowing: false,
-          foo: "foo",
-          bar: "bar",
+          foo: 'foo',
+          bar: 'bar',
         });
 
         await render(hbs`
@@ -279,47 +279,47 @@ function testHook({
         `);
       });
 
-      assert.step("insert");
-      expected = { foo: "foo", bar: "bar" };
+      assert.step('insert');
+      expected = { foo: 'foo', bar: 'bar' };
 
       await this.assertCalled(insert, () => {
-        this.set("isShowing", true);
+        this.set('isShowing', true);
       });
 
-      assert.step("update 1");
-      expected = { foo: "FOO", bar: "bar" };
+      assert.step('update 1');
+      expected = { foo: 'FOO', bar: 'bar' };
 
       await this.assertCalled(update, () => {
-        this.set("foo", "FOO");
+        this.set('foo', 'FOO');
       });
 
-      assert.step("update 2");
-      expected = { foo: "FOO", bar: "BAR" };
+      assert.step('update 2');
+      expected = { foo: 'FOO', bar: 'BAR' };
 
       await this.assertCalled(update, () => {
-        this.set("bar", "BAR");
+        this.set('bar', 'BAR');
       });
 
-      assert.step("destroy");
+      assert.step('destroy');
 
       await this.assertCalled(destroy, () => {
-        this.set("isShowing", false);
+        this.set('isShowing', false);
       });
 
       assert.verifySteps([
-        "no-op render",
-        "insert",
-        "update 1",
-        "update 2",
-        "destroy",
+        'no-op render',
+        'insert',
+        'update 1',
+        'update 2',
+        'destroy',
       ]);
     });
   });
 }
 
 function testHooksOrdering(factory: Factory): void {
-  module("hooks ordering", function () {
-    test("hooks are fired in the right order", async function (this: TestContext, assert) {
+  module('hooks ordering', function () {
+    test('hooks are fired in the right order', async function (this: TestContext, assert) {
       let actualHooks: undefined | string[];
 
       const callback = (name: string): void => {
@@ -339,20 +339,20 @@ function testHooksOrdering(factory: Factory): void {
         try {
           await callback();
         } finally {
-          assert.deepEqual(actualHooks, expectedHooks, "hooks");
+          assert.deepEqual(actualHooks, expectedHooks, 'hooks');
           actualHooks = undefined;
         }
       }
 
-      this.owner.register("modifier:songbird", factory(callback));
+      this.owner.register('modifier:songbird', factory(callback));
 
-      assert.step("no-op render");
+      assert.step('no-op render');
 
       await assertHooks([], async () => {
         this.setProperties({
           isShowing: false,
-          foo: "foo",
-          bar: "bar",
+          foo: 'foo',
+          bar: 'bar',
         });
 
         await render(hbs`
@@ -362,39 +362,39 @@ function testHooksOrdering(factory: Factory): void {
         `);
       });
 
-      assert.step("insert");
+      assert.step('insert');
 
       await assertHooks(
-        ["constructor", "didReceiveArguments", "didInstall"],
+        ['constructor', 'didReceiveArguments', 'didInstall'],
         () => {
-          this.set("isShowing", true);
+          this.set('isShowing', true);
         }
       );
 
-      assert.step("update 1");
+      assert.step('update 1');
 
-      await assertHooks(["didUpdateArguments", "didReceiveArguments"], () => {
-        this.set("foo", "FOO");
+      await assertHooks(['didUpdateArguments', 'didReceiveArguments'], () => {
+        this.set('foo', 'FOO');
       });
 
-      assert.step("update 2");
+      assert.step('update 2');
 
-      await assertHooks(["didUpdateArguments", "didReceiveArguments"], () => {
-        this.set("bar", "BAR");
+      await assertHooks(['didUpdateArguments', 'didReceiveArguments'], () => {
+        this.set('bar', 'BAR');
       });
 
-      assert.step("destroy");
+      assert.step('destroy');
 
-      await assertHooks(["willRemove", "willDestroy"], () => {
-        this.set("isShowing", false);
+      await assertHooks(['willRemove', 'willDestroy'], () => {
+        this.set('isShowing', false);
       });
 
       assert.verifySteps([
-        "no-op render",
-        "insert",
-        "update 1",
-        "update 2",
-        "destroy",
+        'no-op render',
+        'insert',
+        'update 1',
+        'update 2',
+        'destroy',
       ]);
     });
   });
@@ -402,7 +402,7 @@ function testHooksOrdering(factory: Factory): void {
 
 export function testHooks(factory: Factory): void {
   testHook({
-    name: "constructor",
+    name: 'constructor',
     insert: true,
     update: false,
     destroy: false,
@@ -411,7 +411,7 @@ export function testHooks(factory: Factory): void {
   });
 
   testHook({
-    name: "didReceiveArguments",
+    name: 'didReceiveArguments',
     insert: true,
     update: true,
     destroy: false,
@@ -420,7 +420,7 @@ export function testHooks(factory: Factory): void {
   });
 
   testHook({
-    name: "didUpdateArguments",
+    name: 'didUpdateArguments',
     insert: false,
     update: true,
     destroy: false,
@@ -429,7 +429,7 @@ export function testHooks(factory: Factory): void {
   });
 
   testHook({
-    name: "didInstall",
+    name: 'didInstall',
     insert: true,
     update: false,
     destroy: false,
@@ -438,7 +438,7 @@ export function testHooks(factory: Factory): void {
   });
 
   testHook({
-    name: "willRemove",
+    name: 'willRemove',
     insert: false,
     update: false,
     destroy: true,
@@ -447,7 +447,7 @@ export function testHooks(factory: Factory): void {
   });
 
   testHook({
-    name: "willDestroy",
+    name: 'willDestroy',
     insert: false,
     update: false,
     destroy: true,
@@ -458,7 +458,7 @@ export function testHooks(factory: Factory): void {
   testHooksOrdering(factory);
 }
 
-module("Integration | Modifier Manager | class-based modifier", function (
+module('Integration | Modifier Manager | class-based modifier', function (
   hooks
 ) {
   setupRenderingTest(hooks);
@@ -468,33 +468,33 @@ module("Integration | Modifier Manager | class-based modifier", function (
       class NativeModifier extends Modifier {
         constructor(owner: unknown, args: ModifierArgs) {
           super(owner, args);
-          callback("constructor", this);
+          callback('constructor', this);
         }
 
         didReceiveArguments(): void {
-          callback("didReceiveArguments", this);
+          callback('didReceiveArguments', this);
         }
 
         didUpdateArguments(): void {
-          callback("didUpdateArguments", this);
+          callback('didUpdateArguments', this);
         }
 
         didInstall(): void {
-          callback("didInstall", this);
+          callback('didInstall', this);
         }
 
         willRemove(): void {
-          callback("willRemove", this);
+          callback('willRemove', this);
         }
 
         willDestroy(): void {
-          callback("willDestroy", this);
+          callback('willDestroy', this);
         }
       }
   );
 
-  module("service injection", function () {
-    test("can participate in ember dependency injection", async function (this: TestContext, assert) {
+  module('service injection', function () {
+    test('can participate in ember dependency injection', async function (this: TestContext, assert) {
       let called = false;
 
       class Foo extends Service {
@@ -505,8 +505,8 @@ module("Integration | Modifier Manager | class-based modifier", function (
         isBarService = true;
       }
 
-      this.owner.register("service:foo", Foo);
-      this.owner.register("service:bar", Bar);
+      this.owner.register('service:foo', Foo);
+      this.owner.register('service:bar', Bar);
 
       class NativeModifier extends Modifier {
         @service foo!: Foo;
@@ -515,7 +515,7 @@ module("Integration | Modifier Manager | class-based modifier", function (
         // cannot extend it anywhere but at the top level of the module. The
         // cast is safe because of the registration of `service:bar` above.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        @service("bar" as any) baz!: Bar;
+        @service('bar' as any) baz!: Bar;
 
         constructor(owner: unknown, args: ModifierArgs) {
           super(owner, args);
@@ -525,20 +525,20 @@ module("Integration | Modifier Manager | class-based modifier", function (
           assert.strictEqual(
             this.foo.isFooService,
             true,
-            "this.foo.isFooService"
+            'this.foo.isFooService'
           );
           assert.strictEqual(
             this.baz.isBarService,
             true,
-            "this.baz.isBarService"
+            'this.baz.isBarService'
           );
         }
       }
-      this.owner.register("modifier:songbird", NativeModifier);
+      this.owner.register('modifier:songbird', NativeModifier);
 
       await render(hbs`<h1 {{songbird}}>Hello</h1>`);
 
-      assert.strictEqual(called, true, "constructor called");
+      assert.strictEqual(called, true, 'constructor called');
     });
   });
 });

@@ -4,14 +4,15 @@ const stringUtils = require('ember-cli-string-utils');
 const isPackageMissing = require('ember-cli-is-package-missing');
 
 const useTestFrameworkDetector = require('../test-framework-detector');
-const isModuleUnificationProject = require('../module-unification').isModuleUnificationProject;
+const isModuleUnificationProject = require('../module-unification')
+  .isModuleUnificationProject;
 
 const path = require('path');
 
 module.exports = useTestFrameworkDetector({
   description: 'Generates a helper integration test or a unit test.',
 
-  fileMapTokens: function() {
+  fileMapTokens: function () {
     if (isModuleUnificationProject(this.project)) {
       return {
         __root__(options) {
@@ -20,7 +21,9 @@ module.exports = useTestFrameworkDetector({
           }
 
           if (options.inDummy) {
-            throw new Error("The --dummy flag isn't supported within a module unification app");
+            throw new Error(
+              "The --dummy flag isn't supported within a module unification app"
+            );
           }
 
           return 'src';
@@ -47,8 +50,12 @@ module.exports = useTestFrameworkDetector({
     }
   },
 
-  locals: function(options) {
-    const friendlyTestName = ['Integration', 'Modifier', options.entity.name].join(' | ');
+  locals: function (options) {
+    const friendlyTestName = [
+      'Integration',
+      'Modifier',
+      options.entity.name,
+    ].join(' | ');
     let dasherizedModulePrefix;
 
     if (
@@ -57,16 +64,18 @@ module.exports = useTestFrameworkDetector({
     ) {
       dasherizedModulePrefix = options.inRepoAddon || options.project.name();
     } else {
-      dasherizedModulePrefix = stringUtils.dasherize(options.project.config().modulePrefix);
+      dasherizedModulePrefix = stringUtils.dasherize(
+        options.project.config().modulePrefix
+      );
     }
 
     return {
       friendlyTestName: friendlyTestName,
-      dasherizedModulePrefix: dasherizedModulePrefix
+      dasherizedModulePrefix: dasherizedModulePrefix,
     };
   },
 
-  afterInstall: function(options) {
+  afterInstall: function (options) {
     if (
       !options.dryRun &&
       options.testType === 'integration' &&

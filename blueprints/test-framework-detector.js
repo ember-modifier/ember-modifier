@@ -2,12 +2,12 @@
 
 const path = require('path');
 
-module.exports = function(blueprint) {
-  blueprint.supportsAddon = function() {
+module.exports = function (blueprint) {
+  blueprint.supportsAddon = function () {
     return false;
   };
 
-  blueprint.filesPath = function() {
+  blueprint.filesPath = function () {
     let type;
 
     const dependencies = this.project.dependencies();

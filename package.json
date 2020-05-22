@@ -15,7 +15,11 @@
   "scripts": {
     "build": "ember build",
     "lint:hbs": "ember-template-lint .",
+    "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint .",
+    "lint:js:fix": "eslint . --fix",
+    "lint": "npm-run-all --aggregate-output --continue-on-error --parallel 'lint:!(fix)'",
+    "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
     "test:ts": "tsc --noEmit",
     "start": "ember serve",
     "test": "ember test",
@@ -62,10 +66,14 @@
     "ember-source-channel-url": "^2.0.1",
     "ember-try": "^1.2.1",
     "eslint": "^7.0.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-ember": "^7.1.0",
     "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.3",
     "expect-type": "^0.7.3",
     "loader.js": "^4.7.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.0.5",
     "qunit-dom": "^0.9.0",
     "release-it": "^13.6.0",
     "release-it-lerna-changelog": "^2.3.0",
@@ -73,6 +81,9 @@
   },
   "engines": {
     "node": "10.* || >= 12.*"
+  },
+  "prettier": {
+    "singleQuote": true
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
