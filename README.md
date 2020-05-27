@@ -20,6 +20,10 @@ is based on their work, and wouldn't have been possible without them.</i>
 
 - [Compatibility](#compatibility)
 - [Installation](#installation)
+- [Philosophy](#philosophy)
+  - [Woah woah woah, hold on, what's a _"side effect"_?](#woah-woah-woah-hold-on-whats-a-side-effect)
+  - [Managing "side effects" effectively](#managing-side-effects-effectively)
+  - [Should modifiers _always_ be self-contained?](#should-modifiers-always-be-self-contained)
 - [Usage](#usage)
   - [Functional Modifiers](#functional-modifiers)
     - [Generating a Functional Modifier](#generating-a-functional-modifier)
