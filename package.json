@@ -20,13 +20,18 @@
     "lint:js:fix": "eslint . --fix",
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel 'lint:!(fix)'",
     "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
-    "test:ts": "tsc --noEmit",
     "start": "ember serve",
     "test": "ember test",
+    "test:ts": "tsc --noEmit",
     "test:types": "ember try:each --config-path=ember-try-typescript.js",
     "test:all": "ember try:each",
-    "prepublishOnly": "ember ts:precompile",
-    "postpublish": "ember ts:clean"
+    "prepublish:types": "ember ts:precompile",
+    "prepublish:downlevel": "downlevel-dts . ts3.4",
+    "prepublishOnly": "run-s prepublish:types prepublish:downlevel",
+    "clean:ts": "ember ts:clean",
+    "clean:downlevel": "rimraf ./ts3.4",
+    "clean": "npm-run-all --aggregate-output --parallel clean:*",
+    "postpublish": "npm run clean"
   },
   "dependencies": {
     "ember-cli-babel": "^7.19.0",
@@ -47,6 +52,7 @@
     "@typescript-eslint/parser": "^2.34.0",
     "babel-eslint": "^10.0.3",
     "broccoli-asset-rev": "^3.0.0",
+    "downlevel-dts": "^0.4.0",
     "ember-cli": "~3.13.1",
     "ember-cli-dependency-checker": "^3.1.0",
     "ember-cli-htmlbars": "^4.0.0",
@@ -77,7 +83,8 @@
     "qunit-dom": "^0.9.0",
     "release-it": "^13.6.0",
     "release-it-lerna-changelog": "^2.3.0",
-    "typescript": "^3.7.5"
+    "rimraf": "^3.0.2",
+    "typescript": "^3.9.3"
   },
   "engines": {
     "node": "10.* || >= 12.*"
@@ -104,6 +111,12 @@
     "github": {
       "release": true,
       "tokenRef": "GITHUB_AUTH"
+    }
+  },
+  "types": "index.d.ts",
+  "typeVersions": {
+    "<3.9": {
+      "*": "ts3.4/*"
     }
   }
 }
