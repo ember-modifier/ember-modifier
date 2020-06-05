@@ -27,7 +27,7 @@
     "test:all": "ember try:each",
     "prepublish:types": "ember ts:precompile",
     "prepublish:downlevel": "downlevel-dts . ts3.4",
-    "prepublishOnly": "run-s prepublish:types prepublish:downlevel",
+    "prepublishOnly": "npm-run-all prepublish:types prepublish:downlevel",
     "clean:ts": "ember ts:clean",
     "clean:downlevel": "rimraf ./ts3.4",
     "clean": "npm-run-all --aggregate-output --parallel clean:*",
