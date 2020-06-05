@@ -36,6 +36,7 @@
     "tests/**/*",
     "types/**/*",
     "test-support/**/*",
-    "addon-test-support/**/*"
+    "addon-test-support/**/*",
+    "type-tests/modifier-test.ts"
   ]
 }
