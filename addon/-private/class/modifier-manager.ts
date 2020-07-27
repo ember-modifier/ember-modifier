@@ -3,11 +3,7 @@ import { capabilities } from '@ember/modifier';
 import { set } from '@ember/object';
 import { schedule } from '@ember/runloop';
 
-import ClassBasedModifier, {
-  DESTROYING,
-  DESTROYED,
-  InTeardown,
-} from './modifier';
+import ClassBasedModifier, { DESTROYING, DESTROYED } from './modifier';
 import { ModifierArgs } from 'ember-modifier/-private/interfaces';
 
 function scheduleDestroy(modifier: ClassBasedModifier, meta: Ember.Meta): void {
@@ -48,12 +44,8 @@ class ClassBasedModifierManager {
     instance.didReceiveArguments();
   }
 
-  // Uses `InTeardown<ClassBasedModifier>` to correctly model the type of
-  // `element` at this point in the lifecycle. This is safe because this manager
-  // is what *defines* that lifecycle behavior.
-  destroyModifier(instance: InTeardown<ClassBasedModifier>): void {
+  destroyModifier(instance: ClassBasedModifier): void {
     instance.willRemove();
-    instance.element = null;
 
     if (instance[DESTROYING]) {
       return;

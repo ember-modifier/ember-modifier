@@ -451,7 +451,7 @@ export function testHooks(factory: Factory): void {
     insert: false,
     update: false,
     destroy: true,
-    element: false,
+    element: true,
     factory,
   });
 
