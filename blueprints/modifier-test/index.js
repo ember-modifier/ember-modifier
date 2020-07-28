@@ -1,8 +1,6 @@
 'use strict';
 
 const stringUtils = require('ember-cli-string-utils');
-const isPackageMissing = require('ember-cli-is-package-missing');
-
 const useTestFrameworkDetector = require('../test-framework-detector');
 
 module.exports = useTestFrameworkDetector({
@@ -37,17 +35,5 @@ module.exports = useTestFrameworkDetector({
       friendlyTestName: friendlyTestName,
       dasherizedModulePrefix: dasherizedModulePrefix,
     };
-  },
-
-  afterInstall: function (options) {
-    if (
-      !options.dryRun &&
-      options.testType === 'integration' &&
-      isPackageMissing(this, 'ember-cli-htmlbars-inline-precompile')
-    ) {
-      return this.addPackagesToProject([
-        { name: 'ember-cli-htmlbars-inline-precompile', target: '^0.3.1' },
-      ]);
-    }
   },
 });
