@@ -400,7 +400,7 @@ function testHooksOrdering(factory: Factory): void {
   });
 }
 
-export function testHooks(factory: Factory): void {
+function testHooks(factory: Factory): void {
   testHook({
     name: 'constructor',
     insert: true,
