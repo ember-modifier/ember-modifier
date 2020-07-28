@@ -3,7 +3,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
 import { TestContext as BaseContext } from 'ember-test-helpers';
 import Service, { inject as service } from '@ember/service';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import Modifier, { ModifierArgs } from 'ember-modifier';
 import ClassBasedModifier from 'ember-modifier';
 
