@@ -7,20 +7,6 @@ export type FunctionalModifier<
   N extends ModifierArgs['named'] = ModifierArgs['named']
 > = (element: Element, positional: P, named: N) => unknown;
 
-const MANAGERS: WeakMap<object, FunctionalModifierManager> = new WeakMap();
-
-function managerFor(owner: object): FunctionalModifierManager {
-  let manager = MANAGERS.get(owner);
-
-  if (manager === undefined) {
-    manager = new FunctionalModifierManager(owner);
-  }
-
-  return manager;
-}
-
-// TODO: simplify this -- it doesn't (and shouldn't) use the owner at all.
-// See https://github.com/ember-modifier/ember-modifier/issues/26
 /**
  * An API for writing simple modifiers.
  *
@@ -37,5 +23,5 @@ function managerFor(owner: object): FunctionalModifierManager {
  * @param fn The function which defines the modifier.
  */
 export default function modifier(fn: FunctionalModifier): unknown {
-  return setModifierManager(managerFor, fn);
+  return setModifierManager(() => FunctionalModifierManager, fn);
 }

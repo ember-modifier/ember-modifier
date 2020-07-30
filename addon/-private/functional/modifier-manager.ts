@@ -28,14 +28,8 @@ function setup(
   MODIFIER_TEARDOWNS.set(modifier, teardown);
 }
 
-export default class FunctionalModifierManager {
+class FunctionalModifierManager {
   capabilities = capabilities('3.13');
-
-  // TODO: remove this entirely as part of #25
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  constructor(_owner: unknown) {
-    /* no-op */
-  }
 
   createModifier(factory: Factory): FunctionalModifier {
     // This looks superfluous, but this is creating a new instance
@@ -65,3 +59,5 @@ export default class FunctionalModifierManager {
     teardown(modifier);
   }
 }
+
+export default new FunctionalModifierManager();
