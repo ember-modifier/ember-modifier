@@ -10,18 +10,18 @@ function destroyModifier(modifier: ClassBasedModifier): void {
   modifier.willDestroy();
 }
 
-class ClassBasedModifierManager {
+export default class ClassBasedModifierManager {
   capabilities = capabilities('3.13');
+
+  constructor(private owner: unknown) {}
 
   createModifier(
     factory: { owner: unknown; class: typeof ClassBasedModifier },
     args: ModifierArgs
   ): ClassBasedModifier {
-    // TODO: stop getting the owner off the factory like this; it is *not* per
-    // the spec. See https://github.com/ember-modifier/ember-modifier/issues/25
-    const { owner, class: Modifier } = factory;
+    const Modifier = factory.class;
 
-    const modifier = new Modifier(owner, args);
+    const modifier = new Modifier(this.owner, args);
 
     registerDestructor(modifier, destroyModifier);
 
@@ -45,5 +45,3 @@ class ClassBasedModifierManager {
     destroy(instance);
   }
 }
-
-export default new ClassBasedModifierManager();
