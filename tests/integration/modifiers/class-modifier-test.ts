@@ -61,7 +61,7 @@ function testHook({
 
             assert.strictEqual(
               instance.isDestroying,
-              name === 'willDestroy',
+              name === 'willDestroy' || name === 'willRemove',
               'isDestroying'
             );
             assert.strictEqual(instance.isDestroyed, false, 'isDestroyed');

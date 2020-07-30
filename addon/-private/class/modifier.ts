@@ -1,11 +1,8 @@
 import { setOwner } from '@ember/application';
 import { setModifierManager } from '@ember/modifier';
 import Manager from './modifier-manager';
-import { symbol } from '../utils/symbol';
 import { ModifierArgs } from 'ember-modifier/-private/interfaces';
-
-export const DESTROYING: unique symbol = symbol('destroying');
-export const DESTROYED: unique symbol = symbol('destroyed');
+import { isDestroying, isDestroyed } from '@ember/destroyable';
 
 /**
  * A base class for modifiers which need more capabilities than function-based
@@ -24,13 +21,6 @@ export const DESTROYED: unique symbol = symbol('destroyed');
 export default class ClassBasedModifier<
   Args extends ModifierArgs = ModifierArgs
 > {
-  // NOTE: these are private (and `DESTROYING` and `DESTROYED` are not exported
-  // in the main export, only at `-private` locations), but these cannot be made
-  // `private` in the class body because the modifier manager needs to be able
-  // to access them
-  [DESTROYING] = false;
-  [DESTROYED] = false;
-
   /**
    * The arguments passed to the modifier. `args.positional` is an array of
    * positional arguments, and `args.named` is an object containing the named
@@ -99,11 +89,11 @@ export default class ClassBasedModifier<
   }
 
   get isDestroying(): boolean {
-    return this[DESTROYING];
+    return isDestroying(this);
   }
 
   get isDestroyed(): boolean {
-    return this[DESTROYED];
+    return isDestroyed(this);
   }
 }
 

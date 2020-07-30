@@ -1,20 +1,13 @@
-import Ember from 'ember';
 import { capabilities } from '@ember/modifier';
 import { set } from '@ember/object';
-import { schedule } from '@ember/runloop';
+import { destroy, registerDestructor } from '@ember/destroyable';
 
-import ClassBasedModifier, { DESTROYING, DESTROYED } from './modifier';
+import ClassBasedModifier from './modifier';
 import { ModifierArgs } from 'ember-modifier/-private/interfaces';
 
-function scheduleDestroy(modifier: ClassBasedModifier, meta: Ember.Meta): void {
-  if (modifier[DESTROYED]) {
-    return;
-  }
-
-  Ember.destroy(modifier);
-
-  meta.setSourceDestroyed();
-  modifier[DESTROYED] = true;
+function destroyModifier(modifier: ClassBasedModifier): void {
+  modifier.willRemove();
+  modifier.willDestroy();
 }
 
 class ClassBasedModifierManager {
@@ -26,9 +19,13 @@ class ClassBasedModifierManager {
   ): ClassBasedModifier {
     // TODO: stop getting the owner off the factory like this; it is *not* per
     // the spec. See https://github.com/ember-modifier/ember-modifier/issues/25
-    const { owner, class: modifier } = factory;
+    const { owner, class: Modifier } = factory;
 
-    return new modifier(owner, args);
+    const modifier = new Modifier(owner, args);
+
+    registerDestructor(modifier, destroyModifier);
+
+    return modifier;
   }
 
   installModifier(instance: ClassBasedModifier, element: Element): void {
@@ -45,19 +42,7 @@ class ClassBasedModifierManager {
   }
 
   destroyModifier(instance: ClassBasedModifier): void {
-    instance.willRemove();
-
-    if (instance[DESTROYING]) {
-      return;
-    }
-
-    const meta = Ember.meta(instance);
-
-    meta.setSourceDestroying();
-    instance[DESTROYING] = true;
-
-    schedule('actions', instance, instance.willDestroy);
-    schedule('destroy', undefined, scheduleDestroy, instance, meta);
+    destroy(instance);
   }
 }
 
