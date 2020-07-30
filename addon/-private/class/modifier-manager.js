@@ -2,6 +2,7 @@ import Ember from 'ember';
 import { capabilities } from '@ember/modifier';
 import { set } from '@ember/object';
 import { schedule } from '@ember/runloop';
+import { gte } from 'ember-compatibility-helpers';
 
 import { DESTROYING, DESTROYED } from './modifier';
 
@@ -36,8 +37,17 @@ class ClassBasedModifierManager {
 
     let meta = Ember.meta(instance);
 
-    meta.setSourceDestroying();
     instance[DESTROYING] = true;
+
+    if (gte('3.20.0-beta.4')) {
+      // call this on 3.20+ early because it is using the
+      // @ember/destroyable API's `destroy` function (this will
+      // ensure that any users _on_ 3.20 that have called
+      // `registerDestructor` have their destructors called
+      Ember.destroy(instance);
+    } else {
+      meta.setSourceDestroying();
+    }
 
     schedule('actions', instance, instance.willDestroy);
     schedule('destroy', undefined, scheduleDestroy, instance, meta);
@@ -49,9 +59,13 @@ function scheduleDestroy(modifier, meta) {
     return;
   }
 
-  Ember.destroy(modifier);
+  if (!gte('3.20.0-beta.4')) {
+    // in 3.20+ we call destroy _early_ (because it is actually
+    // the @ember/destroyable's `destroy` API)
+    Ember.destroy(modifier);
+    meta.setSourceDestroyed();
+  }
 
-  meta.setSourceDestroyed();
   modifier[DESTROYED] = true;
 }
 
