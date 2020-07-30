@@ -1,3 +1,41 @@
+## v2.0.0 (2020-07-30)
+
+#### :boom: Breaking Change
+* [#45](https://github.com/ember-modifier/ember-modifier/pull/45) Remove module unification support from blueprints. ([@rwjblue](https://github.com/rwjblue))
+* [#31](https://github.com/ember-modifier/ember-modifier/pull/31) Drop support for Node 8 and 9 ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :rocket: Enhancement
+* [#46](https://github.com/ember-modifier/ember-modifier/pull/46) Use `ember-cli-htmlbars` for inline precompilation in blueprints. ([@rwjblue](https://github.com/rwjblue))
+* [#41](https://github.com/ember-modifier/ember-modifier/pull/41) TS: upgrade to 3.9; implement RFC for type stability ([@chriskrycho](https://github.com/chriskrycho))
+* [#38](https://github.com/ember-modifier/ember-modifier/pull/38) Deprecate the `willRemove` hook for class based modifiers. ([@chriskrycho](https://github.com/chriskrycho))
+* [#23](https://github.com/ember-modifier/ember-modifier/pull/23) Convert the addon to TypeScript ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :bug: Bug Fix
+* [#48](https://github.com/ember-modifier/ember-modifier/pull/48) Migrate to `@ember/destroyable` for destruction. ([@rwjblue](https://github.com/rwjblue))
+
+#### :memo: Documentation
+* [#39](https://github.com/ember-modifier/ember-modifier/pull/39) Update README Table of Contents w/Philosophy section ([@chriskrycho](https://github.com/chriskrycho))
+* [#1](https://github.com/ember-modifier/ember-modifier/pull/1) Adds a philosophy section to the guide ([@pzuraq](https://github.com/pzuraq))
+* [#22](https://github.com/ember-modifier/ember-modifier/pull/22) Fix arguments destructuring in `README.md` ([@MrChocolatine](https://github.com/MrChocolatine))
+* [#15](https://github.com/ember-modifier/ember-modifier/pull/15) Fix incorrect `makeFunctionalModifier` reference in `README.md` ([@tomwayson](https://github.com/tomwayson))
+
+#### :house: Internal
+* [#49](https://github.com/ember-modifier/ember-modifier/pull/49) Refactor / cleanup owner usage in modifier manager APIs. ([@rwjblue](https://github.com/rwjblue))
+* [#47](https://github.com/ember-modifier/ember-modifier/pull/47) Update addon blueprint from `ember-cli@3.13` to `ember-cli@3.20` ([@rwjblue](https://github.com/rwjblue))
+* [#34](https://github.com/ember-modifier/ember-modifier/pull/34) Add Prettier, configured according to [emberjs/rfcs#628](https://github.com/emberjs/rfcs/pull/628) ([@chriskrycho](https://github.com/chriskrycho))
+* [#36](https://github.com/ember-modifier/ember-modifier/pull/36) Run TS tests in parallel in CI ([@chriskrycho](https://github.com/chriskrycho))
+* [#30](https://github.com/ember-modifier/ember-modifier/pull/30) Support linting TS, and test types ([@chriskrycho](https://github.com/chriskrycho))
+* [#16](https://github.com/ember-modifier/ember-modifier/pull/16) Use `release-it` and `lerna-changelog` to manage releases ([@elwayman02](https://github.com/elwayman02))
+
+#### Committers: 6
+- Chris Garrett ([@pzuraq](https://github.com/pzuraq))
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Jordan Hawker ([@elwayman02](https://github.com/elwayman02))
+- Maxime Zanot ([@MrChocolatine](https://github.com/MrChocolatine))
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+- Tom Wayson ([@tomwayson](https://github.com/tomwayson))
+
+
 ## v1.0.4 (2020-07-30)
 
 #### :bug: Bug Fix
