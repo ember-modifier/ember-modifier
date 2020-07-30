@@ -25,6 +25,7 @@
     "ember-cli-is-package-missing": "^1.0.0",
     "ember-cli-normalize-entity-name": "^1.0.0",
     "ember-cli-string-utils": "^1.1.0",
+    "ember-compatibility-helpers": "^1.2.1",
     "ember-modifier-manager-polyfill": "^1.2.0"
   },
   "devDependencies": {
