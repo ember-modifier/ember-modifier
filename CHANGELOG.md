@@ -1,3 +1,12 @@
+## v2.0.1 (2020-07-31)
+
+#### :bug: Bug Fix
+* [#54](https://github.com/ember-modifier/ember-modifier/pull/54) Update dependencies to fix issues with `@ember/destroyable`. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v2.0.0 (2020-07-30)
 
 #### :boom: Breaking Change
