@@ -1,3 +1,12 @@
+## v2.1.0 (2020-08-02)
+
+#### :rocket: Enhancement
+* [#55](https://github.com/ember-modifier/ember-modifier/pull/55) Update ember-destroyable-polyfill to 2.0.0. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v2.0.1 (2020-07-31)
 
 #### :bug: Bug Fix
