@@ -698,26 +698,25 @@ True type safety requires runtime checking, since templates are not currently ty
 
 ```ts
 import Modifier from 'ember-modifier';
+import { assert } from '@ember/debug';
 
 export class ScrollPositionModifier extends ClassBasedModifier {
   get scrollPosition(): number {
     const scrollValue = this.args.positional[0];
-    if (typeof scrollValue !== "number") {
-      throw new Error(
-        `first argument to 'scroll-position' must be a number, but ${scrollValue} was ${typeof scrollValue}`
-      );
-    }
+    assert(,
+      `first argument to 'scroll-position' must be a number, but ${scrollValue} was ${typeof scrollValue}`,
+      typeof scrollValue === "number"
+    );
 
     return scrollValue;
   }
 
   get isRelative(): boolean {
     const { relative } = this.args.named;
-    if (typeof relative !== "boolean") {
-      throw new Error(
-        `'relative' argument to 'scroll-position' must be a boolean, but ${relative} was ${typeof relative}`
-      );
-    }
+    assert(
+      `'relative' argument to 'scroll-position' must be a boolean, but ${relative} was ${typeof relative}`,
+      typeof relative === "boolean"
+    );
 
     return relative;
   }
@@ -775,20 +774,21 @@ Let’s look at a variant of the `move-randomly` example from above, implemented
 ```ts
 // app/modifiers/move-randomly.js
 import { modifier } from 'ember-modifier';
+import { assert } from '@ember/debug';
 
 const { random, round } = Math;
 
 export default modifier((element, _, named) => {
-  if (!(element instanceof HTMLElement)) {
-    throw new Error(`move-randomly can only be installed on HTML elements!`);
-  }
+  assert(
+    'move-randomly can only be installed on HTML elements!',
+    element instanceof HTMLElement
+  );
 
   const { maxOffset } = named;
-  if (typeof maxOffset !== "number") {
-    throw new Error(
-      `The 'max-offset' argument to 'move-randomly' must be a number, but was ${typeof maxOffset}`
-    );
-  }
+  assert(
+    `The 'max-offset' argument to 'move-randomly' must be a number, but was ${typeof maxOffset}`,
+    typeof maxOffset === "number"
+  );
 
   const id = setInterval(() => {
     const top = round(random() * maxOffset);
@@ -849,6 +849,7 @@ To support correctly typing `args` in the `constructor` for the case where you d
 
 ```ts
 import Modifier, { ModifierArgs } from 'ember-modifier';
+import { assert } from '@ember/debug';
 
 export default class NeatModifier extends Modifier {
   interval?: number;
@@ -859,11 +860,10 @@ export default class NeatModifier extends Modifier {
   }
 
   get lengthOfInput(): number {
-    if (typeof this.args.positional[0] !== 'string') {
-      throw new Error(
-        `positional arg must be 'string' but was ${typeof this.args.positional[0]}`
-      );
-    }
+  	assert(
+  	  `positional arg must be 'string' but was ${typeof this.args.positional[0]}`,
+  	  typeof this.args.positional[0] === 'string'
+  	);
 
     return this.args.positional[0].length;
   }
@@ -873,12 +873,10 @@ export default class NeatModifier extends Modifier {
       return 1000;
     }
 
-    if (typeof this.args.named.multiplier !== "number") {
-      throw new Error(
-        `'multiplier' arg must be a number but was ${typeof this.args.named
-          .multiplier}`
-      );
-    }
+    assert(
+    	`'multiplier' arg must be a number but was ${typeof this.args.named.multiplier}`,
+    	typeof this.args.named.multiplier === "number"
+    );
 
     return this.args.named.multiplier;
   }
