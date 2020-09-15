@@ -44,6 +44,7 @@ class ClassBasedModifierManager {
       // @ember/destroyable API's `destroy` function (this will
       // ensure that any users _on_ 3.20 that have called
       // `registerDestructor` have their destructors called
+      // eslint-disable-next-line ember/new-module-imports
       Ember.destroy(instance);
     } else {
       meta.setSourceDestroying();
@@ -62,6 +63,7 @@ function scheduleDestroy(modifier, meta) {
   if (!gte('3.20.0-beta.4')) {
     // in 3.20+ we call destroy _early_ (because it is actually
     // the @ember/destroyable's `destroy` API)
+    // eslint-disable-next-line ember/new-module-imports
     Ember.destroy(modifier);
     meta.setSourceDestroyed();
   }
