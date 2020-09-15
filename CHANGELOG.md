@@ -1,3 +1,11 @@
+## v1.0.5 (2020-09-15)
+
+#### :bug: Bug Fix
+* [#61](https://github.com/ember-modifier/ember-modifier/pull/61) Fix issue with Ember 3.20.4+. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
 ## v1.0.4 (2020-07-30)
 
 #### :bug: Bug Fix
