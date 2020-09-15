@@ -31,4 +31,4 @@ export default class ClassBasedModifier {
   }
 }
 
-setModifierManager(() => Manager, ClassBasedModifier);
+setModifierManager((owner) => new Manager(owner), ClassBasedModifier);

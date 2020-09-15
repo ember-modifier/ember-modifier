@@ -9,10 +9,14 @@ import { DESTROYING, DESTROYED } from './modifier';
 class ClassBasedModifierManager {
   capabilities = capabilities('3.13');
 
-  createModifier(factory, args) {
-    let { owner, class: modifier } = factory;
+  constructor(owner) {
+    this.owner = owner;
+  }
 
-    return new modifier(owner, args);
+  createModifier(factory, args) {
+    let Modifier = factory.class;
+
+    return new Modifier(this.owner, args);
   }
   installModifier(instance, element) {
     instance.element = element;
@@ -71,4 +75,4 @@ function scheduleDestroy(modifier, meta) {
   modifier[DESTROYED] = true;
 }
 
-export default new ClassBasedModifierManager();
+export default ClassBasedModifierManager;
