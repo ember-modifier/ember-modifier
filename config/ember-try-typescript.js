@@ -16,6 +16,20 @@ module.exports = {
       },
     },
     {
+      command: 'tsc --noEmit --project type-tests/tsconfig-3.9.json',
+      name: 'typescript-3.9',
+      npm: {
+        typescript: '~3.9',
+      },
+    },
+    {
+      command: 'tsc --noEmit --project type-tests/tsconfig-4.0.json',
+      name: 'typescript-4.0',
+      npm: {
+        typescript: '~4.0',
+      },
+    },
+    {
       command: 'tsc --noEmit --project type-tests/tsconfig-next.json',
       name: 'typescript-next',
       allowedToFail: true,
