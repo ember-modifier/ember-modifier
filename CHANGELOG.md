@@ -1,3 +1,16 @@
+## v2.1.1 (2020-09-17)
+
+#### :bug: Bug Fix
+* [#62](https://github.com/ember-modifier/ember-modifier/pull/62) Update minimum version of ember-destroyable-polyfill. ([@rwjblue](https://github.com/rwjblue))
+
+#### :memo: Documentation
+* [#57](https://github.com/ember-modifier/ember-modifier/pull/57) Update documentation to use `assert` from `@ember/debug` for type narrowing ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v2.1.0 (2020-08-02)
 
 #### :rocket: Enhancement
