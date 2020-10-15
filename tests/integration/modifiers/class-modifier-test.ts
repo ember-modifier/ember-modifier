@@ -1,3 +1,4 @@
+import { gte } from 'ember-compatibility-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
@@ -463,35 +464,81 @@ module('Integration | Modifier Manager | class-based modifier', function (
 ) {
   setupRenderingTest(hooks);
 
-  testHooks(
-    (callback) =>
-      class NativeModifier extends Modifier {
-        constructor(owner: unknown, args: ModifierArgs) {
-          super(owner, args);
-          callback('constructor', this);
-        }
+  if (gte('3.22.0')) {
+    module('capabilities(3.22)', function () {
+      testHooks(
+        (callback) =>
+          class NativeModifier extends Modifier {
+            constructor(owner: unknown, args: ModifierArgs) {
+              super(owner, args);
+              callback('constructor', this);
+            }
 
-        didReceiveArguments(): void {
-          callback('didReceiveArguments', this);
-        }
+            didReceiveArguments(): void {
+              for (let i = 0; i < this.args.positional.length; i++) {
+                // "noop" / consume the arg
+                this.args.positional[i];
+              }
 
-        didUpdateArguments(): void {
-          callback('didUpdateArguments', this);
-        }
+              for (const key of Object.keys(this.args.named)) {
+                // "noop" / consume the arg
+                this.args.named[key];
+              }
 
-        didInstall(): void {
-          callback('didInstall', this);
-        }
+              callback('didReceiveArguments', this);
+            }
 
-        willRemove(): void {
-          callback('willRemove', this);
-        }
+            didUpdateArguments(): void {
+              callback('didUpdateArguments', this);
+            }
 
-        willDestroy(): void {
-          callback('willDestroy', this);
-        }
-      }
-  );
+            didInstall(): void {
+              callback('didInstall', this);
+            }
+
+            willRemove(): void {
+              callback('willRemove', this);
+            }
+
+            willDestroy(): void {
+              callback('willDestroy', this);
+            }
+          }
+      );
+    });
+  } else {
+    module('capabilities(3.13)', function () {
+      testHooks(
+        (callback) =>
+          class NativeModifier extends Modifier {
+            constructor(owner: unknown, args: ModifierArgs) {
+              super(owner, args);
+              callback('constructor', this);
+            }
+
+            didReceiveArguments(): void {
+              callback('didReceiveArguments', this);
+            }
+
+            didUpdateArguments(): void {
+              callback('didUpdateArguments', this);
+            }
+
+            didInstall(): void {
+              callback('didInstall', this);
+            }
+
+            willRemove(): void {
+              callback('willRemove', this);
+            }
+
+            willDestroy(): void {
+              callback('willDestroy', this);
+            }
+          }
+      );
+    });
+  }
 
   module('service injection', function () {
     test('can participate in ember dependency injection', async function (this: TestContext, assert) {

@@ -1,6 +1,8 @@
 import { capabilities } from '@ember/modifier';
+import { gte } from 'ember-compatibility-helpers';
 import { set } from '@ember/object';
 import { destroy, registerDestructor } from '@ember/destroyable';
+import { assert } from '@ember/debug';
 
 import ClassBasedModifier from './modifier';
 import { ModifierArgs } from 'ember-modifier/-private/interfaces';
@@ -10,16 +12,40 @@ function destroyModifier(modifier: ClassBasedModifier): void {
   modifier.willDestroy();
 }
 
+type CreateModifierArgs313 = [
+  { owner: unknown; class: typeof ClassBasedModifier },
+  ModifierArgs
+];
+type CreateModifierArgs322 = [typeof ClassBasedModifier, ModifierArgs];
+type CreateModifierArgs = CreateModifierArgs313 | CreateModifierArgs322;
+
 export default class ClassBasedModifierManager {
-  capabilities = capabilities('3.13');
+  capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
 
   constructor(private owner: unknown) {}
 
   createModifier(
-    factory: { owner: unknown; class: typeof ClassBasedModifier },
-    args: ModifierArgs
+    ...createModifierArgs: CreateModifierArgs
   ): ClassBasedModifier {
-    const Modifier = factory.class;
+    const [factoryOrClass, args] = createModifierArgs;
+
+    let Modifier: typeof ClassBasedModifier;
+
+    if (gte('3.22.0')) {
+      assert(
+        'expected factory to be a class reference',
+        !('class' in factoryOrClass)
+      );
+
+      Modifier = factoryOrClass;
+    } else {
+      assert(
+        'createModifier expected an object with keys owner and class',
+        'class' in factoryOrClass
+      );
+
+      Modifier = factoryOrClass.class;
+    }
 
     const modifier = new Modifier(this.owner, args);
 
@@ -35,7 +61,6 @@ export default class ClassBasedModifierManager {
   }
 
   updateModifier(instance: ClassBasedModifier, args: ModifierArgs): void {
-    // TODO: this should be an args proxy
     set(instance, 'args', args);
     instance.didUpdateArguments();
     instance.didReceiveArguments();

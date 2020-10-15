@@ -1,3 +1,4 @@
+import { gte } from 'ember-compatibility-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
@@ -89,10 +90,17 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
 
       this.registerModifier(
         'songbird',
-        modifier(() => callCount++)
+        modifier((_, positional: [number]) => {
+          // A change is not triggered unless args are consumed
+          if (gte('3.22.0')) {
+            positional[0];
+          }
+
+          return callCount++;
+        })
       );
 
-      await render(hbs`<h1 {{songbird value}}>Hello</h1>`);
+      await render(hbs`<h1 {{songbird this.value}}>Hello</h1>`);
 
       assert.equal(callCount, 1);
 
@@ -109,10 +117,17 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
 
       this.registerModifier(
         'songbird',
-        modifier(() => () => callCount++)
+        modifier((_, positional: [number]) => {
+          // A change is not triggered unless args are consumed
+          if (gte('3.22.0')) {
+            positional[0];
+          }
+
+          return () => callCount++;
+        })
       );
 
-      await render(hbs`<h1 {{songbird value}}>Hello</h1>`);
+      await render(hbs`<h1 {{songbird this.value}}>Hello</h1>`);
 
       assert.equal(callCount, 0);
 
