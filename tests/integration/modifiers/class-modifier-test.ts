@@ -674,7 +674,7 @@ module('Integration | Modifier Manager | class-based modifier', function (
             assert.dom().containsText('bar');
           });
         });
-      } else if (gte('3.13')) {
+      } else if (gte('3.16')) {
         module('capabilities(3.13)', function () {
           test('there exists render error (args consumed)', async function (assert) {
             assert.expect(1);
