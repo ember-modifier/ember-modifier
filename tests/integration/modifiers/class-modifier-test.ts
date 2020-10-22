@@ -1,4 +1,4 @@
-import { gte } from 'ember-compatibility-helpers';
+import { gte, lte } from 'ember-compatibility-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, settled, setupOnerror } from '@ember/test-helpers';
@@ -674,7 +674,7 @@ module('Integration | Modifier Manager | class-based modifier', function (
             assert.dom().containsText('bar');
           });
         });
-      } else {
+      } else if (gte('3.13')) {
         module('capabilities(3.13)', function () {
           test('there exists render error (args consumed)', async function (assert) {
             assert.expect(1);
@@ -719,6 +719,10 @@ module('Integration | Modifier Manager | class-based modifier', function (
 
             setupOnerror(function (err: Error) {
               if (err.message !== errorMsg) {
+                if (lte('3.16')) {
+                  assert.equal(err.message, 'BUG: double release?');
+                }
+
                 // ignore other potential errors that could occur
                 // (ember 3.4-3.16)
                 return;
