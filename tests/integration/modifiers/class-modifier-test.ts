@@ -720,6 +720,11 @@ module('Integration | Modifier Manager | class-based modifier', function (
             );
 
             setupOnerror(function (err: Error) {
+              if (err.message !== errorMsg) {
+                // ignore other potential errors that could occur
+                // (ember 3.4-3.16)
+                return;
+              }
               assert.equal(err.message, errorMsg);
             });
 
