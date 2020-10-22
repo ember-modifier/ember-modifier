@@ -711,12 +711,10 @@ module('Integration | Modifier Manager | class-based modifier', function (
               'helper:eq',
               helper(([a, b]) => a === b)
             );
+            this.owner.register('component:some-component', TestComponent);
             this.owner.register(
-              'component:some-component',
-              setComponentTemplate(
-                hbs`<div {{custom-modifier this.derivedData}}></div>`,
-                TestComponent
-              )
+              'template:components/some-component',
+              hbs`<div {{custom-modifier this.derivedData}}></div>`
             );
 
             setupOnerror(function (err: Error) {
