@@ -378,7 +378,7 @@ This may seem more complicated than the functional version, but that complexity
 comes along with much more _control_.
 
 As with functional modifiers, the lifecycle hooks of class modifiers are
-_tracked_. When they run, they any values they access will be added to the
+_tracked_. When they run, then any values they access will be added to the
 modifier, and the modifier will update if any of those values change.
 
 #### Generating a Class Modifier
