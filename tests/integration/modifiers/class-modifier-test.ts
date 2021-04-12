@@ -1,11 +1,16 @@
+import { gte, lte } from 'ember-compatibility-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, settled } from '@ember/test-helpers';
+import { render, settled, setupOnerror } from '@ember/test-helpers';
 import { TestContext as BaseContext } from 'ember-test-helpers';
 import Service, { inject as service } from '@ember/service';
 import { hbs } from 'ember-cli-htmlbars';
 import Modifier, { ModifierArgs } from 'ember-modifier';
 import ClassBasedModifier from 'ember-modifier';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { setComponentTemplate } from '@ember/component';
+import { helper } from '@ember/component/helper';
 
 // `any` required for the inference to work correctly here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -463,35 +468,81 @@ module('Integration | Modifier Manager | class-based modifier', function (
 ) {
   setupRenderingTest(hooks);
 
-  testHooks(
-    (callback) =>
-      class NativeModifier extends Modifier {
-        constructor(owner: unknown, args: ModifierArgs) {
-          super(owner, args);
-          callback('constructor', this);
-        }
+  if (gte('3.22.0')) {
+    module('capabilities(3.22)', function () {
+      testHooks(
+        (callback) =>
+          class NativeModifier extends Modifier {
+            constructor(owner: unknown, args: ModifierArgs) {
+              super(owner, args);
+              callback('constructor', this);
+            }
 
-        didReceiveArguments(): void {
-          callback('didReceiveArguments', this);
-        }
+            didReceiveArguments(): void {
+              for (let i = 0; i < this.args.positional.length; i++) {
+                // "noop" / consume the arg
+                this.args.positional[i];
+              }
 
-        didUpdateArguments(): void {
-          callback('didUpdateArguments', this);
-        }
+              for (const key of Object.keys(this.args.named)) {
+                // "noop" / consume the arg
+                this.args.named[key];
+              }
 
-        didInstall(): void {
-          callback('didInstall', this);
-        }
+              callback('didReceiveArguments', this);
+            }
 
-        willRemove(): void {
-          callback('willRemove', this);
-        }
+            didUpdateArguments(): void {
+              callback('didUpdateArguments', this);
+            }
 
-        willDestroy(): void {
-          callback('willDestroy', this);
-        }
-      }
-  );
+            didInstall(): void {
+              callback('didInstall', this);
+            }
+
+            willRemove(): void {
+              callback('willRemove', this);
+            }
+
+            willDestroy(): void {
+              callback('willDestroy', this);
+            }
+          }
+      );
+    });
+  } else {
+    module('capabilities(3.13)', function () {
+      testHooks(
+        (callback) =>
+          class NativeModifier extends Modifier {
+            constructor(owner: unknown, args: ModifierArgs) {
+              super(owner, args);
+              callback('constructor', this);
+            }
+
+            didReceiveArguments(): void {
+              callback('didReceiveArguments', this);
+            }
+
+            didUpdateArguments(): void {
+              callback('didUpdateArguments', this);
+            }
+
+            didInstall(): void {
+              callback('didInstall', this);
+            }
+
+            willRemove(): void {
+              callback('willRemove', this);
+            }
+
+            willDestroy(): void {
+              callback('willDestroy', this);
+            }
+          }
+      );
+    });
+  }
 
   module('service injection', function () {
     test('can participate in ember dependency injection', async function (this: TestContext, assert) {
@@ -541,4 +592,158 @@ module('Integration | Modifier Manager | class-based modifier', function (
       assert.strictEqual(called, true, 'constructor called');
     });
   });
+
+  module(
+    'Migrating from non-proxied args to proxied args: emberjs/ember.js#19162',
+    function () {
+      // This test verifies https://github.com/emberjs/ember.js/issues/19162
+      // is fixed
+      //
+      // These tests follow the reproduction:
+      // https://ember-twiddle.com/5a3fa797b26e8807869340792219a5ee
+      if (gte('3.22.0')) {
+        module('capabilities(3.22)', function () {
+          test('there is no render error', async function (assert) {
+            assert.expect(6);
+
+            const errorMsg = `Unexpected error, because derivedData should not be re-eval'd`;
+            const foo = 'foo' as const;
+            const baz = 'baz' as const;
+
+            class Baz {
+              @tracked kind = baz;
+              @tracked nestedData = undefined;
+            }
+
+            class Foo {
+              @tracked kind = foo;
+              @tracked nestedData = new Baz();
+            }
+
+            class TestComponent extends Component<{ data: Foo }> {
+              @tracked data: Foo = new Foo();
+
+              get derivedData(): string {
+                if (!this.args.data.nestedData) {
+                  throw new Error(errorMsg);
+                }
+                return this.args.data.nestedData.kind;
+              }
+            }
+
+            class CustomModifier extends Modifier {}
+
+            this.owner.register('modifier:custom-modifier', CustomModifier);
+            this.owner.register(
+              'helper:eq',
+              helper(([a, b]) => a === b)
+            );
+            this.owner.register(
+              'component:some-component',
+              setComponentTemplate(
+                hbs`<div {{custom-modifier this.derivedData}}>{{@data.kind}}</div>`,
+                TestComponent
+              )
+            );
+
+            setupOnerror(function (err: Error) {
+              assert.notOk(err, 'Did not expect to error');
+            });
+
+            await render(
+              hbs`
+                {{#if (eq this.data.kind 'foo')}}
+                  <SomeComponent @data={{this.data}} />
+                {{else}}
+                  bar
+                {{/if}}
+              `
+            );
+
+            assert.dom().doesNotContainText('foo');
+            assert.dom().containsText('bar');
+
+            this.setProperties({ data: new Foo() });
+
+            assert.dom().containsText('foo');
+            assert.dom().doesNotContainText('bar');
+
+            this.setProperties({ data: new Baz() });
+
+            assert.dom().doesNotContainText('foo');
+            assert.dom().containsText('bar');
+          });
+        });
+      } else if (gte('3.16')) {
+        module('capabilities(3.13)', function () {
+          test('there exists render error (args consumed)', async function (assert) {
+            assert.expect(1);
+
+            const errorMsg = 'Expected error, because nestedData is undefined';
+            const foo = 'foo' as const;
+            const baz = 'baz' as const;
+
+            class Baz {
+              @tracked kind = baz;
+              @tracked nestedData = undefined;
+            }
+
+            class Foo {
+              @tracked kind = foo;
+              @tracked nestedData = new Baz();
+            }
+
+            class TestComponent extends Component<{ data: Foo }> {
+              @tracked data: Foo = new Foo();
+
+              get derivedData(): string {
+                if (!this.args.data.nestedData) {
+                  throw new Error(errorMsg);
+                }
+                return this.args.data.nestedData.kind;
+              }
+            }
+
+            class CustomModifier extends Modifier {}
+
+            this.owner.register('modifier:custom-modifier', CustomModifier);
+            this.owner.register(
+              'helper:eq',
+              helper(([a, b]) => a === b)
+            );
+            this.owner.register('component:some-component', TestComponent);
+            this.owner.register(
+              'template:components/some-component',
+              hbs`<div {{custom-modifier this.derivedData}}></div>`
+            );
+
+            setupOnerror(function (err: Error) {
+              if (err.message !== errorMsg) {
+                if (lte('3.16')) {
+                  assert.equal(err.message, 'BUG: double release?');
+                }
+
+                // ignore other potential errors that could occur
+                // (ember 3.4-3.16)
+                return;
+              }
+              assert.equal(err.message, errorMsg);
+            });
+
+            this.setProperties({ data: new Foo() });
+
+            await render(
+              hbs`
+                {{#if (eq this.data.kind 'foo')}}
+                  <SomeComponent @data={{this.data}} />
+                {{/if}}
+              `
+            );
+
+            this.setProperties({ data: new Baz() });
+          });
+        });
+      }
+    }
+  );
 });

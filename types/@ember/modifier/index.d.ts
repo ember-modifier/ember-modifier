@@ -4,6 +4,7 @@
 declare module '@ember/modifier' {
   export function setModifierManager<Manager extends unknown = unknown>(
     factory: (owner: unknown) => Manager,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     obj: object
   ): void;
 
