@@ -368,7 +368,7 @@ export default class OnModifier extends Modifier {
     this.addEventListener();
   }
 
-  willRemove() {
+  willDestroy() {
     this.removeEventListener();
   }
 }
@@ -475,7 +475,7 @@ export default class ScrollContainerComponent extends Component {
 #### Example with Cleanup
 
 If the functionality you add in the modifier needs to be torn down when the
-modifier is removed, you can use the `willRemove` hook.
+modifier is removed, you can use the `willDestroy` hook.
 
 For example, if you want to have your elements dance randomly on the page using
 `setInterval`, but you wanted to make sure that was canceled when the modifier
@@ -516,7 +516,7 @@ export default class MoveRandomlyModifier extends Modifier {
     this.setIntervalId = setInterval(this.moveElement, this.delay);
   }
 
-  willRemove() {
+  willDestroy() {
     clearInterval(this.setIntervalId);
     this.setIntervalId = null;
   }
@@ -573,7 +573,7 @@ export default class TrackClickModifier extends Modifier {
     this.element.addEventListener('click', this.onClick, true);
   }
 
-  willRemove() {
+  willDestroy() {
     this.element.removeEventListener('click', this.onClick, true);
   }
 }
