@@ -43,13 +43,9 @@ class FunctionalModifierManager {
   createModifier(
     factoryOrClass: Factory | FunctionalModifier
   ): FunctionalModifier {
-    let Modifier: FunctionalModifier;
-
-    if (isFactory(factoryOrClass)) {
-      Modifier = factoryOrClass.class;
-    } else {
-      Modifier = factoryOrClass;
-    }
+    const Modifier = isFactory(factoryOrClass)
+      ? factoryOrClass.class
+      : factoryOrClass;
 
     // This looks superfluous, but this is creating a new instance
     // of a function -- this is important so that each instance of the

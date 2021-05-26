@@ -33,13 +33,9 @@ export default class ClassBasedModifierManager {
     factoryOrClass: Factory | typeof ClassBasedModifier,
     args: ModifierArgs
   ): ClassBasedModifier {
-    let Modifier: typeof ClassBasedModifier;
-
-    if (isFactory(factoryOrClass)) {
-      Modifier = factoryOrClass.class;
-    } else {
-      Modifier = factoryOrClass;
-    }
+    const Modifier = isFactory(factoryOrClass)
+      ? factoryOrClass.class
+      : factoryOrClass;
 
     const modifier = new Modifier(this.owner, args);
 
