@@ -5,23 +5,11 @@ import { destroy, registerDestructor } from '@ember/destroyable';
 
 import ClassBasedModifier from './modifier';
 import { ModifierArgs } from 'ember-modifier/-private/interfaces';
-import { consumeArgs } from '../consume-args';
-
-interface Factory {
-  owner: unknown;
-  class: typeof ClassBasedModifier;
-}
+import { consumeArgs, Factory, isFactory } from '../compat';
 
 function destroyModifier(modifier: ClassBasedModifier): void {
   modifier.willRemove();
   modifier.willDestroy();
-}
-
-function isFactory(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _factoryOrClass: Factory | unknown
-): _factoryOrClass is Factory {
-  return !gte('3.22.0');
 }
 
 export default class ClassBasedModifierManager {
@@ -30,7 +18,9 @@ export default class ClassBasedModifierManager {
   constructor(private owner: unknown) {}
 
   createModifier(
-    factoryOrClass: Factory | typeof ClassBasedModifier,
+    factoryOrClass:
+      | Factory<typeof ClassBasedModifier>
+      | typeof ClassBasedModifier,
     args: ModifierArgs
   ): ClassBasedModifier {
     const Modifier = isFactory(factoryOrClass)

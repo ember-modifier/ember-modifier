@@ -2,11 +2,7 @@ import { capabilities } from '@ember/modifier';
 import { gte } from 'ember-compatibility-helpers';
 import { FunctionalModifier } from './modifier';
 import { ModifierArgs } from '../interfaces';
-import { consumeArgs } from '../consume-args';
-
-interface Factory {
-  class: FunctionalModifier;
-}
+import { consumeArgs, Factory, isFactory } from '../compat';
 
 const MODIFIER_ELEMENTS = new WeakMap();
 const MODIFIER_TEARDOWNS: WeakMap<FunctionalModifier, unknown> = new WeakMap();
@@ -30,18 +26,11 @@ function setup(
   MODIFIER_TEARDOWNS.set(modifier, teardown);
 }
 
-function isFactory(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _factoryOrClass: Factory | unknown
-): _factoryOrClass is Factory {
-  return !gte('3.22.0');
-}
-
 class FunctionalModifierManager {
   capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
 
   createModifier(
-    factoryOrClass: Factory | FunctionalModifier
+    factoryOrClass: Factory<FunctionalModifier> | FunctionalModifier
   ): FunctionalModifier {
     const Modifier = isFactory(factoryOrClass)
       ? factoryOrClass.class
