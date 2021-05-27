@@ -13,13 +13,30 @@ export function isFactory<T>(
   return !gte('3.22.0');
 }
 
-// This is a workaround for a change in the autotracking semantics of the args
-// proxy introduced in `3.22`. Arguments are no longer eagerly consumed, so if
-// you didn’t use an argument, it won’t be updated.
-export function consumeArgs({ positional, named }: ModifierArgs): void {
-  for (let i = 0; i < positional.length; i++) {
-    positional[i];
-  }
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = (): void => {};
 
-  Object.values(named);
+/**
+ * Consume each positional and named argument to entangle it in autotracking and
+ * enable updates.
+ *
+ * This is a temporary workaround for a change in the autotracking semantics of
+ * the args proxy introduced in `v3.22`. What changed is that arguments are no
+ * longer eagerly consumed. Didn’t use an argument? Then updates won’t be run
+ * when its value changes. This workaround reproduces the previous behaviour to
+ * avoid introducing a breaking change until a suitable transition path is made
+ * available.
+ */
+let consumeArgs: (args: ModifierArgs) => void = noop;
+
+if (gte('3.22.0')) {
+  consumeArgs = function ({ positional, named }) {
+    for (let i = 0; i < positional.length; i++) {
+      positional[i];
+    }
+
+    Object.values(named);
+  };
 }
+
+export { consumeArgs };
