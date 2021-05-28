@@ -51,7 +51,7 @@ is based on their work, and wouldn't have been possible without them.</i>
 Compatibility
 ------------------------------------------------------------------------------
 
-* Ember.js v3.12 or above
+* Ember.js v3.4 or above
 * Ember CLI v2.13 or above
 * Node.js v10 or above
 
