@@ -1,3 +1,17 @@
+## v2.1.2 (2021-05-28)
+
+#### :bug: Bug Fix
+* [#87](https://github.com/ember-modifier/ember-modifier/pull/87) Add support for `3.22` modifier capabilities ([@sandydoo](https://github.com/sandydoo))
+
+#### :house: Internal
+* [#77](https://github.com/ember-modifier/ember-modifier/pull/77) migrate from TravisCI to GitHub Actions ([@jelhan](https://github.com/jelhan))
+* [#70](https://github.com/ember-modifier/ember-modifier/pull/70) small typo ([@bartocc](https://github.com/bartocc))
+
+#### Committers: 3
+- Jeldrik Hanschke ([@jelhan](https://github.com/jelhan))
+- Julien Palmas ([@bartocc](https://github.com/bartocc))
+- Sander Melnikov ([@sandydoo](https://github.com/sandydoo))
+
 ## v2.1.1 (2020-09-17)
 
 #### :bug: Bug Fix
