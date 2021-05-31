@@ -4,8 +4,9 @@ import { ModifierArgs } from '../interfaces';
 
 export type FunctionalModifier<
   P extends ModifierArgs['positional'] = ModifierArgs['positional'],
-  N extends ModifierArgs['named'] = ModifierArgs['named']
-> = (element: Element, positional: P, named: N) => unknown;
+  N extends ModifierArgs['named'] = ModifierArgs['named'],
+  E extends Element = Element
+> = (element: E, positional: P, named: N) => unknown;
 
 /**
  * An API for writing simple modifiers.
@@ -22,6 +23,10 @@ export type FunctionalModifier<
  *
  * @param fn The function which defines the modifier.
  */
-export default function modifier(fn: FunctionalModifier): unknown {
+export default function modifier<
+  E extends Element = Element,
+  P extends ModifierArgs['positional'] = ModifierArgs['positional'],
+  N extends ModifierArgs['named'] = ModifierArgs['named']
+>(fn: FunctionalModifier<P, N, E>): unknown {
   return setModifierManager(() => FunctionalModifierManager, fn);
 }
