@@ -1,6 +1,6 @@
 <% if (modifierType === 'function') { %>import { modifier } from 'ember-modifier';
 
-export default modifier(function <%= camelizedModuleName %>(element/*, params, hash*/) {
+export default modifier(function <%= camelizedModuleName %>(element/*, positional, named*/) {
 
 });<% } else { %>import Modifier from 'ember-modifier';
 
