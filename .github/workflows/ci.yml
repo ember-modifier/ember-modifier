@@ -168,7 +168,7 @@ jobs:
       run: yarn test:ember --launch ${{ matrix.browser }}
 
 
-  try-scenarios:
+  ember-compatibility:
     name: Tests - ${{ matrix.ember-try-scenario }}
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -184,10 +184,6 @@ jobs:
           ember-beta,
           ember-canary,
           ember-default-with-jquery,
-          typescript-4.2,
-          typescript-4.3,
-          typescript-4.4,
-          typescript-next,
           ember-classic
         ]
 
@@ -226,3 +222,55 @@ jobs:
       env:
         EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
       run: node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
+
+  typescript-compatibility:
+    name: Type checking - ${{ matrix.typescript-scenario }}
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: test
+
+    strategy:
+      fail-fast: true
+      matrix:
+        typescript-scenario: [
+          typescript-4.2,
+          typescript-4.3,
+          typescript-4.4,
+          typescript-next,
+        ]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+
+    - uses: actions/setup-node@v2-beta
+      with:
+        node-version: '${{ env.NODE_VERSION }}'
+
+    - name: Get package manager's global cache path
+      id: global-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - name: Cache package manager's global cache and node_modules
+      id: cache-dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ steps.global-cache-dir-path.outputs.dir }}
+          node_modules
+        key: ${{ runner.os }}-${{ matrix.node-version }}-${{
+          hashFiles('**/yarn.lock'
+          ) }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.node-version }}-
+
+    - name: Install Dependencies
+      run: yarn install --frozen-lockfile
+      if: |
+        steps.cache-dependencies.outputs.cache-hit != 'true'
+
+    - name: Type checking
+      env:
+        EMBER_TRY_SCENARIO: ${{ matrix.typescript-scenario }}
+      run: node_modules/.bin/ember try:one --config-path="./config/ember-try-typescript.js" $EMBER_TRY_SCENARIO
