@@ -62,6 +62,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
     test('teardown method called when removed', async function (this: TestContext, assert) {
       let callCount = 0;
       this.shouldRender = true;
+      this.value = 0;
 
       this.registerModifier(
         'songbird',
@@ -70,7 +71,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
 
       await render(hbs`
         {{#if this.shouldRender}}
-          <h1 {{songbird value}}>Hello</h1>
+          <h1 {{songbird this.value}}>Hello</h1>
         {{/if}}
       `);
 
@@ -92,7 +93,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
         modifier(() => callCount++)
       );
 
-      await render(hbs`<h1 {{songbird value}}>Hello</h1>`);
+      await render(hbs`<h1 {{songbird this.value}}>Hello</h1>`);
 
       assert.equal(callCount, 1);
 
@@ -112,7 +113,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
         modifier(() => () => callCount++)
       );
 
-      await render(hbs`<h1 {{songbird value}}>Hello</h1>`);
+      await render(hbs`<h1 {{songbird this.value}}>Hello</h1>`);
 
       assert.equal(callCount, 0);
 
@@ -133,7 +134,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
       );
 
       await render(hbs`
-        {{#if isRendered}}
+        {{#if this.isRendered}}
           <h1 {{songbird "A"}}>A</h1>
           <h1 {{songbird "B"}}>B</h1>
         {{/if}}
