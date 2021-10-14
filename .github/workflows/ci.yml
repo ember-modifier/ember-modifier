@@ -41,7 +41,7 @@ on:
   pull_request:
 
 env:
-  NODE_VERSION: '10.x'
+  NODE_VERSION: '12.x'
 
 jobs:
   lint:
@@ -178,17 +178,15 @@ jobs:
       fail-fast: true
       matrix:
         ember-try-scenario: [
-          ember-lts-3.4,
-          ember-lts-3.8,
-          ember-lts-3.12,
-          ember-lts-3.16,
-          ember-lts-3.20,
+          ember-lts-3.24,
+          ember-lts-3.28,
           ember-release,
           ember-beta,
           ember-canary,
           ember-default-with-jquery,
-          typescript-3.6,
-          typescript-3.7,
+          typescript-4.2,
+          typescript-4.3,
+          typescript-4.4,
           typescript-next,
           ember-classic
         ]
