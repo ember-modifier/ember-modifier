@@ -90,7 +90,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        browser: [chrome]
 
     steps:
     - uses: actions/checkout@v2
@@ -124,7 +123,7 @@ jobs:
         steps.cache-dependencies.outputs.cache-hit != 'true'
 
     - name: Test
-      run: yarn test:ember --launch ${{ matrix.browser }}
+      run: yarn test:ember
 
 
   floating-dependencies:
@@ -135,7 +134,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        browser: [chrome]
 
     steps:
     - uses: actions/checkout@v2
@@ -165,7 +163,7 @@ jobs:
       run: yarn install --no-lockfile --non-interactive
 
     - name: Test
-      run: yarn test:ember --launch ${{ matrix.browser }}
+      run: yarn test:ember
 
 
   ember-compatibility:
