@@ -25,15 +25,12 @@
     "test": "npm-run-all lint:* test:*",
     "test:ember": "ember test",
     "test:ember-compatibility": "ember try:each",
-    "pretest": "npm-run-all prepublish:*",
+    "pretest": "prepublishOnly",
     "posttest": "npm run clean",
     "test:types": "ember try:each --config-path=./config/ember-try-typescript.js",
     "prepublish:types": "ember ts:precompile",
-    "prepublish:downlevel": "downlevel-dts . ts3.4",
-    "prepublishOnly": "npm-run-all prepublish:*",
-    "clean:ts": "ember ts:clean",
-    "clean:downlevel": "rimraf ./ts3.4",
-    "clean": "npm-run-all --aggregate-output --parallel clean:*",
+    "prepublishOnly": "ember ts:precompile",
+    "clean": "ember ts:clean",
     "postpublish": "npm run clean"
   },
   "dependencies": {
@@ -51,15 +48,15 @@
     "@glimmer/tracking": "^1.0.0",
     "@types/ember": "^3.1.2",
     "@types/ember-qunit": "^3.4.8",
+    "@types/ember-resolver": "^5.0.10",
     "@types/ember__test-helpers": "^0.7.10",
     "@types/qunit": "^2.9.1",
     "@types/rsvp": "^4.0.3",
-    "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@typescript-eslint/parser": "^2.34.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
-    "downlevel-dts": "^0.4.0",
-    "ember-auto-import": "^1.6.0",
+    "ember-auto-import": "^2.2.2",
     "ember-cli": "~3.20.0",
     "ember-cli-dependency-checker": "^3.2.0",
     "ember-cli-htmlbars": "^5.2.0",
@@ -91,10 +88,11 @@
     "release-it": "^13.6.0",
     "release-it-lerna-changelog": "^2.3.0",
     "rimraf": "^3.0.2",
-    "typescript": "^3.9.3"
+    "typescript": "^4.4.4",
+    "webpack": "^5.58.2"
   },
   "engines": {
-    "node": "10.* || >= 12"
+    "node": "12.* || >= 14"
   },
   "prettier": {
     "singleQuote": true
@@ -123,10 +121,5 @@
       "tokenRef": "GITHUB_AUTH"
     }
   },
-  "types": "index.d.ts",
-  "typesVersions": {
-    "<3.9": {
-      "*": "ts3.4/*"
-    }
-  }
+  "types": "index.d.ts"
 }

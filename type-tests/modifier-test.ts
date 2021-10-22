@@ -9,7 +9,7 @@ expectTypeOf(modifier).toEqualTypeOf<
       element: Element,
       positional: unknown[],
       named: Record<string, unknown>
-    ) => (() => unknown) | void
+    ) => unknown
   ) => unknown
 >();
 
