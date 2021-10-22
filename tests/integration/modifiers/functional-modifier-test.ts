@@ -130,7 +130,11 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
 
       this.registerModifier(
         'songbird',
-        modifier((_, [val]: [string]) => () => teardownCalls.push(val))
+        modifier(
+          (_, [val]: [string]) =>
+            () =>
+              teardownCalls.push(val)
+        )
       );
 
       await render(hbs`
