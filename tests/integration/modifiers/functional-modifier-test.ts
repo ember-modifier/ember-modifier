@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
-import { TestContext as BaseContext } from 'ember-test-helpers';
+import type { TestContext as BaseContext } from 'ember-test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { modifier } from 'ember-modifier';
 
@@ -130,7 +130,11 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
 
       this.registerModifier(
         'songbird',
-        modifier((_, [val]: [string]) => () => teardownCalls.push(val))
+        modifier(
+          (_, [val]: [string]) =>
+            () =>
+              teardownCalls.push(val)
+        )
       );
 
       await render(hbs`

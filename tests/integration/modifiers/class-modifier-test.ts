@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
-import { TestContext as BaseContext } from 'ember-test-helpers';
+import type { TestContext as BaseContext } from 'ember-test-helpers';
 import Service, { inject as service } from '@ember/service';
 import { hbs } from 'ember-cli-htmlbars';
 import Modifier, { ModifierArgs } from 'ember-modifier';
@@ -458,87 +458,88 @@ function testHooks(factory: Factory): void {
   testHooksOrdering(factory);
 }
 
-module('Integration | Modifier Manager | class-based modifier', function (
-  hooks
-) {
-  setupRenderingTest(hooks);
+module(
+  'Integration | Modifier Manager | class-based modifier',
+  function (hooks) {
+    setupRenderingTest(hooks);
 
-  testHooks(
-    (callback) =>
-      class NativeModifier extends Modifier {
-        constructor(owner: unknown, args: ModifierArgs) {
-          super(owner, args);
-          callback('constructor', this);
+    testHooks(
+      (callback) =>
+        class NativeModifier extends Modifier {
+          constructor(owner: unknown, args: ModifierArgs) {
+            super(owner, args);
+            callback('constructor', this);
+          }
+
+          didReceiveArguments(): void {
+            callback('didReceiveArguments', this);
+          }
+
+          didUpdateArguments(): void {
+            callback('didUpdateArguments', this);
+          }
+
+          didInstall(): void {
+            callback('didInstall', this);
+          }
+
+          willRemove(): void {
+            callback('willRemove', this);
+          }
+
+          willDestroy(): void {
+            callback('willDestroy', this);
+          }
+        }
+    );
+
+    module('service injection', function () {
+      test('can participate in ember dependency injection', async function (this: TestContext, assert) {
+        let called = false;
+
+        class Foo extends Service {
+          isFooService = true;
         }
 
-        didReceiveArguments(): void {
-          callback('didReceiveArguments', this);
+        class Bar extends Service {
+          isBarService = true;
         }
 
-        didUpdateArguments(): void {
-          callback('didUpdateArguments', this);
+        this.owner.register('service:foo', Foo);
+        this.owner.register('service:bar', Bar);
+
+        class NativeModifier extends Modifier {
+          @service foo!: Foo;
+
+          // SAFETY: we're not using the registry here for convenience, because we
+          // cannot extend it anywhere but at the top level of the module. The
+          // cast is safe because of the registration of `service:bar` above.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          @service('bar' as any) baz!: Bar;
+
+          constructor(owner: unknown, args: ModifierArgs) {
+            super(owner, args);
+
+            called = true;
+
+            assert.strictEqual(
+              this.foo.isFooService,
+              true,
+              'this.foo.isFooService'
+            );
+            assert.strictEqual(
+              this.baz.isBarService,
+              true,
+              'this.baz.isBarService'
+            );
+          }
         }
+        this.owner.register('modifier:songbird', NativeModifier);
 
-        didInstall(): void {
-          callback('didInstall', this);
-        }
+        await render(hbs`<h1 {{songbird}}>Hello</h1>`);
 
-        willRemove(): void {
-          callback('willRemove', this);
-        }
-
-        willDestroy(): void {
-          callback('willDestroy', this);
-        }
-      }
-  );
-
-  module('service injection', function () {
-    test('can participate in ember dependency injection', async function (this: TestContext, assert) {
-      let called = false;
-
-      class Foo extends Service {
-        isFooService = true;
-      }
-
-      class Bar extends Service {
-        isBarService = true;
-      }
-
-      this.owner.register('service:foo', Foo);
-      this.owner.register('service:bar', Bar);
-
-      class NativeModifier extends Modifier {
-        @service foo!: Foo;
-
-        // SAFETY: we're not using the registry here for convenience, because we
-        // cannot extend it anywhere but at the top level of the module. The
-        // cast is safe because of the registration of `service:bar` above.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        @service('bar' as any) baz!: Bar;
-
-        constructor(owner: unknown, args: ModifierArgs) {
-          super(owner, args);
-
-          called = true;
-
-          assert.strictEqual(
-            this.foo.isFooService,
-            true,
-            'this.foo.isFooService'
-          );
-          assert.strictEqual(
-            this.baz.isBarService,
-            true,
-            'this.baz.isBarService'
-          );
-        }
-      }
-      this.owner.register('modifier:songbird', NativeModifier);
-
-      await render(hbs`<h1 {{songbird}}>Hello</h1>`);
-
-      assert.strictEqual(called, true, 'constructor called');
+        assert.strictEqual(called, true, 'constructor called');
+      });
     });
-  });
-});
+  }
+);
