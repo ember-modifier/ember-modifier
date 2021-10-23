@@ -24,7 +24,7 @@ interface HookSetup {
   factory: Factory;
 }
 
-interface TestContext extends BaseContext {
+interface Context extends BaseContext {
   instance: null | ClassBasedModifier;
   assertCalled(
     shouldCall: boolean,
@@ -42,7 +42,7 @@ function testHook({
   factory,
 }: HookSetup): void {
   module(`\`${name}\` hook`, function (hooks) {
-    hooks.beforeEach(function (this: TestContext, assert) {
+    hooks.beforeEach(function (this: Context, assert) {
       this.instance = null;
 
       let called = (): void => {
@@ -97,7 +97,7 @@ function testHook({
       };
     });
 
-    hooks.afterEach(async function (this: TestContext, assert) {
+    hooks.afterEach(async function (this: Context, assert) {
       await settled();
 
       assert.strictEqual(this.instance?.isDestroying, true, 'isDestroying');
@@ -105,7 +105,7 @@ function testHook({
     });
 
     if (element) {
-      test('it has access to the DOM element', async function (this: TestContext, assert) {
+      test('it has access to the DOM element', async function (this: Context, assert) {
         this.hook((instance) => {
           assert.equal(instance.element.tagName, 'H1', 'this.element.tagName');
           assert.equal(instance.element.id, 'expected', 'this.element.id');
@@ -147,7 +147,7 @@ function testHook({
         assert.verifySteps(['no-op render', 'insert', 'update', 'destroy']);
       });
     } else {
-      test('it does not have access to the DOM element', async function (this: TestContext, assert) {
+      test('it does not have access to the DOM element', async function (this: Context, assert) {
         this.hook((instance) => {
           assert.strictEqual(instance.element, null, 'this.element');
         });
@@ -189,7 +189,7 @@ function testHook({
       });
     }
 
-    test('has access to positional arguments', async function (this: TestContext, assert) {
+    test('has access to positional arguments', async function (this: Context, assert) {
       let expected: string[];
 
       this.hook((instance) => {
@@ -252,7 +252,7 @@ function testHook({
       ]);
     });
 
-    test('has access to named arguments', async function (this: TestContext, assert) {
+    test('has access to named arguments', async function (this: Context, assert) {
       let expected: Record<string, string>;
 
       this.hook((instance) => {
@@ -319,7 +319,7 @@ function testHook({
 
 function testHooksOrdering(factory: Factory): void {
   module('hooks ordering', function () {
-    test('hooks are fired in the right order', async function (this: TestContext, assert) {
+    test('hooks are fired in the right order', async function (assert) {
       let actualHooks: undefined | string[];
 
       const callback = (name: string): void => {
@@ -494,7 +494,7 @@ module(
     );
 
     module('service injection', function () {
-      test('can participate in ember dependency injection', async function (this: TestContext, assert) {
+      test('can participate in ember dependency injection', async function (this: Context, assert) {
         let called = false;
 
         class Foo extends Service {
