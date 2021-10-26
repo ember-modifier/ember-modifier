@@ -3,7 +3,8 @@
 module.exports = {
   name: require('./package').name,
 
-  options: {
-    useBabelConfig: true,
-  },
+  // TODO: turn this back on as part of #102.
+  // options: {
+  // useBabelConfig: true,
+  // },
 };

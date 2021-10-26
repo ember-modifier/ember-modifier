@@ -1,3 +1,6 @@
+// TODO: this is currently only being used by ESLint via @babel/eslint-parser.
+// When #102 lands, we can switch to using it throughout properly.
+
 const { buildEmberPlugins } = require('ember-cli-babel');
 
 module.exports = function (api) {
@@ -10,12 +13,6 @@ module.exports = function (api) {
         {
           allowDeclareFields: true,
           onlyRemoveTypeImports: true,
-        },
-      ],
-      [
-        require.resolve('@babel/preset-env'),
-        {
-          targets: require('./tests/dummy/config/targets'),
         },
       ],
     ],

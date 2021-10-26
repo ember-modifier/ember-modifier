@@ -4,9 +4,10 @@ const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function (defaults) {
   const app = new EmberAddon(defaults, {
-    'ember-cli-babel': {
-      useBabelConfig: true,
-    },
+    // TODO: turn this back on as part of #102.
+    // 'ember-cli-babel': {
+    // useBabelConfig: true,
+    // },
   });
 
   /*
