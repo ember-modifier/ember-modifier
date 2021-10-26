@@ -2,7 +2,7 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
@@ -37,6 +37,7 @@ module.exports = {
         'blueprints/**/*.js',
         'config/**/*.js',
         'tests/dummy/config/**/*.js',
+        'babel.config.js',
       ],
       excludedFiles: [
         'addon/**',
@@ -69,7 +70,7 @@ module.exports = {
       extends: [
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
-        'prettier/@typescript-eslint',
+        'prettier',
       ],
       rules: {
         '@typescript-eslint/explicit-function-return-type': [

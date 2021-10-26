@@ -1,6 +1,6 @@
 'use strict';
 
-const stringUtils = require('ember-cli-string-utils');
+const { dasherize } = require('ember-cli-string-utils');
 const useTestFrameworkDetector = require('../test-framework-detector');
 
 module.exports = useTestFrameworkDetector({
@@ -27,7 +27,7 @@ module.exports = useTestFrameworkDetector({
       options.entity.name,
     ].join(' | ');
 
-    let dasherizedModulePrefix = stringUtils.dasherize(
+    let dasherizedModulePrefix = dasherize(
       options.project.config().modulePrefix
     );
 
