@@ -25,7 +25,6 @@
 /tests/
 /yarn.lock
 .gitkeep
-/babel.config.js
 
 # ember-try
 /.node_modules.ember-try/
