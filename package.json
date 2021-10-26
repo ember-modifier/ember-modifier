@@ -22,7 +22,7 @@
     "lint:hbs": "ember-template-lint .",
     "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
     "start": "ember serve",
-    "test": "npm-run-all lint:* test:*",
+    "test": "npm-run-all test:*",
     "test:ember": "ember test",
     "test:ember-compatibility": "ember try:each",
     "pretest": "npm run prepublishOnly",
