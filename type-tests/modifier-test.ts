@@ -22,7 +22,6 @@ expectTypeOf<Modifier['element']>().toEqualTypeOf<Element>();
 expectTypeOf<Modifier['didReceiveArguments']>().toEqualTypeOf<() => void>();
 expectTypeOf<Modifier['didUpdateArguments']>().toEqualTypeOf<() => void>();
 expectTypeOf<Modifier['didInstall']>().toEqualTypeOf<() => void>();
-expectTypeOf<Modifier['willRemove']>().toEqualTypeOf<() => void>();
 expectTypeOf<Modifier['willDestroy']>().toEqualTypeOf<() => void>();
 expectTypeOf<Modifier['isDestroying']>().toEqualTypeOf<boolean>();
 expectTypeOf<Modifier['isDestroyed']>().toEqualTypeOf<boolean>();

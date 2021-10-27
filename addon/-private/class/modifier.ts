@@ -69,18 +69,6 @@ export default class ClassBasedModifier<
   }
 
   /**
-   * Called when the DOM element is about to be destroyed; use for removing
-   * event listeners on the element and other similar clean-up tasks.
-   *
-   * @deprecated since 2.0.0: prefer to use `willDestroy`, since both it and
-   *   `willRemove` can perform all the same operations, including on the
-   *   `element`.
-   */
-  willRemove(): void {
-    /* no op, for subclassing */
-  }
-
-  /**
    * Called when the modifier itself is about to be destroyed; use for teardown
    * code. Called after `willRemove`.
    */

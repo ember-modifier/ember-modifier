@@ -8,7 +8,6 @@ import { ModifierArgs } from 'ember-modifier/-private/interfaces';
 import { consumeArgs, Factory, isFactory } from '../compat';
 
 function destroyModifier(modifier: ClassBasedModifier): void {
-  modifier.willRemove();
   modifier.willDestroy();
 }
 

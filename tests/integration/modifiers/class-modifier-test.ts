@@ -61,7 +61,7 @@ function testHook({
 
             assert.strictEqual(
               instance.isDestroying,
-              name === 'willDestroy' || name === 'willRemove',
+              name === 'willDestroy',
               'isDestroying'
             );
             assert.strictEqual(instance.isDestroyed, false, 'isDestroyed');
@@ -385,7 +385,7 @@ function testHooksOrdering(factory: Factory): void {
 
       assert.step('destroy');
 
-      await assertHooks(['willRemove', 'willDestroy'], () => {
+      await assertHooks(['willDestroy'], () => {
         this.set('isShowing', false);
       });
 
@@ -438,15 +438,6 @@ function testHooks(factory: Factory): void {
   });
 
   testHook({
-    name: 'willRemove',
-    insert: false,
-    update: false,
-    destroy: true,
-    element: true,
-    factory,
-  });
-
-  testHook({
     name: 'willDestroy',
     insert: false,
     update: false,
@@ -481,10 +472,6 @@ module(
 
           didInstall(): void {
             callback('didInstall', this);
-          }
-
-          willRemove(): void {
-            callback('willRemove', this);
           }
 
           willDestroy(): void {
