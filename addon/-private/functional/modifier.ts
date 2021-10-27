@@ -3,9 +3,9 @@ import FunctionalModifierManager from './modifier-manager';
 import { ModifierArgs } from '../interfaces';
 
 export type FunctionalModifier<
+  E extends Element = Element,
   P extends ModifierArgs['positional'] = ModifierArgs['positional'],
-  N extends ModifierArgs['named'] = ModifierArgs['named'],
-  E extends Element = Element
+  N extends ModifierArgs['named'] = ModifierArgs['named']
 > = (element: E, positional: P, named: N) => unknown;
 
 /**
@@ -24,9 +24,9 @@ export type FunctionalModifier<
  * @param fn The function which defines the modifier.
  */
 export default function modifier<
-  E extends Element = Element,
-  P extends ModifierArgs['positional'] = ModifierArgs['positional'],
-  N extends ModifierArgs['named'] = ModifierArgs['named']
->(fn: FunctionalModifier<P, N, E>): unknown {
+  E extends Element,
+  P extends ModifierArgs['positional'],
+  N extends ModifierArgs['named']
+>(fn: FunctionalModifier<E, P, N>): unknown {
   return setModifierManager(() => FunctionalModifierManager, fn);
 }
