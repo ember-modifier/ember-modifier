@@ -1,6 +1,6 @@
-export interface ModifierArgs<N = unknown> {
+export interface ModifierArgs {
   /** Positional arguments to a modifier, `{{foo @bar this.baz}}` */
   positional: unknown[];
   /** Named arguments to a modifier, `{{foo bar=this.baz}}` */
-  named: Record<string, N>;
+  named: Record<string, unknown>;
 }
