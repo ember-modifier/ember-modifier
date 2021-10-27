@@ -1,3 +1,29 @@
+## v3.0.0 (2021-10-27)
+
+#### :boom: Breaking Change
+* [#97](https://github.com/ember-modifier/ember-modifier/pull/97) Drop support for Node <12, Ember <3.24, TS <4.2 ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :rocket: Enhancement
+* [#100](https://github.com/ember-modifier/ember-modifier/pull/100) Ember 4.x compatibility ([@chriskrycho](https://github.com/chriskrycho))
+* [#91](https://github.com/ember-modifier/ember-modifier/pull/91) Use `positional` and `named` as argument names in `ember g modifier` blueprint ([@bertdeblock](https://github.com/bertdeblock))
+
+#### :bug: Bug Fix
+* [#79](https://github.com/ember-modifier/ember-modifier/pull/79) Types: fix strictness and add a failing test ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#99](https://github.com/ember-modifier/ember-modifier/pull/99) docs: update README with compatibility info ([@chriskrycho](https://github.com/chriskrycho))
+* [#90](https://github.com/ember-modifier/ember-modifier/pull/90) Improve logic in `removeEventListener()` from examples ([@MrChocolatine](https://github.com/MrChocolatine))
+
+#### :house: Internal
+* [#104](https://github.com/ember-modifier/ember-modifier/pull/104) chore: run TS compat independent of tests ([@chriskrycho](https://github.com/chriskrycho))
+* [#101](https://github.com/ember-modifier/ember-modifier/pull/101) chore: update linting configuration ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 4
+- Bert De Block ([@bertdeblock](https://github.com/bertdeblock))
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Max Z ([@MrChocolatine](https://github.com/MrChocolatine))
+- Nathaniel Furniss ([@nlfurniss](https://github.com/nlfurniss))
+
 ## v2.1.2 (2021-05-28)
 
 #### :bug: Bug Fix
