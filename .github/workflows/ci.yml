@@ -167,7 +167,7 @@ jobs:
     name: Type checking - ${{ matrix.typescript-scenario }}
     runs-on: ubuntu-latest
     continue-on-error: true
-    needs: test
+    needs: lint
 
     strategy:
       fail-fast: true
