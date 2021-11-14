@@ -13,6 +13,7 @@
 /.eslintignore
 /.eslintrc.js
 /.git/
+/.github/
 /.gitignore
 /.template-lintrc.js
 /.travis.yml
@@ -33,3 +34,10 @@
 /.node_modules.ember-try/
 /bower.json.ember-try
 /package.json.ember-try
+
+# custom
+/config/ember-try-typescript.js
+/.vscode/
+/RELEASE.md
+/types/dummy/
+/type-tests/
