@@ -21,6 +21,12 @@ module.exports = {
       },
     },
     {
+      name: 'typescript-4.5',
+      npm: {
+        typescript: '~4.5',
+      },
+    },
+    {
       name: 'typescript-next',
       allowedToFail: true,
       npm: {
