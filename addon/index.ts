@@ -1,3 +1,3 @@
 export { default } from './-private/class/modifier';
 export { default as modifier } from './-private/functional/modifier';
-export { ModifierArgs } from './-private/interfaces';
+export type { ModifierArgs } from './-private/interfaces';
