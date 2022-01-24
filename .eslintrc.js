@@ -9,6 +9,7 @@ module.exports = {
     ecmaFeatures: {
       legacyDecorators: true,
     },
+    requireConfigFile: false,
   },
   plugins: ['ember', 'prettier'],
   extends: [
