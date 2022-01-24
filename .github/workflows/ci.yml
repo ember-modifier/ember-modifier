@@ -173,11 +173,11 @@ jobs:
       fail-fast: true
       matrix:
         typescript-scenario: [
-          typescript-4.2,
-          typescript-4.3,
-          typescript-4.4,
-          typescript-4.5,
-          typescript-next,
+          typescript@4.2,
+          typescript@4.3,
+          typescript@4.4,
+          typescript@4.5,
+          typescript@next,
         ]
 
     steps:
@@ -194,7 +194,8 @@ jobs:
     - name: Install Dependencies
       run: yarn install --frozen-lockfile
 
+    - name: Update TS version
+      run: yarn add -D ${{ matrix.typescript-scenario }}
+
     - name: Type checking
-      env:
-        EMBER_TRY_SCENARIO: ${{ matrix.typescript-scenario }}
-      run: node_modules/.bin/ember try:one --config-path="./config/ember-try-typescript.js" $EMBER_TRY_SCENARIO
+      run: yarn lint:ts
