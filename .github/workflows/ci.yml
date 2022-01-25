@@ -48,22 +48,21 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
-    - name: Install Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 12.x
-        cache: yarn
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+          cache: yarn
 
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
 
-    - name: Lint
-      run: yarn lint
-
+      - name: Lint
+        run: yarn lint
 
   test:
     name: Tests
@@ -75,25 +74,24 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
-    - name: Install Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 12.x
-        cache: yarn
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+          cache: yarn
 
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
 
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
 
-    - name: Test
-      run: yarn test:ember
-
+      - name: Test
+        run: yarn test:ember
 
   floating-dependencies:
     name: Floating Dependencies
@@ -105,25 +103,24 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
-    - name: Install Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 12.x
-        cache: yarn
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+          cache: yarn
 
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
 
-    - name: Install Dependencies
-      run: yarn install --no-lockfile --non-interactive
+      - name: Install Dependencies
+        run: yarn install --no-lockfile --non-interactive
 
-    - name: Test
-      run: yarn test:ember
-
+      - name: Test
+        run: yarn test:ember
 
   ember-compatibility:
     name: Tests - ${{ matrix.ember-try-scenario }}
@@ -134,32 +131,33 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        ember-try-scenario: [
-          ember-lts-3.24,
-          ember-lts-3.28,
-          ember-release,
-          ember-beta,
-          ember-canary,
-        ]
+        ember-try-scenario:
+          [
+            ember-lts-3.24,
+            ember-lts-3.28,
+            ember-release,
+            ember-beta,
+            ember-canary,
+          ]
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
-    - name: Install Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 12.x
-        cache: yarn
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+          cache: yarn
 
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
 
-    - name: Test
-      env:
-        EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
-      run: node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
+      - name: Test
+        env:
+          EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
+        run: node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
 
   typescript-compatibility:
     name: Type checking - ${{ matrix.typescript-scenario }}
@@ -170,30 +168,31 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        typescript-scenario: [
-          typescript@4.2,
-          typescript@4.3,
-          typescript@4.4,
-          typescript@4.5,
-          typescript@next,
-        ]
+        typescript-scenario:
+          [
+            typescript@4.2,
+            typescript@4.3,
+            typescript@4.4,
+            typescript@4.5,
+            typescript@next,
+          ]
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
-    - name: Install Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 12.x
-        cache: yarn
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+          cache: yarn
 
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
 
-    - name: Update TS version
-      run: yarn add -D ${{ matrix.typescript-scenario }}
+      - name: Update TS version
+        run: yarn add -D ${{ matrix.typescript-scenario }}
 
-    - name: Type checking
-      run: yarn lint:ts
+      - name: Type checking
+        run: yarn lint:ts
