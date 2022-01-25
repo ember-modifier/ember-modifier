@@ -1,3 +1,24 @@
+
+## v3.1.0 (2022-01-25)
+
+#### :rocket: Enhancement
+* [#135](https://github.com/ember-modifier/ember-modifier/pull/135) Add TypeScript 4.5 to testing matrix ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### :bug: Bug Fix
+* [#134](https://github.com/ember-modifier/ember-modifier/pull/134) Properly re-export types ([@mydea](https://github.com/mydea))
+
+#### :house: Internal
+* [#162](https://github.com/ember-modifier/ember-modifier/pull/162) Remove babel.config.js ([@chriskrycho](https://github.com/chriskrycho))
+* [#161](https://github.com/ember-modifier/ember-modifier/pull/161) CI config: tweak how TS versions are tested ([@chriskrycho](https://github.com/chriskrycho))
+* [#123](https://github.com/ember-modifier/ember-modifier/pull/123) Update npmignore file ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#109](https://github.com/ember-modifier/ember-modifier/pull/109) Create dependabot.yml ([@banupriya-bp](https://github.com/banupriya-bp))
+
+#### Committers: 4
+- Banupriya ([@banupriya-bp](https://github.com/banupriya-bp))
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Francesco Novy ([@mydea](https://github.com/mydea))
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+
 ## v3.0.0 (2021-10-27)
 
 #### :boom: Breaking Change
