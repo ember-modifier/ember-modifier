@@ -121,5 +121,8 @@
       "tokenRef": "GITHUB_AUTH"
     }
   },
-  "types": "index.d.ts"
+  "types": "index.d.ts",
+  "volta": {
+    "node": "14.19.0"
+  }
 }
