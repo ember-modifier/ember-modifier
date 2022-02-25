@@ -1,4 +1,4 @@
-import { ModifierArgs } from 'ember-modifier/-private/interfaces';
+import { ModifierArgs } from './interfaces';
 import { gte } from 'ember-compatibility-helpers';
 
 export interface Factory<T> {
