@@ -2,26 +2,17 @@ ember-modifier
 ==============================================================================
 
 This addon provides an API for authoring [element modifiers] in Ember. It
-mirrors Ember's [helper] API, with variations for writing simple _functional_
-modifiers and for writing more complicated _class_ modifiers.
+mirrors Ember's [helper] API, with variations for writing both simple
+function-based modifiers and more complicated class-based modifiers.
 
 [element modifiers]: https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html
 [helper]: https://octane-guides-preview.emberjs.com/release/templates/writing-helpers
 
-<i>This addon is the next iteration of both [ember-class-based-modifier] and
-[ember-functional-modifiers]. Some breaking changes to the APIs have been made.
-For a list of differences, see the [API differences](#api-differences) section.</i>
-
-<i>Huge thanks to @sukima and @spencer516 for their contributions! This project
-is based on their work, and wouldn't have been possible without them.</i>
-
-[ember-class-based-modifier]: https://github.com/sukima/ember-class-based-modifier
-[ember-functional-modifiers]: https://github.com/spencer516/ember-functional-modifiers
-
 - [Compatibility](#compatibility)
+  - [TypeScript](#typescript)
 - [Installation](#installation)
 - [Philosophy](#philosophy)
-  - [Woah woah woah, hold on, what's a _"side effect"_?](#woah-woah-woah-hold-on-whats-a-side-effect)
+  - [Whoa whoa whoa, hold on, what's a _"side effect"_?](#whoa-whoa-whoa-hold-on-whats-a-side-effect)
   - [Managing "side effects" effectively](#managing-side-effects-effectively)
   - [Should modifiers _always_ be self-contained?](#should-modifiers-always-be-self-contained)
 - [Usage](#usage)
@@ -35,8 +26,7 @@ is based on their work, and wouldn't have been possible without them.</i>
     - [Example with Cleanup](#example-with-cleanup-1)
     - [Example with Service Injection](#example-with-service-injection)
     - [API](#api)
-      - [Lifecycle Summary](#lifecycle-summary)
-- [TypeScript](#typescript)
+- [TypeScript](#typescript-1)
   - [Examples with TypeScript](#examples-with-typescript)
     - [Functional modifier](#functional-modifier)
     - [Class-based](#class-based)
@@ -45,6 +35,7 @@ is based on their work, and wouldn't have been possible without them.</i>
   - [API differences from ember-functional-modifiers](#api-differences-from-ember-functional-modifiers)
   - [API differences from ember-class-based-modifier](#api-differences-from-ember-class-based-modifier)
   - [API differences from ember-oo-modifiers](#api-differences-from-ember-oo-modifiers)
+- [History](#history)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -92,10 +83,10 @@ value that _isn't_ in an element, it is probably a _helper_ instead), and they
 are passed the element when applying their effects.
 
 Conceptually, modifiers take _tracked, derived state_, and turn it into some
-sort of _side effect_ - usually, mutating the DOM node they are applied to in
-some way, but they might also trigger other types of side effects.
+sort of _side effect_ related in some way to the DOM element they are applied
+to.
 
-### Woah woah woah, hold on, what's a _"side effect"_?
+### Whoa whoa whoa, hold on, what's a _"side effect"_?
 
 A "side effect" is something that happens in programming all the time. Here's an
 example of one in an Ember component that attempts to make a button like in the
@@ -122,7 +113,7 @@ export default class MyButton extends Component {
 ```
 
 We can see by looking at the `setupEventListener` getter that it isn't actually
-returning a value, instead it always returns `undefined`. However, it also adds
+returning a value. Instead, it always returns `undefined`. However, it also adds
 the `@onClick` argument as an _event listener_ to the button in the template
 when the getter is run, as the template is rendering, which is a _side effect_
 - it is an effect of running the code that doesn't have anything to do with the
@@ -131,8 +122,9 @@ value. In fact, this code doesn't compute a value at all, so this component is
 _misusing_ the getter in order to run its side effect whenever it is rendered in
 the template.
 
-Side effects can make code very difficult to reason about, since any function
-could be updating a value elsewhere. In fact, the code above is very buggy:
+Unmanaged side effects can make code very difficult to reason about, since any
+function could be updating a value elsewhere. In fact, the code above is very
+buggy:
 
 1. If the `@onClick` argument ever changes, it won't remove the old event
    listener, it'll just keep adding new ones.
@@ -263,12 +255,14 @@ modifier((element, positional, named) => { /* */ });
 This function runs the first time when the element the modifier was applied to
 is inserted into the DOM, and it _autotracks_ while running. Any values that it
 accesses will be tracked, including the arguments it receives, and if any of
-them changes, the function will run again.
+them changes, the function will run again.[^changes]
 
 The modifier can also optionally return a _destructor_. The destructor function
 will be run just before the next update, and when the element is being removed
 entirely. It should generally clean up the changes that the modifier made in the
 first place.
+
+[^changes]: As with autotracking in general, “changes” here actually means that the tracked property was set—even if it was set to the same value. This is because autotracking does not cache the *values* of properties, only the last time they changed. See [this blog post](https://v5.chriskrycho.com/journal/autotracking-elegant-dx-via-cutting-edge-cs/) for a deep dive on how it works!
 
 #### Generating a Functional Modifier
 
@@ -933,6 +927,21 @@ See [this pull request comment](https://github.com/sukima/ember-class-based-modi
 * Renamed `didInsertElement` to `didInstall` and `willDestroyElement` to `willRemove`. This is to emphasize that when the modifier is installed or removed, the underlying element may not be freshly inserted or about to go away. Therefore, it is important to perform clean-up work in the `willRemove` to reverse any modifications you made to the element.
 * Changed life-cycle hook order: `didReceiveArguments` fires before `didInstall`, and `didUpdateArguments` fires before `didReceiveArguments`, mirroring the classic component life-cycle hooks ordering.
 * Added `willDestroy`, `isDestroying` and `isDestroyed` with the same semantics as Ember objects and Glimmer components.
+
+History
+------------------------------------------------------------------------------
+
+This addon is the next iteration of both [ember-class-based-modifier] and
+[ember-functional-modifiers]. Some breaking changes to the APIs have been made.
+For a list of differences, see the [API differences](#api-differences) section.
+
+Huge thanks to [**@sukima**](https://github.com/sukima) and [**@spencer516**](https://github.com/spencer516) for their contributions! This project
+is based on their work, and wouldn't have been possible without them!
+
+[ember-class-based-modifier]: https://github.com/sukima/ember-class-based-modifier
+[ember-functional-modifiers]: https://github.com/spencer516/ember-functional-modifiers
+
+
 
 Contributing
 ------------------------------------------------------------------------------
