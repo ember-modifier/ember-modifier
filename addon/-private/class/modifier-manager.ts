@@ -4,15 +4,15 @@ import { set } from '@ember/object';
 import { destroy, registerDestructor } from '@ember/destroyable';
 
 import ClassBasedModifier from './modifier';
-import { ModifierArgs } from 'ember-modifier/-private/interfaces';
+import { ArgsFor, ElementFor } from 'ember-modifier/-private/signature';
 import { consumeArgs, Factory, isFactory } from '../compat';
 
-function destroyModifier(modifier: ClassBasedModifier): void {
+function destroyModifier<S>(modifier: ClassBasedModifier<S>): void {
   modifier.willRemove();
   modifier.willDestroy();
 }
 
-export default class ClassBasedModifierManager {
+export default class ClassBasedModifierManager<S> {
   capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
 
   constructor(private owner: unknown) {}
@@ -21,8 +21,8 @@ export default class ClassBasedModifierManager {
     factoryOrClass:
       | Factory<typeof ClassBasedModifier>
       | typeof ClassBasedModifier,
-    args: ModifierArgs
-  ): ClassBasedModifier {
+    args: ArgsFor<S>
+  ): ClassBasedModifier<S> {
     const Modifier = isFactory(factoryOrClass)
       ? factoryOrClass.class
       : factoryOrClass;
@@ -35,9 +35,9 @@ export default class ClassBasedModifierManager {
   }
 
   installModifier(
-    instance: ClassBasedModifier,
-    element: Element,
-    args: ModifierArgs
+    instance: ClassBasedModifier<S>,
+    element: ElementFor<S>,
+    args: ArgsFor<S>
   ): void {
     instance.element = element;
 
@@ -49,7 +49,7 @@ export default class ClassBasedModifierManager {
     instance.didInstall();
   }
 
-  updateModifier(instance: ClassBasedModifier, args: ModifierArgs): void {
+  updateModifier(instance: ClassBasedModifier<S>, args: ArgsFor<S>): void {
     // TODO: this should be an args proxy
     set(instance, 'args', args);
 

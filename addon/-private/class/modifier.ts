@@ -1,8 +1,8 @@
 import { setOwner } from '@ember/application';
 import { setModifierManager } from '@ember/modifier';
 import Manager from './modifier-manager';
-import { ModifierArgs } from 'ember-modifier/-private/interfaces';
 import { isDestroying, isDestroyed } from '@ember/destroyable';
+import { ElementFor, ArgsFor, DefaultSignature } from '../signature';
 
 /**
  * A base class for modifiers which need more capabilities than function-based
@@ -18,15 +18,13 @@ import { isDestroying, isDestroyed } from '@ember/destroyable';
  * values they access will be added to the modifier, and the modifier will
  * update if any of those values change.
  */
-export default class ClassBasedModifier<
-  Args extends ModifierArgs = ModifierArgs
-> {
+export default class ClassBasedModifier<S = DefaultSignature> {
   /**
    * The arguments passed to the modifier. `args.positional` is an array of
    * positional arguments, and `args.named` is an object containing the named
    * arguments.
    */
-  readonly args: Args;
+  readonly args: ArgsFor<S>;
 
   /**
    * The element the modifier is applied to.
@@ -37,9 +35,9 @@ export default class ClassBasedModifier<
   // SAFETY: this is managed correctly by the class-based modifier. It is not
   // available during the `constructor`.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  element: Element = null as any;
+  element: ElementFor<S> = null as any;
 
-  constructor(owner: unknown, args: Args) {
+  constructor(owner: unknown, args: ArgsFor<S>) {
     setOwner(this, owner);
     this.args = args;
   }
