@@ -1,10 +1,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import {
-  render,
-  settled,
-  type TestContext as BaseContext,
-} from '@ember/test-helpers';
+import { render, settled } from '@ember/test-helpers';
+import type { TestContext as BaseContext } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { modifier } from 'ember-modifier';
 
