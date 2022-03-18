@@ -1,5 +1,5 @@
-import { ModifierArgs } from './interfaces';
 import { gte } from 'ember-compatibility-helpers';
+import { ArgsFor } from './signature';
 
 export interface Factory<T> {
   owner: unknown;
@@ -27,10 +27,10 @@ const noop = (): void => {};
  * avoid introducing a breaking change until a suitable transition path is made
  * available.
  */
-let consumeArgs: (args: ModifierArgs) => void = noop;
+let consumeArgs: (args: ArgsFor<any>) => void = noop;
 
 if (gte('3.22.0')) {
-  consumeArgs = function ({ positional, named }) {
+  consumeArgs = function ({ positional, named }: ArgsFor<any>) {
     for (let i = 0; i < positional.length; i++) {
       positional[i];
     }

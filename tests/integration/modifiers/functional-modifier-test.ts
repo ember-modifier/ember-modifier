@@ -90,7 +90,9 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
 
       this.registerModifier(
         'songbird',
-        modifier(() => callCount++)
+        modifier(() => {
+          callCount++;
+        })
       );
 
       await render(hbs`<h1 {{songbird this.value}}>Hello</h1>`);

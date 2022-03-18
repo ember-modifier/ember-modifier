@@ -697,7 +697,17 @@ Both the functional and class APIs can be used with TypeScript!
 
 Before checking out the [Examples with Typescript](#examples-with-type-script) below, there is an important caveat you should understand about type safety!
 
-True type safety requires runtime checking, since templates are not currently type-checked: the arguments passed to your modifier can be *anything*. They’re typed as `unknown` by default, which means by default TypeScript will *require* you to work out the type passed to you at runtime. For example, with the `ScrollPositionModifier` shown above, you can combine TypeScript’s [type narrowing] with the default types for the class to provide runtime errors if the caller passes the wrong types, while providing safety throughout the rest of the body of the modifier. Here, `didReceiveArguments` would be *guaranteed* to have the correct types for `this.scrollPosition` and `this.isRelative`:
+There are, today, two basic approaches you can take to dealing with your modifier's arguments and element in a type safe way:
+
+1. You can use a type definition which specifies those for the outside world, relying on tooling like [Glint][glint] to check that the invocation is correct, and treat input as safe accordingly.
+2. You can provide the minimal public interface which *all* modifiers conform to, and do runtime type checking with `assert` calls to make your internal implementation safe.
+
+If you have a code base which is strictly typed from end to end, including with template type checking via Glint, then (1) is a great choice. If you have a mixed code base, or are publishing an addon for others to use, then [it's usually best to do both (1) *and* (2)][safe-ts-libs]!
+
+[glint]: https://github.com/typed-ember/glint
+[safe-ts-libs]: https://v5.chriskrycho.com/journal/writing-robust-typescript-libraries/s
+
+To handle runtime checking, for non-type-checked templates (including projects not yet using Glint or supporting external callers), you should *act* as though the arguments passed to your modifier can be *anything*. They’re typed as `unknown` by default, which means by default TypeScript will *require* you to work out the type passed to you at runtime. For example, with the `ScrollPositionModifier` shown above, you can combine TypeScript’s [type narrowing] with the default types for the class to provide runtime errors if the caller passes the wrong types, while providing safety throughout the rest of the body of the modifier. Here, `didReceiveArguments` would be *guaranteed* to have the correct types for `this.scrollPosition` and `this.isRelative`:
 
 [type narrowing]: https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types
 
@@ -736,30 +746,34 @@ export class ScrollPositionModifier extends ClassBasedModifier {
 }
 ```
 
-You can also avoid writing these runtime checks by extending `Modifier` with predefined args, similar to the way you would define your args for a Glimmer Component:
+If you were writing for a fully-typed context, you can define your `Modifier` with a `Signature` interface, similar to the way you would define your signature for a Glimmer Component:
 
 ```ts
 // app/modifiers/scroll-position.ts
 import Modifier from 'ember-modifier';
 
-interface ScrollPositionModifierArgs {
-  positional: [number],
-  named: {
-    relative: boolean
-  }
+interface ScrollPositionModifierSignature {
+  Args: {
+    Positional: [number];
+    Named: {
+      relative: boolean;
+    };
+  };
+  Element: Element; // not required: it'll be set by default
 }
 
-export default class ScrollPositionModifier extends Modifier<ScrollPositionModifierArgs> {
+export default class ScrollPositionModifier
+    extends Modifier<ScrollPositionModifierSignature> {
   get scrollPosition(): number {
     return this.args.positional[0];
   }
 
   get isRelative(): boolean {
-    return this.args.named.relative
+    return this.args.named.relative;
   }
 
   didReceiveArguments() {
-    if(this.isRelative) {
+    if (this.isRelative) {
       this.element.scrollTop += this.scrollPosition;
     } else {
       this.element.scrollTop = this.scrollPosition;
@@ -768,13 +782,119 @@ export default class ScrollPositionModifier extends Modifier<ScrollPositionModif
 }
 ```
 
-However, while doing so is slightly more convenient, it means you get *much worse* feedback in tests or at runtime if someone passes the wrong kind of arguments to your modifier.
+Besides supporting integration with [Glint][glint], this also provides nice hooks for documentation tooling. Note, however, that it can result in *much worse* feedback in tests or at runtime if someone passes the wrong kind of arguments to your modifier and you *haven't* included the assertions: users who pass the wrong thing will just have the modifier fail. For example, if you fail to pass the positional argument, `this.scrollPosition` would simply be `undefined`, and then `this.element.scrollTop` could end up being set to `NaN`. Whoops! For that reason, if your modifier will be used by non-TypeScript consumers, you should both publish the types for it *and* add dev-time assertions:
+
+```ts
+// app/modifiers/scroll-position.ts
+import Modifier from 'ember-modifier';
+
+interface ScrollPositionModifierSignature {
+  Args: {
+    Positional: [number];
+    Named: {
+      relative: boolean;
+    };
+  };
+  Element: Element; // not required: it'll be set by default
+}
+
+export default class ScrollPositionModifier
+    extends Modifier<ScrollPositionModifierSignature> {
+  get scrollPosition(): number {
+    const scrollValue = this.args.positional[0];
+    assert(,
+      `first argument to 'scroll-position' must be a number, but ${scrollValue} was ${typeof scrollValue}`,
+      typeof scrollValue === "number"
+    );
+
+    return scrollValue;
+  }
+
+  get isRelative(): boolean {
+    const { relative } = this.args.named;
+    assert(
+      `'relative' argument to 'scroll-position' must be a boolean, but ${relative} was ${typeof relative}`,
+      typeof relative === "boolean"
+    );
+
+    return relative;
+  }
+
+  didReceiveArguments() {
+    if (this.isRelative) {
+      this.element.scrollTop += this.scrollPosition;
+    } else {
+      this.element.scrollTop = this.scrollPosition;
+    }
+  }
+}
+```
+
+### The `Signature` type
+
+The `Signature` for a modifier is the combination of the positional and named arguments it receives and the element to which it may be applied.
+
+```ts
+interface Signature {
+  Args: {
+    Named: {
+      [argName: string]: unknown;
+    };
+    Positional: unknown[];
+  };
+  Element: Element;
+}
+```
+
+When writing a signature yourself, all of those are optional: the types for modifiers will fall back to the correct defaults of `Element`, an object for named arguments, and an array for positional arguments. You can apply a signature when defining either a function-based or a class-based modifier.
+
+In a function-based modifier, the callback arguments will be inferred from the signature, so you do not need to specify the types twice:
+
+```ts
+interface MySignature {
+  // ...
+}
+
+const myModifier = modifier<MySignature>((el, pos, named) => {
+  // ...
+})
+```
+
+You never *need* to specify a signature in this way for a function-based modifier. However, it is tested to keep working, since it can be useful for documentation!
+
+The same basic approach works with a class-based modifier:
+
+```ts
+interface MySignature {
+  // ...
+}
+
+export default class MyModifier extends Modifier<MySignature> {
+  // ...
+}
+```
+
+In that case, the `element` and `args` will always have the right types throughout the body. Since the type of `args` in the constructor are derived from the signature, you can use the `ArgsFor` type helper to avoid having to write the type out separately:
+
+```ts
+import Modifier, { ArgsFor } from 'ember-modifier';
+
+interface MySignature {
+  // ...
+}
+
+export default class MyModifier extends Modifier<MySignature> {
+  constructor(owner: unknown, args: ArgsFor<MySignature>) {
+    // ...
+  }
+}
+```
 
 ### Examples with TypeScript
 
-#### Functional modifier
+#### Function-based modifier
 
-Let’s look at a variant of the `move-randomly` example from above, implemented in TypeScript, and now requiring a named argument, the maximum offset. Using the recommended runtime type-checking, it would look like this:
+Let’s look at a variant of the `move-randomly` example from above, implemented in TypeScript, and now requiring a named argument, the maximum offset. Using the recommended combination of types and runtime type-checking, it would look like this:
 
 ```ts
 // app/modifiers/move-randomly.js
@@ -783,7 +903,7 @@ import { assert } from '@ember/debug';
 
 const { random, round } = Math;
 
-export default modifier((element, _, named) => {
+export default modifier((element: HTMLElement, _: [], named: { maxOffset: number }) => {
   assert(
     'move-randomly can only be installed on HTML elements!',
     element instanceof HTMLElement
@@ -807,7 +927,7 @@ export default modifier((element, _, named) => {
 
 A few things to notice here:
 
-1.  TypeScript correctly infers the types of the arguments for the function passed to the modifier; you don't need to specify what `element` or `positional` or `named` are.
+1.  TypeScript correctly infers the *base* types of the arguments for the function passed to the modifier; you don't need to specify what `element` or `positional` or `named` are unless you are doing like we are in this example and providing a usefully more-specific type to callers.
 
 2.  If we returned a teardown function which had the wrong type signature, that would also be an error.
 
@@ -824,10 +944,7 @@ A few things to notice here:
     TypeScript will report:
 
     > ```
-    > Argument of type '(element: Element, _: Positional, named: Record<string, unknown>) => Timeout' is not assignable to parameter of type 'FunctionalModifier<Positional, Record<string, unknown>>'.
-    >   Type 'Timeout' is not assignable to type 'void | Teardown'.
-    >     Type 'Timeout' is not assignable to type 'Teardown'.
-    >       Type 'Timeout' provides no match for the signature '(): void'.
+    > Type 'Timeout' is not assignable to type 'void | Teardown'.
     > ```
 
     Likewise, if we return a function with the wrong signature, we will see the same kinds of errors. If we expected to receive an argument in the teardown callback, like this:
@@ -843,23 +960,30 @@ A few things to notice here:
     TypeScript will report:
 
     > ```
-    > Argument of type '(element: Element, _: Positional, named: Record<string, unknown>) => (interval: number) => void' is not assignable to parameter of type 'FunctionalModifier<Positional, Record<string, unknown>>'.
-    >   Type '(interval: number) => void' is not assignable to type 'void | Teardown'.
-    >     Type '(interval: number) => void' is not assignable to type 'Teardown'.
+    > Type '(interval: number) => void' is not assignable to type 'void | Teardown'.
     > ```
 
 ####  Class-based
 
-To support correctly typing `args` in the `constructor` for the case where you do runtime type checking, we supply a `ModifierArgs` interface import. Here’s what a fully typed modifier that alerts "This is a typesafe modifier!" an amount of time after receiving arguments that depends on the length of the first argument and an *optional* multiplier (a nonsensical thing to do, but one that illustrates a fully type-safe class-based modifier):
+To support correctly typing `args` in the `constructor` for the case where you do runtime type checking, we supply an `ArgsFor` type utility. (This is useful because the `Signature` type, matching Glimmer Component and other "invokable" items in Ember/Glimmer, has capital letters for the names of the types, while `args.named` and `args.positional` are lower-case.) Here’s how that would look with a fully typed modifier that alerts "This is a typesafe modifier!" an amount of time after receiving arguments that depends on the length of the first argument and an *optional* multiplier (a nonsensical thing to do, but one that illustrates a fully type-safe class-based modifier):
 
 ```ts
-import Modifier, { ModifierArgs } from 'ember-modifier';
+import Modifier, { ArgsFor } from 'ember-modifier';
 import { assert } from '@ember/debug';
 
-export default class NeatModifier extends Modifier {
+interface NeatSignature {
+  Args: {
+    Named: {
+      multiplier?: number;
+    };
+    Positional: [string];
+  }
+}
+
+export default class Neat extends Modifier<NeatSignature> {
   interval?: number;
 
-  constructor(owner: unknown, args: ModifierArgs) {
+  constructor(owner: unknown, args: ArgsFor<NeatSignature>) {
     super(owner, args);
     // other setup you might do
   }
