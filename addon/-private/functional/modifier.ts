@@ -1,12 +1,38 @@
 import { setModifierManager } from '@ember/modifier';
+import {
+  DefaultSignature,
+  ElementFor,
+  NamedArgs,
+  PositionalArgs,
+} from '../signature';
 import FunctionalModifierManager from './modifier-manager';
-import { ModifierArgs } from '../interfaces';
 
-export type FunctionalModifier<
-  E extends Element = Element,
-  P extends ModifierArgs['positional'] = ModifierArgs['positional'],
-  N extends ModifierArgs['named'] = ModifierArgs['named']
-> = (element: E, positional: P, named: N) => unknown;
+// Type-only utilities used for representing the type of a Modifier in a way
+// that (a) has no runtime overhead and (b) makes no public API commitment: by
+// extending it with an interface representing the modifier, its internals
+// become literally invisible. The private field for the "brand" is not visible
+// when interacting with an interface which extends this, but it makes the type
+// non-substitutable with an empty object. This is borrowed from, and basically
+// identical to, the same time used internally in Ember's types.
+declare const Brand: unique symbol;
+declare class Opaque<T> {
+  private readonly [Brand]: T;
+}
+
+// This provides a signature whose only purpose here is to represent the runtime
+// type of a function-based modifier: an opaque item. The fact that it's an
+// empty interface is actually the point: it makes the private `[Brand]` above
+// is not visible to end users.
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface FunctionBasedModifier<S = DefaultSignature>
+  extends Opaque<S> {}
+
+/**
+ * The (optional) return type for a modifier which needs to perform some kind of
+ * cleanup or teardown -- for example, removing an event listener from an
+ * element besides the one passed into the modifier.
+ */
+type Teardown = () => unknown;
 
 /**
  * An API for writing simple modifiers.
@@ -23,10 +49,77 @@ export type FunctionalModifier<
  *
  * @param fn The function which defines the modifier.
  */
+// This overload allows users to write types directly on the callback passed to
+// the `modifier` function and infer the resulting type correctly.
 export default function modifier<
   E extends Element,
-  P extends ModifierArgs['positional'],
-  N extends ModifierArgs['named']
->(fn: FunctionalModifier<E, P, N>): unknown {
-  return setModifierManager(() => FunctionalModifierManager, fn);
+  P extends unknown[],
+  N extends Record<string, unknown>
+>(
+  fn: (element: E, positional: P, named: N) => void | Teardown
+): FunctionBasedModifier<{
+  Args: { Named: N; Positional: P };
+  Element: E;
+}>;
+
+// This overload allows users to provide a `Signature` type explicitly at the
+// modifier definition site, e.g. `modifier<Sig>((el, pos, named) => {...})`.
+// **Note:** this overload must appear second, since TS' inference engine will
+// not correctly infer the type of `S` here from the types on the supplied
+// callback.
+export default function modifier<S>(
+  fn: (
+    element: ElementFor<S>,
+    positional: PositionalArgs<S>,
+    named: NamedArgs<S>
+  ) => void | Teardown
+): FunctionBasedModifier<{
+  Element: ElementFor<S>;
+  Args: {
+    Named: NamedArgs<S>;
+    Positional: PositionalArgs<S>;
+  };
+}>;
+
+// This is the runtime signature; it performs no inference whatsover and just
+// uses the simplest version of the invocation possible since, for the case of
+// setting it on the modifier manager, we don't *need* any of that info, and
+// the two previous overloads capture all invocations from a type perspective.
+export default function modifier(
+  fn: (
+    element: Element,
+    positional: unknown[],
+    named: Record<string, undefined>
+  ) => void | Teardown
+): FunctionBasedModifier<{
+  Element: Element;
+  Args: {
+    Named: Record<string, unknown>;
+    Positional: unknown[];
+  };
+}> {
+  // SAFETY: the cast here is a *lie*, but it is a useful one. The actual return
+  // type of `setModifierManager` today is `void`; we pretend it actually
+  // returns an opaque `Modifier` type so that we can provide a result from this
+  // type which is useful to TS-aware tooling (e.g. Glint).
+  return setModifierManager(
+    () => FunctionalModifierManager,
+    fn
+  ) as unknown as FunctionBasedModifier<{
+    Element: Element;
+    Args: {
+      Named: Record<string, unknown>;
+      Positional: unknown[];
+    };
+  }>;
 }
+
+/**
+ * @internal
+ */
+export type FunctionalModifierDefinition<
+  S,
+  E extends ElementFor<S> = ElementFor<S>,
+  P extends PositionalArgs<S> = PositionalArgs<S>,
+  N extends NamedArgs<S> = NamedArgs<S>
+> = (element: E, positional: P, named: N) => void | Teardown;

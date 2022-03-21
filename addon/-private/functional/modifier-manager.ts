@@ -1,13 +1,24 @@
 import { capabilities } from '@ember/modifier';
 import { gte } from 'ember-compatibility-helpers';
-import { FunctionalModifier } from './modifier';
-import { ModifierArgs } from '../interfaces';
+import type { FunctionalModifierDefinition } from './modifier';
+import type { ArgsFor, ElementFor } from '../signature';
 import { consumeArgs, Factory, isFactory } from '../compat';
+import { assert } from '@ember/debug';
 
-const MODIFIER_ELEMENTS = new WeakMap();
-const MODIFIER_TEARDOWNS: WeakMap<FunctionalModifier, unknown> = new WeakMap();
+type ElementMap = {
+  get<S>(key: FunctionalModifierDefinition<S>): ElementFor<S> | null;
+  set<S>(key: FunctionalModifierDefinition<S>, value: ElementFor<S>): void;
+};
 
-function teardown(modifier: FunctionalModifier): void {
+type TeardownMap = {
+  get<S>(key: FunctionalModifierDefinition<S>): unknown;
+  set<S>(key: FunctionalModifierDefinition<S>, value: unknown): void;
+};
+
+const MODIFIER_ELEMENTS = new WeakMap() as ElementMap;
+const MODIFIER_TEARDOWNS = new WeakMap() as TeardownMap;
+
+function teardown<S>(modifier: FunctionalModifierDefinition<S>): void {
   const teardown = MODIFIER_TEARDOWNS.get(modifier);
 
   if (teardown && typeof teardown === 'function') {
@@ -15,10 +26,10 @@ function teardown(modifier: FunctionalModifier): void {
   }
 }
 
-function setup(
-  modifier: FunctionalModifier,
-  element: Element,
-  args: ModifierArgs
+function setup<S>(
+  modifier: FunctionalModifierDefinition<S>,
+  element: ElementFor<S>,
+  args: ArgsFor<S>
 ): void {
   const { positional, named } = args;
   const teardown = modifier(element, positional, named);
@@ -26,12 +37,14 @@ function setup(
   MODIFIER_TEARDOWNS.set(modifier, teardown);
 }
 
-class FunctionalModifierManager {
+class FunctionalModifierManager<S> {
   capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
 
   createModifier(
-    factoryOrClass: Factory<FunctionalModifier> | FunctionalModifier
-  ): FunctionalModifier {
+    factoryOrClass:
+      | Factory<FunctionalModifierDefinition<S>>
+      | FunctionalModifierDefinition<S>
+  ): FunctionalModifierDefinition<S> {
     const Modifier = isFactory(factoryOrClass)
       ? factoryOrClass.class
       : factoryOrClass;
@@ -44,9 +57,9 @@ class FunctionalModifierManager {
   }
 
   installModifier(
-    modifier: FunctionalModifier,
-    element: Element,
-    args: ModifierArgs
+    modifier: FunctionalModifierDefinition<S>,
+    element: ElementFor<S>,
+    args: ArgsFor<S>
   ): void {
     MODIFIER_ELEMENTS.set(modifier, element);
 
@@ -57,8 +70,16 @@ class FunctionalModifierManager {
     setup(modifier, element, args);
   }
 
-  updateModifier(modifier: FunctionalModifier, args: ModifierArgs): void {
+  updateModifier(
+    modifier: FunctionalModifierDefinition<S>,
+    args: ArgsFor<S>
+  ): void {
     const element = MODIFIER_ELEMENTS.get(modifier);
+
+    assert(
+      'ember-modifier: called updateModifier without a registered element.\nThis is an internal error; please open a bug!',
+      !!element
+    );
 
     teardown(modifier);
 
@@ -69,7 +90,7 @@ class FunctionalModifierManager {
     setup(modifier, element, args);
   }
 
-  destroyModifier(modifier: FunctionalModifier): void {
+  destroyModifier(modifier: FunctionalModifierDefinition<S>): void {
     teardown(modifier);
   }
 }
