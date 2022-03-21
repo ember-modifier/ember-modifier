@@ -3,6 +3,26 @@ import { setModifierManager } from '@ember/modifier';
 import Manager from './modifier-manager';
 import { isDestroying, isDestroyed } from '@ember/destroyable';
 import { ElementFor, ArgsFor, DefaultSignature } from '../signature';
+import { deprecate } from '@ember/debug';
+
+function deprecateForDestroyables<S>(
+  name: 'willDestroy' | 'isDestroying' | 'isDestroyed',
+  instance: ClassBasedModifier<S>
+): void {
+  deprecate(
+    `Modifier.${name} is deprecated`,
+    instance[name] !== ClassBasedModifier.prototype[name],
+    {
+      id: 'ember-modifier.use-destroyables',
+      until: '4.0.0',
+      for: 'ember-modifier',
+      since: {
+        available: '3.2.0',
+        enabled: '3.2.0',
+      },
+    }
+  );
+}
 
 /**
  * A base class for modifiers which need more capabilities than function-based
@@ -40,6 +60,10 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   constructor(owner: unknown, args: ArgsFor<S>) {
     setOwner(this, owner);
     this.args = args;
+
+    deprecateForDestroyables('willDestroy', this);
+    deprecateForDestroyables('isDestroying', this);
+    deprecateForDestroyables('isDestroyed', this);
   }
 
   /**
@@ -69,16 +93,44 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   /**
    * Called when the modifier itself is about to be destroyed; use for teardown
    * code. Called after `willRemove`.
+   *
+   * @deprecated Until 4.0. Use `registerDestructor` from `@ember/destroyables`.
    */
   willDestroy(): void {
     /* no op, for subclassing */
   }
 
+  /**
+   * @deprecated Until 4.0. Use `isDestroying` from `@ember/destroyables`.
+   */
   get isDestroying(): boolean {
+    deprecate('Modifier.isDestroying is deprecated', false, {
+      id: 'ember-modifier.use-destroyables',
+      until: '4.0.0',
+      for: 'ember-modifier',
+      since: {
+        available: '3.2.0',
+        enabled: '3.2.0',
+      },
+    });
+
     return isDestroying(this);
   }
 
+  /**
+   * @deprecated Until 4.0. Use `isDestroyed` from `@ember/destroyables`.
+   */
   get isDestroyed(): boolean {
+    deprecate('Modifier.isDestroyed is deprecated', false, {
+      id: 'ember-modifier.use-destroyables',
+      until: '4.0.0',
+      for: 'ember-modifier',
+      since: {
+        available: '3.2.0',
+        enabled: '3.2.0',
+      },
+    });
+
     return isDestroyed(this);
   }
 }
