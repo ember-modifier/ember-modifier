@@ -14,14 +14,25 @@ import { DEBUG } from '@glimmer/env';
 
 // SAFETY: these sets are dev-only code to avoid showing deprecations for the
 // same class more than once.
-let SEEN_CLASSES_FOR_LIFECYCLE: Set<ClassBasedModifier['constructor']>;
+type ClassBasedModifierClass = ClassBasedModifier['constructor'];
+let SEEN_CLASSES_FOR_LIFECYCLE: Set<ClassBasedModifierClass>;
 if (DEBUG) {
   SEEN_CLASSES_FOR_LIFECYCLE = new Set();
 }
 
-let SEEN_CLASSES_FOR_DESTROYABLES: Set<ClassBasedModifier['constructor']>;
+let SEEN_CLASSES_FOR_DESTROYABLES: Set<ClassBasedModifierClass>;
 if (DEBUG) {
   SEEN_CLASSES_FOR_DESTROYABLES = new Set();
+}
+
+let SEEN_CLASSES_FOR_ARGS: Set<ClassBasedModifierClass>;
+if (DEBUG) {
+  SEEN_CLASSES_FOR_ARGS = new Set();
+}
+
+let SEEN_CLASSES_FOR_ELEMENTS: Set<ClassBasedModifierClass>;
+if (DEBUG) {
+  SEEN_CLASSES_FOR_ELEMENTS = new Set();
 }
 
 /** @internal */
@@ -39,6 +50,12 @@ export const _implementsLegacyHooks = <S>(
   instance.didReceiveArguments !==
     ClassBasedModifier.prototype.didReceiveArguments;
 
+/** @internal */
+export const Element = Symbol('Element');
+
+/** @internal */
+export const Args = Symbol('Args');
+
 /**
  * A base class for modifiers which need more capabilities than function-based
  * modifiers. Useful if, for example:
@@ -54,27 +71,44 @@ export const _implementsLegacyHooks = <S>(
  * update if any of those values change.
  */
 export default class ClassBasedModifier<S = DefaultSignature> {
+  // Done this way with the weird combination of `declare` and `defineProperty`
+  // so that subclasses which are overriding this by writing their own `args`
+  // field type declarations continue to type check correctly. (If we introduced
+  // a getter here, existing classes defining their args via a `declare args:`
+  // would stop type checking, because TS -- correctly! -- differentiates
+  // between class fields and getters).
   /**
    * The arguments passed to the modifier. `args.positional` is an array of
    * positional arguments, and `args.named` is an object containing the named
    * arguments.
+   *
+   * @deprecated Until 4.0. Access positional and named arguments directly in
+   *   the `modify` hook instead.
    */
-  readonly args: ArgsFor<S>;
+  declare readonly args: ArgsFor<S>;
 
+  // Done this way with the weird combination of `declare` and `defineProperty`
+  // so that subclasses which are overriding this by writing their own `element`
+  // field declarations continue to type check correctly.
   /**
    * The element the modifier is applied to.
    *
    * @warning `element` is ***not*** available during `constructor` or
    *   `willDestroy`.
+   * @deprecated Until 4.0. Access the `element` as an argument in the `modify`
+   *   hook instead.
    */
-  // SAFETY: this is managed correctly by the class-based modifier. It is not
-  // available during the `constructor`.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  element: ElementFor<S> = null as any;
+  declare element: ElementFor<S>;
 
   constructor(owner: unknown, args: ArgsFor<S>) {
     setOwner(this, owner);
-    this.args = args;
+
+    // SAFETY: the point here is (for the period where we are providing `args`
+    // and `element`) to provide an internal-only way of setting and update the
+    // `args` for the modifier instance; we use the `InternalClassBasedModifier`
+    // interface to represent the internal-only API in a way that end users do
+    // *not* have access to when subclassing `ClassBasedModifier`.
+    (this as unknown as InternalClassBasedModifier<S>)[Args] = args;
 
     assert(
       'ember-modifier: You cannot implement both `modify` and any of the deprecated legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and `didUpdateArguments`)',
@@ -271,6 +305,73 @@ export default class ClassBasedModifier<S = DefaultSignature> {
 
     return isDestroyed(this);
   }
+}
+
+// We apply these here, against the prototype, so that there is only one of
+// these, rather than one per instance. We also only issue the deprecation once
+// per class for each of `args` and `element`.
+Object.defineProperty(ClassBasedModifier.prototype, 'args', {
+  enumerable: true,
+  get(this: InternalClassBasedModifier<unknown>) {
+    deprecate(
+      `ember-modifier (in ${this.constructor.name} at ${
+        new Error().stack
+      }): using \`this.args\` is deprecated. Access positional and named arguments directly in the \`modify\` hook instead.`,
+      !SEEN_CLASSES_FOR_ARGS.has(this.constructor),
+      {
+        id: 'ember-modifier.no-args-property',
+        for: 'ember-modifier',
+        since: {
+          available: '3.2.0',
+          enabled: '3.2.0',
+        },
+        until: '4.0.0',
+      }
+    );
+
+    if (DEBUG && !SEEN_CLASSES_FOR_ARGS.has(this.constructor)) {
+      SEEN_CLASSES_FOR_ARGS.add(this.constructor);
+    }
+
+    return this[Args];
+  },
+});
+
+Object.defineProperty(ClassBasedModifier.prototype, 'element', {
+  enumerable: true,
+  get(this: InternalClassBasedModifier<unknown>) {
+    deprecate(
+      `ember-modifier (in ${this.constructor.name} at ${
+        new Error().stack
+      }): using \`this.element\` is deprecated. Access the \`element\` as an argument in the \`modify\` hook instead.`,
+      !SEEN_CLASSES_FOR_ELEMENTS.has(this.constructor),
+      {
+        id: 'ember-modifier.no-element-property',
+        for: 'ember-modifier',
+        since: {
+          available: '3.2.0',
+          enabled: '3.2.0',
+        },
+        until: '4.0.0',
+      }
+    );
+
+    if (DEBUG && !SEEN_CLASSES_FOR_ELEMENTS.has(this.constructor)) {
+      SEEN_CLASSES_FOR_ELEMENTS.add(this.constructor);
+    }
+
+    return this[Element] ?? null;
+  },
+});
+
+/**
+ * @internal This provides an interface we can use to backwards-compatibly set
+ *   up the element in a way that external callers will not have access to or
+ *   even see.
+ */
+export interface InternalClassBasedModifier<S> extends ClassBasedModifier<S> {
+  [Element]: ElementFor<S>;
+  [Args]: ArgsFor<S>;
 }
 
 setModifierManager((owner) => new Manager(owner), ClassBasedModifier);

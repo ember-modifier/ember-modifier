@@ -1,9 +1,13 @@
 import { capabilities } from '@ember/modifier';
 import { gte } from 'ember-compatibility-helpers';
-import { set } from '@ember/object';
 import { destroy, registerDestructor } from '@ember/destroyable';
 
-import ClassBasedModifier, { _implementsModify } from './modifier';
+import ClassBasedModifier, {
+  InternalClassBasedModifier,
+  Element,
+  _implementsModify,
+  Args,
+} from './modifier';
 import { ArgsFor, ElementFor } from 'ember-modifier/-private/signature';
 import { consumeArgs, Factory, isFactory } from '../compat';
 
@@ -61,6 +65,28 @@ function installElement<S>(
   return installedState;
 }
 
+function installElementOnInstance<S>(
+  instance: ClassBasedModifier<S>,
+  element: ElementFor<S>
+): void {
+  // SAFETY: we use the internal API for all class-based modifiers to set this
+  // in a way which lets us issue the deprecation warning for anyone accessing
+  // `element` as a getter while allowing types to continue working for any
+  // existing subclasses (see the discussion on the class definition).
+  (instance as InternalClassBasedModifier<S>)[Element] = element;
+}
+
+function updateArgsOnInstance<S>(
+  instance: ClassBasedModifier<S>,
+  args: ArgsFor<S>
+): void {
+  // SAFETY: we use the internal API for all class-based modifiers to set this
+  // in a way which lets us issue the deprecation warning for anyone accessing
+  // `args` as a getter while allowing types to continue working for any
+  // existing subclasses (see the discussion on the class definition).
+  (instance as InternalClassBasedModifier<S>)[Args] = args;
+}
+
 export default class ClassBasedModifierManager<S> {
   capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
 
@@ -95,7 +121,7 @@ export default class ClassBasedModifierManager<S> {
 
     // TODO: this can be deleted entirely at v4.
     const { instance } = state;
-    instance.element = element;
+    installElementOnInstance(instance, element);
 
     if (state.implementsModify) {
       instance.modify(element, args.positional, args.named);
@@ -117,7 +143,8 @@ export default class ClassBasedModifierManager<S> {
   updateModifier(state: InstalledState<S>, args: ArgsFor<S>): void {
     const { instance } = state;
 
-    set(instance, 'args', args); // TODO: remove at 4.0
+    // TODO: remove at 4.0
+    updateArgsOnInstance(state.instance, args);
 
     if (state.implementsModify) {
       instance.modify(state.element, args.positional, args.named);
