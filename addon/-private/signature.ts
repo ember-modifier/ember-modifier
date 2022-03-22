@@ -22,12 +22,14 @@ type DefaultPositional = unknown[];
 /** @private */
 export type PositionalArgs<S> = 'Args' extends keyof S
   ? 'Positional' extends keyof S['Args']
-    ? S['Args']['Positional'] extends unknown[]
+    ? S['Args']['Positional'] extends DefaultPositional
       ? S['Args']['Positional']
       : DefaultPositional
     : DefaultPositional
   : 'positional' extends keyof S
-  ? S['positional']
+  ? S['positional'] extends DefaultPositional
+    ? S['positional']
+    : DefaultPositional
   : DefaultPositional;
 
 type DefaultNamed = Record<string, unknown>;
@@ -35,12 +37,14 @@ type DefaultNamed = Record<string, unknown>;
 /** @private */
 export type NamedArgs<S> = 'Args' extends keyof S
   ? 'Named' extends keyof S['Args']
-    ? S['Args']['Named'] extends Record<string, unknown>
+    ? S['Args']['Named'] extends DefaultNamed
       ? S['Args']['Named']
       : DefaultNamed
     : DefaultNamed
   : 'named' extends keyof S
-  ? S['named']
+  ? S['named'] extends DefaultNamed
+    ? S['named']
+    : DefaultNamed
   : DefaultNamed;
 
 /** @private */
@@ -48,7 +52,6 @@ export interface DefaultSignature {
   Element: Element;
 }
 
-/** @private */
 export interface ArgsFor<S> {
   named: NamedArgs<S>;
   positional: PositionalArgs<S>;

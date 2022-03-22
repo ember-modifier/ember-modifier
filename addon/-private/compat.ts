@@ -27,10 +27,10 @@ const noop = (): void => {};
  * avoid introducing a breaking change until a suitable transition path is made
  * available.
  */
-let consumeArgs: (args: ArgsFor<any>) => void = noop;
+let consumeArgs: <S>(args: ArgsFor<S>) => void = noop;
 
 if (gte('3.22.0')) {
-  consumeArgs = function ({ positional, named }: ArgsFor<any>) {
+  consumeArgs = function ({ positional, named }) {
     for (let i = 0; i < positional.length; i++) {
       positional[i];
     }
