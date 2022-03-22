@@ -16,7 +16,26 @@ function deprecateForDestroyables<S>(
   instance: ClassBasedModifier<S>
 ): void {
   deprecate(
-    `Modifier.${name} is deprecated`,
+    `Modifier.${name} is deprecated. Use the corresponding API from '@ember/destroyable' instead.`,
+    instance[name] !== ClassBasedModifier.prototype[name],
+    {
+      id: 'ember-modifier.use-destroyables',
+      until: '4.0.0',
+      for: 'ember-modifier',
+      since: {
+        available: '3.2.0',
+        enabled: '3.2.0',
+      },
+    }
+  );
+}
+
+function deprecateForLifecycle<S>(
+  name: 'didInstall' | 'didReceiveArguments' | 'didUpdateArguments',
+  instance: ClassBasedModifier<S>
+): void {
+  deprecate(
+    `Modifier.${name} is deprecated. Use the new \`modify\` hook instead.`,
     instance[name] !== ClassBasedModifier.prototype[name],
     {
       id: 'ember-modifier.use-destroyables',
@@ -85,6 +104,9 @@ export default class ClassBasedModifier<S = DefaultSignature> {
     deprecateForDestroyables('willDestroy', this);
     deprecateForDestroyables('isDestroying', this);
     deprecateForDestroyables('isDestroyed', this);
+    deprecateForLifecycle('didInstall', this);
+    deprecateForLifecycle('didReceiveArguments', this);
+    deprecateForLifecycle('didUpdateArguments', this);
 
     assert(
       'ember-modifier: You cannot implement both `modify` and any of the deprecated legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and `didUpdateArguments`)',
@@ -140,6 +162,8 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   /**
    * Called when the modifier is installed **and** anytime the arguments are
    * updated.
+   *
+   * @deprecated Until 4.0. Use `modify()`.
    */
   didReceiveArguments(): void {
     /* no op, for subclassing */
@@ -148,6 +172,8 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   /**
    * Called anytime the arguments are updated but **not** on the initial
    * install. Called before `didReceiveArguments`.
+   *
+   * @deprecated Until 4.0. Use `modify()`.
    */
   didUpdateArguments(): void {
     /* no op, for subclassing */
@@ -156,6 +182,8 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   /**
    * Called when the modifier is installed on the DOM element. Called after
    * `didReceiveArguments`.
+   *
+   * @deprecated Until 4.0. Use `modify()`.
    */
   didInstall(): void {
     /* no op, for subclassing */
