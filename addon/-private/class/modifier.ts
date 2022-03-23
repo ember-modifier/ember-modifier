@@ -109,17 +109,16 @@ export default class ClassBasedModifier<S = DefaultSignature> {
    * class IntersectionObserver extends Modifier {
    *   observer;
    *
+   *   constructor(owner, args) {
+   *     super(owner, args);
+   *     registerDestructor(this, disconnect);
+   *   }
+   *
    *   modify(element, callback, options) {
-   *     // Gets rid of any existing connection, since we're getting called with
-   *     // a new callback or new options, and drops any existing destructor
-   *     // registrations so we avoid having extra destructors lying around.
    *     disconnect(this);
-   *     unregisterDestructor(this, disconnect);
    *
    *     this.observer = new IntersectionObserver(callback, options);
    *     this.observer.observe(element);
-   *
-   *     registerDestructor(this, disconnect);
    *   }
    * }
    * ```
