@@ -87,7 +87,7 @@ export default class ClassBasedModifier<S = DefaultSignature> {
     deprecateForDestroyables('isDestroyed', this);
 
     assert(
-      'ember-modifier: You cannot implement both `run` and any of the deprecated legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and `didUpdateArguments`)',
+      'ember-modifier: You cannot implement both `modify` and any of the deprecated legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and `didUpdateArguments`)',
       !(_implementsModify(this) && _implementsLegacyHooks(this))
     );
   }
