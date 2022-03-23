@@ -114,6 +114,16 @@
         "launchEditor": true
       }
     },
+    "changelog": {
+      "labels": {
+        "breaking": ":boom: Breaking Change",
+        "enhancement": ":rocket: Enhancement",
+        "bug": ":bug: Bug Fix",
+        "documentation": ":memo: Documentation",
+        "internal": ":house: Internal",
+        "deprecation": ":no_entry_sign: Deprecations"
+      }
+    },
     "git": {
       "tagName": "v${version}"
     },
