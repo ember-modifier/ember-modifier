@@ -38,7 +38,7 @@ interface CreateState<S> extends State<S> {
 
 /**
  * The `State` after calling `installModifier`, and therefore the state
- * available in all subsequent `updateModifier` calls.
+ * available in all `updateModifier` calls and in `destroyModifier`.
  * @internal
  */
 interface InstalledState<S> extends State<S> {
@@ -67,24 +67,29 @@ export default class ClassBasedModifierManager<S> {
       element: null,
     };
 
-    // Since we have created a state bucket to hand around, we need to make its
-    // destruction trigger the destruction of the modifier. (Ember will
-    // automatically call `destroy` on the state bucket returned from the
-    // `createModifier` hook for precisely this reason.)
-    associateDestroyableChild(state, modifier);
     registerDestructor(modifier, destroyModifier);
 
     return state;
   }
 
   installModifier(
-    state: State<S>,
+    state: CreateState<S>,
     element: ElementFor<S>,
     args: ArgsFor<S>
   ): void {
-    const { instance } = state;
+    // SAFETY: this cast represents how we are actually handling the state
+    // machine transition: from this point forward in the lifecycle of the
+    // modifier, it always behaves as `InstalledState<S>`. It is safe because,
+    // and *only* because, we immediately initialize `element`. (We cannot
+    // create a new state from the old one because the modifier manager API
+    // expects mutation of a single state bucket rather than updating it at
+    // hook calls.)
+    const installedState = state as State<S> as InstalledState<S>;
+    installedState.element = element;
+
+    // TODO: this can be deleted entirely at v4.
+    const { instance } = installedState;
     instance.element = element;
-    state.element = element;
 
     // The `consumeArgs()` call backwards compatibility on v3 for the deprecated
     // legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and
@@ -127,7 +132,7 @@ export default class ClassBasedModifierManager<S> {
     }
   }
 
-  destroyModifier(instance: ClassBasedModifier): void {
-    destroy(instance);
+  destroyModifier(state: InstalledState<S>): void {
+    destroy(state.instance);
   }
 }
