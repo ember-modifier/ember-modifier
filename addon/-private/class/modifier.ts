@@ -103,7 +103,7 @@ export default class ClassBasedModifier<S = DefaultSignature> {
    *
    * ```js
    * function disconnect(instance) {
-   *  instnace.observer?.disconnect();
+   *  instance.observer?.disconnect();
    * }
    *
    * class IntersectionObserver extends Modifier {
@@ -111,8 +111,10 @@ export default class ClassBasedModifier<S = DefaultSignature> {
    *
    *   modify(element, callback, options) {
    *     // Gets rid of any existing connection, since we're getting called with
-   *     // a new callback or new options.
+   *     // a new callback or new options, and drops any existing destructor
+   *     // registrations so we avoid having extra destructors lying around.
    *     disconnect(this);
+   *     unregisterDestructor(this, disconnect);
    *
    *     this.observer = new IntersectionObserver(callback, options);
    *     this.observer.observe(element);
