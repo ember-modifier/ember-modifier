@@ -19,36 +19,29 @@ export type ElementFor<S> = 'Element' extends keyof S
 
 type DefaultPositional = unknown[];
 
+type Args<S, K, Fallback> = K extends keyof S
+  ? S[K] extends Fallback
+    ? S[K]
+    : Fallback
+  : Fallback;
+
 /** @private */
 export type PositionalArgs<S> = 'Args' extends keyof S
-  ? 'Positional' extends keyof S['Args']
-    ? S['Args']['Positional'] extends unknown[]
-      ? S['Args']['Positional']
-      : DefaultPositional
-    : DefaultPositional
-  : 'positional' extends keyof S
-  ? S['positional']
-  : DefaultPositional;
+  ? Args<S['Args'], 'Positional', DefaultPositional>
+  : Args<S, 'positional', DefaultPositional>;
 
 type DefaultNamed = Record<string, unknown>;
 
 /** @private */
 export type NamedArgs<S> = 'Args' extends keyof S
-  ? 'Named' extends keyof S['Args']
-    ? S['Args']['Named'] extends Record<string, unknown>
-      ? S['Args']['Named']
-      : DefaultNamed
-    : DefaultNamed
-  : 'named' extends keyof S
-  ? S['named']
-  : DefaultNamed;
+  ? Args<S['Args'], 'Named', DefaultNamed>
+  : Args<S, 'named', DefaultNamed>;
 
 /** @private */
 export interface DefaultSignature {
   Element: Element;
 }
 
-/** @private */
 export interface ArgsFor<S> {
   named: NamedArgs<S>;
   positional: PositionalArgs<S>;

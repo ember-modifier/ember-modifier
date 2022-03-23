@@ -27,12 +27,19 @@ const noop = (): void => {};
  * avoid introducing a breaking change until a suitable transition path is made
  * available.
  */
-let consumeArgs: (args: ArgsFor<any>) => void = noop;
+let consumeArgs: <S>(args: ArgsFor<S>) => void = noop;
 
 if (gte('3.22.0')) {
-  consumeArgs = function ({ positional, named }: ArgsFor<any>) {
-    for (let i = 0; i < positional.length; i++) {
-      positional[i];
+  consumeArgs = function ({ positional, named }) {
+    // SAFETY: TS before 4.6 does not correctly/fully resolve the type in a way
+    // that allows the type checker to see that `positional` must *always* be
+    // something which `extends unknown[]` here, because the underlying
+    // machinery is fairly complicated and relies on a fair bit of type
+    // recursion. It will stop mattering when we cut v4.0, because we won't be
+    // doing this anyway.
+    const pos = positional as unknown[];
+    for (let i = 0; i < pos.length; i++) {
+      pos[i];
     }
 
     Object.values(named);

@@ -2,8 +2,14 @@ import { setOwner } from '@ember/application';
 import { setModifierManager } from '@ember/modifier';
 import Manager from './modifier-manager';
 import { isDestroying, isDestroyed } from '@ember/destroyable';
-import { ElementFor, ArgsFor, DefaultSignature } from '../signature';
-import { deprecate } from '@ember/debug';
+import {
+  ElementFor,
+  ArgsFor,
+  DefaultSignature,
+  PositionalArgs,
+  NamedArgs,
+} from '../signature';
+import { assert, deprecate } from '@ember/debug';
 
 function deprecateForDestroyables<S>(
   name: 'willDestroy' | 'isDestroying' | 'isDestroyed',
@@ -23,6 +29,21 @@ function deprecateForDestroyables<S>(
     }
   );
 }
+
+/** @internal */
+export const _implementsModify = <S>(
+  instance: ClassBasedModifier<S>
+): boolean => instance.modify !== ClassBasedModifier.prototype.modify;
+
+/** @internal */
+export const _implementsLegacyHooks = <S>(
+  instance: ClassBasedModifier<S>
+): boolean =>
+  instance.didInstall !== ClassBasedModifier.prototype.didInstall ||
+  instance.didUpdateArguments !==
+    ClassBasedModifier.prototype.didUpdateArguments ||
+  instance.didReceiveArguments !==
+    ClassBasedModifier.prototype.didReceiveArguments;
 
 /**
  * A base class for modifiers which need more capabilities than function-based
@@ -64,6 +85,56 @@ export default class ClassBasedModifier<S = DefaultSignature> {
     deprecateForDestroyables('willDestroy', this);
     deprecateForDestroyables('isDestroying', this);
     deprecateForDestroyables('isDestroyed', this);
+
+    assert(
+      'ember-modifier: You cannot implement both `modify` and any of the deprecated legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and `didUpdateArguments`)',
+      !(_implementsModify(this) && _implementsLegacyHooks(this))
+    );
+  }
+
+  /**
+   * Called when the modifier is installed and any time any tracked state used
+   * in the modifier changes.
+   *
+   * If you need to do first-time-only setup, create a class field representing
+   * the initialization state and check it when running the hook. That is also
+   * where and when you should use `registerDestructor` for any teardown you
+   * need to do. For example:
+   *
+   * ```js
+   * function disconnect(instance) {
+   *  instance.observer?.disconnect();
+   * }
+   *
+   * class IntersectionObserver extends Modifier {
+   *   observer;
+   *
+   *   constructor(owner, args) {
+   *     super(owner, args);
+   *     registerDestructor(this, disconnect);
+   *   }
+   *
+   *   modify(element, callback, options) {
+   *     disconnect(this);
+   *
+   *     this.observer = new IntersectionObserver(callback, options);
+   *     this.observer.observe(element);
+   *   }
+   * }
+   * ```
+   *
+   * @param element The element to which the modifier is applied.
+   * @param positional The positional arguments to the modifier.
+   * @param named The named arguments to the modifier.
+   */
+  modify(
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    element: ElementFor<S>,
+    positional: PositionalArgs<S>,
+    named: NamedArgs<S>
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+  ): void {
+    /* no op, for subclassing */
   }
 
   /**
