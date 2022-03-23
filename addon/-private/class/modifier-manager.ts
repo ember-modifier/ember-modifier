@@ -1,11 +1,7 @@
 import { capabilities } from '@ember/modifier';
 import { gte } from 'ember-compatibility-helpers';
 import { set } from '@ember/object';
-import {
-  destroy,
-  registerDestructor,
-  associateDestroyableChild,
-} from '@ember/destroyable';
+import { destroy, registerDestructor } from '@ember/destroyable';
 
 import ClassBasedModifier, { _implementsModify } from './modifier';
 import { ArgsFor, ElementFor } from 'ember-modifier/-private/signature';
@@ -33,7 +29,7 @@ interface State<S> {
  * at the start of `InstallModifier`.
  * @internal
  */
-interface CreateState<S> extends State<S> {
+interface CreatedState<S> extends State<S> {
   element: null;
 }
 
@@ -56,14 +52,14 @@ export default class ClassBasedModifierManager<S> {
       | Factory<typeof ClassBasedModifier>
       | typeof ClassBasedModifier,
     args: ArgsFor<S>
-  ): CreateState<S> {
+  ): CreatedState<S> {
     const Modifier = isFactory(factoryOrClass)
       ? factoryOrClass.class
       : factoryOrClass;
 
     const modifier = new Modifier(this.owner, args);
 
-    const state: CreateState<S> = {
+    const state: CreatedState<S> = {
       instance: modifier,
       element: null,
     };
@@ -74,7 +70,7 @@ export default class ClassBasedModifierManager<S> {
   }
 
   installModifier(
-    state: CreateState<S>,
+    state: CreatedState<S>,
     element: ElementFor<S>,
     args: ArgsFor<S>
   ): void {
