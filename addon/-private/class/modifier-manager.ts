@@ -44,6 +44,23 @@ interface InstalledState<S> extends State<S> {
   element: ElementFor<S>;
 }
 
+// Wraps the unsafe (b/c it mutates, rather than creating new state) code that
+// TS does not yet understand.
+function installElement<S>(
+  state: CreatedState<S>,
+  element: ElementFor<S>
+): InstalledState<S> {
+  // SAFETY: this cast represents how we are actually handling the state machine
+  // transition: from this point forward in the lifecycle of the modifier, it
+  // always behaves as `InstalledState<S>`. It is safe because, and *only*
+  // because, we immediately initialize `element`. (We cannot create a new state
+  // from the old one because the modifier manager API expects mutation of a
+  // single state bucket rather than updating it at hook calls.)
+  const installedState = state as State<S> as InstalledState<S>;
+  installedState.element = element;
+  return installedState;
+}
+
 export default class ClassBasedModifierManager<S> {
   capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
 
@@ -70,25 +87,17 @@ export default class ClassBasedModifierManager<S> {
   }
 
   installModifier(
-    state: CreatedState<S>,
+    createdState: CreatedState<S>,
     element: ElementFor<S>,
     args: ArgsFor<S>
   ): void {
-    // SAFETY: this cast represents how we are actually handling the state
-    // machine transition: from this point forward in the lifecycle of the
-    // modifier, it always behaves as `InstalledState<S>`. It is safe because,
-    // and *only* because, we immediately initialize `element`. (We cannot
-    // create a new state from the old one because the modifier manager API
-    // expects mutation of a single state bucket rather than updating it at
-    // hook calls.)
-    const installedState = state as State<S> as InstalledState<S>;
-    installedState.element = element;
+    const state = installElement(createdState, element);
 
     // TODO: this can be deleted entirely at v4.
-    const { instance } = installedState;
+    const { instance } = state;
     instance.element = element;
 
-    if (installedState.implementsModify) {
+    if (state.implementsModify) {
       instance.modify(element, args.positional, args.named);
     } else {
       // The `consumeArgs()` call provides backwards compatibility on v3 for the
