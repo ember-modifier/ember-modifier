@@ -27,8 +27,9 @@ function-based modifiers and more complicated class-based modifiers.
     - [Example with Service Injection](#example-with-service-injection)
     - [API](#api)
 - [TypeScript](#typescript-1)
+  - [The `Signature` type](#the-signature-type)
   - [Examples with TypeScript](#examples-with-typescript)
-    - [Functional modifier](#functional-modifier)
+    - [Function-based modifier](#function-based-modifier)
     - [Class-based](#class-based)
   - [Additional reading](#additional-reading)
 - [API Differences](#api-differences)
@@ -50,7 +51,7 @@ Compatibility
 
 This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] proposal.
 
-- **Currently supported TypeScript versions:** v4.2, v4.3, v4.4, and v4.5
+- **Currently supported TypeScript versions:** v4.2, v4.3, v4.4, v4.5, and v4.6
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published types not in a `-private` module are public
 
