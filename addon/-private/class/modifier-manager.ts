@@ -16,10 +16,12 @@ function destroyModifier<S>(modifier: ClassBasedModifier<S>): void {
  * state *machine*, where the framework calls us with the version we hand back
  * to it at each phase. The two states are the two `extends` versions of this
  * below.
+ *
  * @internal
  */
 interface State<S> {
   instance: ClassBasedModifier<S>;
+  implementsModify: boolean;
   element: ElementFor<S> | null;
 }
 
@@ -57,15 +59,13 @@ export default class ClassBasedModifierManager<S> {
       : factoryOrClass;
 
     const modifier = new Modifier(this.owner, args);
-
-    const state: CreatedState<S> = {
-      instance: modifier,
-      element: null,
-    };
-
     registerDestructor(modifier, destroyModifier);
 
-    return state;
+    return {
+      instance: modifier,
+      implementsModify: _implementsModify(modifier),
+      element: null,
+    };
   }
 
   installModifier(
@@ -87,19 +87,18 @@ export default class ClassBasedModifierManager<S> {
     const { instance } = installedState;
     instance.element = element;
 
-    // The `consumeArgs()` call backwards compatibility on v3 for the deprecated
-    // legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and
-    // `didUpdateArguments`), which accidentally had eager consumption semantics
-    // prior to Ember 3.22. The new, recommended `modify` hook has the updated
-    // lazy semantics associated with normal auto-tracking.
-    const implementsModify = _implementsModify(instance);
-    if (gte('3.22.0') && !implementsModify) {
-      consumeArgs(args);
-    }
-
-    if (implementsModify) {
+    if (installedState.implementsModify) {
       instance.modify(element, args.positional, args.named);
     } else {
+      // The `consumeArgs()` call provides backwards compatibility on v3 for the
+      // deprecated legacy lifecycle hooks (`didInstall`, `didReceiveArguments`,
+      // and `didUpdateArguments`), which accidentally had eager consumption
+      // semantics prior to Ember 3.22. The new, recommended `modify` hook has
+      // the updated lazy semantics associated with normal auto-tracking.
+      if (gte('3.22.0')) {
+        consumeArgs(args);
+      }
+
       instance.didReceiveArguments();
       instance.didInstall();
     }
@@ -108,21 +107,20 @@ export default class ClassBasedModifierManager<S> {
   updateModifier(state: InstalledState<S>, args: ArgsFor<S>): void {
     const { instance } = state;
 
-    set(instance, 'args', args); // TODO: remove aat 4.0
+    set(instance, 'args', args); // TODO: remove at 4.0
 
-    // The `consumeArgs()` call backwards compatibility on v3 for the deprecated
-    // legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and
-    // `didUpdateArguments`), which accidentally had eager consumption semantics
-    // prior to Ember 3.22. The new, recommended `modify` hook has the updated
-    // lazy semantics associated with normal auto-tracking.
-    const implementsModify = _implementsModify(instance);
-    if (gte('3.22.0') && !implementsModify) {
-      consumeArgs(args);
-    }
-
-    if (implementsModify) {
+    if (state.implementsModify) {
       instance.modify(state.element, args.positional, args.named);
     } else {
+      // The `consumeArgs()` call provides backwards compatibility on v3 for the
+      // deprecated legacy lifecycle hooks (`didInstall`, `didReceiveArguments`,
+      // and `didUpdateArguments`), which accidentally had eager consumption
+      // semantics prior to Ember 3.22. The new, recommended `modify` hook has
+      // the updated lazy semantics associated with normal auto-tracking.
+      if (gte('3.22.0')) {
+        consumeArgs(args);
+      }
+
       instance.didUpdateArguments();
       instance.didReceiveArguments();
     }
