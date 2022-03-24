@@ -5,7 +5,7 @@ export interface ModifierArgs {
   /** Positional arguments to a modifier, `{{foo @bar this.baz}}` */
   positional: unknown[];
   /** Named arguments to a modifier, `{{foo bar=this.baz}}` */
-  named: Record<string, unknown>;
+  named: object;
 }
 
 // --- Type utilities for use with Signature types --- //

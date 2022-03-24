@@ -349,6 +349,6 @@ modifier((el) => {
 
 // --- type utilities --- //
 expectTypeOf<ModifierArgs>().toEqualTypeOf<{
-  named: Record<string, unknown>;
+  named: object;
   positional: unknown[];
 }>();
