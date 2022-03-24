@@ -58,15 +58,64 @@ expectTypeOf(narrowerFn).toEqualTypeOf<
   }>
 >();
 
+const narrowerFnWithEagerFalse = modifier(
+  (div: HTMLIFrameElement, pos: [string], named: Record<Foo, number>) => {
+    function handler(event: MouseEvent): void {
+      console.log(event.clientX, event.clientY, pos[0], named[Foo.Bar]);
+    }
+    div.addEventListener('mouseenter', handler);
+
+    return () => div.removeEventListener('mouseenter', handler);
+  },
+  { eager: false }
+);
+
+// Additionally, the type of the resulting modifier should be as we expect.
+expectTypeOf(narrowerFnWithEagerFalse).toEqualTypeOf<
+  FunctionBasedModifier<{
+    Args: {
+      Named: Record<Foo, number>;
+      Positional: [string];
+    };
+    Element: HTMLIFrameElement;
+  }>
+>();
+
+const narrowerFnWithEagerTrue = modifier(
+  (div: HTMLIFrameElement, pos: [string], named: Record<Foo, number>) => {
+    function handler(event: MouseEvent): void {
+      console.log(event.clientX, event.clientY, pos[0], named[Foo.Bar]);
+    }
+    div.addEventListener('mouseenter', handler);
+
+    return () => div.removeEventListener('mouseenter', handler);
+  },
+  { eager: true }
+);
+
+// Additionally, the type of the resulting modifier should be as we expect.
+expectTypeOf(narrowerFnWithEagerTrue).toEqualTypeOf<
+  FunctionBasedModifier<{
+    Args: {
+      Named: Record<Foo, number>;
+      Positional: [string];
+    };
+    Element: HTMLIFrameElement;
+  }>
+>();
+
 interface TestElementOnly {
   Element: HTMLCanvasElement;
 }
 
-const elementOnly = modifier<TestElementOnly>((el, pos, named) => {
-  expectTypeOf(el).toEqualTypeOf<HTMLCanvasElement>();
-  expectTypeOf(pos).toEqualTypeOf<unknown[]>();
-  expectTypeOf(named).toEqualTypeOf<Record<string, unknown>>();
-});
+const elementOnly = modifier<TestElementOnly>(
+  (el, pos, named) => {
+    expectTypeOf(el).toEqualTypeOf<HTMLCanvasElement>();
+    expectTypeOf(pos).toEqualTypeOf<unknown[]>();
+    expectTypeOf(named).toEqualTypeOf<object>();
+  },
+  { eager: false }
+);
 
 expectTypeOf(elementOnly).toEqualTypeOf<
   FunctionBasedModifier<{
@@ -83,11 +132,14 @@ interface NamedArgsOnly {
   };
 }
 
-const namedArgsOnly = modifier<NamedArgsOnly>((el, pos, named) => {
-  expectTypeOf(el).toEqualTypeOf<Element>();
-  expectTypeOf(pos).toEqualTypeOf<unknown[]>();
-  expectTypeOf(named).toEqualTypeOf<NamedArgsOnly['Args']['Named']>();
-});
+const namedArgsOnly = modifier<NamedArgsOnly>(
+  (el, pos, named) => {
+    expectTypeOf(el).toEqualTypeOf<Element>();
+    expectTypeOf(pos).toEqualTypeOf<unknown[]>();
+    expectTypeOf(named).toEqualTypeOf<NamedArgsOnly['Args']['Named']>();
+  },
+  { eager: false }
+);
 
 expectTypeOf(namedArgsOnly).toEqualTypeOf<
   FunctionBasedModifier<{
@@ -105,17 +157,20 @@ interface PositionalArgsOnly {
   };
 }
 
-const positionalArgsOnly = modifier<PositionalArgsOnly>((el, pos, named) => {
-  expectTypeOf(el).toEqualTypeOf<Element>();
-  expectTypeOf(pos).toEqualTypeOf<PositionalArgsOnly['Args']['Positional']>();
-  expectTypeOf(named).toEqualTypeOf<Record<string, unknown>>();
-});
+const positionalArgsOnly = modifier<PositionalArgsOnly>(
+  (el, pos, named) => {
+    expectTypeOf(el).toEqualTypeOf<Element>();
+    expectTypeOf(pos).toEqualTypeOf<PositionalArgsOnly['Args']['Positional']>();
+    expectTypeOf(named).toEqualTypeOf<object>();
+  },
+  { eager: false }
+);
 
 expectTypeOf(positionalArgsOnly).toEqualTypeOf<
   FunctionBasedModifier<{
     Element: Element;
     Args: {
-      Named: Record<string, unknown>;
+      Named: object;
       Positional: PositionalArgsOnly['Args']['Positional'];
     };
   }>
@@ -130,11 +185,14 @@ interface ArgsOnly {
   };
 }
 
-const argsOnly = modifier<ArgsOnly>((el, pos, named) => {
-  expectTypeOf(el).toEqualTypeOf<Element>();
-  expectTypeOf(pos).toEqualTypeOf<ArgsOnly['Args']['Positional']>();
-  expectTypeOf(named).toEqualTypeOf<ArgsOnly['Args']['Named']>();
-});
+const argsOnly = modifier<ArgsOnly>(
+  (el, pos, named) => {
+    expectTypeOf(el).toEqualTypeOf<Element>();
+    expectTypeOf(pos).toEqualTypeOf<ArgsOnly['Args']['Positional']>();
+    expectTypeOf(named).toEqualTypeOf<ArgsOnly['Args']['Named']>();
+  },
+  { eager: false }
+);
 
 expectTypeOf(argsOnly).toEqualTypeOf<
   FunctionBasedModifier<{
@@ -154,11 +212,14 @@ interface Full {
   };
 }
 
-const full = modifier<Full>((el, pos, named) => {
-  expectTypeOf(el).toEqualTypeOf<Full['Element']>();
-  expectTypeOf(pos).toEqualTypeOf<Full['Args']['Positional']>();
-  expectTypeOf(named).toEqualTypeOf<Full['Args']['Named']>();
-});
+const full = modifier<Full>(
+  (el, pos, named) => {
+    expectTypeOf(el).toEqualTypeOf<Full['Element']>();
+    expectTypeOf(pos).toEqualTypeOf<Full['Args']['Positional']>();
+    expectTypeOf(named).toEqualTypeOf<Full['Args']['Named']>();
+  },
+  { eager: false }
+);
 
 expectTypeOf(full).toEqualTypeOf<FunctionBasedModifier<Full>>();
 
