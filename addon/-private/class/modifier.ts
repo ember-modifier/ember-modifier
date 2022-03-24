@@ -10,24 +10,18 @@ import {
   NamedArgs,
 } from '../signature';
 import { assert, deprecate } from '@ember/debug';
+import { DEBUG } from '@glimmer/env';
 
-function deprecateForDestroyables<S>(
-  name: 'willDestroy' | 'isDestroying' | 'isDestroyed',
-  instance: ClassBasedModifier<S>
-): void {
-  deprecate(
-    `Modifier.${name} is deprecated`,
-    instance[name] !== ClassBasedModifier.prototype[name],
-    {
-      id: 'ember-modifier.use-destroyables',
-      until: '4.0.0',
-      for: 'ember-modifier',
-      since: {
-        available: '3.2.0',
-        enabled: '3.2.0',
-      },
-    }
-  );
+// SAFETY: these sets are dev-only code to avoid showing deprecations for the
+// same class more than once.
+let SEEN_CLASSES_FOR_LIFECYCLE: Set<ClassBasedModifier['constructor']>;
+if (DEBUG) {
+  SEEN_CLASSES_FOR_LIFECYCLE = new Set();
+}
+
+let SEEN_CLASSES_FOR_DESTROYABLES: Set<ClassBasedModifier['constructor']>;
+if (DEBUG) {
+  SEEN_CLASSES_FOR_DESTROYABLES = new Set();
 }
 
 /** @internal */
@@ -82,14 +76,53 @@ export default class ClassBasedModifier<S = DefaultSignature> {
     setOwner(this, owner);
     this.args = args;
 
-    deprecateForDestroyables('willDestroy', this);
-    deprecateForDestroyables('isDestroying', this);
-    deprecateForDestroyables('isDestroyed', this);
-
     assert(
       'ember-modifier: You cannot implement both `modify` and any of the deprecated legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and `didUpdateArguments`)',
       !(_implementsModify(this) && _implementsLegacyHooks(this))
     );
+
+    deprecate(
+      `ember-modifier (in ${this.constructor.name} at ${
+        new Error().stack
+      }): \`willDestroy\`, \`isDestroyed\`, and \`isDestroyed\` are deprecated. Use the corresponding API from '@ember/destroyable' instead.`,
+      (['willDestroy', 'isDestroying', 'isDestroyed'] as const).some(
+        (name) => this[name] !== ClassBasedModifier.prototype[name]
+      ) && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
+      {
+        id: 'ember-modifier.use-destroyables',
+        until: '4.0.0',
+        for: 'ember-modifier',
+        since: {
+          available: '3.2.0',
+          enabled: '3.2.0',
+        },
+      }
+    );
+
+    if (DEBUG && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor)) {
+      SEEN_CLASSES_FOR_DESTROYABLES.add(this.constructor);
+    }
+
+    deprecate(
+      `ember-modifier (in ${this.constructor.name} at ${
+        new Error().stack
+      }): The \`didInstall\`, \`didReceiveArguments\`, and \`didUpdateArguments\` hooks are deprecated. Use the new \`modify\` hook instead.`,
+      !_implementsModify(this) &&
+        !SEEN_CLASSES_FOR_LIFECYCLE.has(this.constructor),
+      {
+        id: 'ember-modifier.use-modify',
+        until: '4.0.0',
+        for: 'ember-modifier',
+        since: {
+          available: '3.2.0',
+          enabled: '3.2.0',
+        },
+      }
+    );
+
+    if (DEBUG && !SEEN_CLASSES_FOR_LIFECYCLE.has(this.constructor)) {
+      SEEN_CLASSES_FOR_LIFECYCLE.add(this.constructor);
+    }
   }
 
   /**
@@ -140,6 +173,8 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   /**
    * Called when the modifier is installed **and** anytime the arguments are
    * updated.
+   *
+   * @deprecated Until 4.0. Use `modify()`.
    */
   didReceiveArguments(): void {
     /* no op, for subclassing */
@@ -148,6 +183,8 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   /**
    * Called anytime the arguments are updated but **not** on the initial
    * install. Called before `didReceiveArguments`.
+   *
+   * @deprecated Until 4.0. Use `modify()`.
    */
   didUpdateArguments(): void {
     /* no op, for subclassing */
@@ -156,6 +193,8 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   /**
    * Called when the modifier is installed on the DOM element. Called after
    * `didReceiveArguments`.
+   *
+   * @deprecated Until 4.0. Use `modify()`.
    */
   didInstall(): void {
     /* no op, for subclassing */
@@ -175,15 +214,23 @@ export default class ClassBasedModifier<S = DefaultSignature> {
    * @deprecated Until 4.0. Use `isDestroying` from `@ember/destroyables`.
    */
   get isDestroying(): boolean {
-    deprecate('Modifier.isDestroying is deprecated', false, {
-      id: 'ember-modifier.use-destroyables',
-      until: '4.0.0',
-      for: 'ember-modifier',
-      since: {
-        available: '3.2.0',
-        enabled: '3.2.0',
-      },
-    });
+    deprecate(
+      'Modifier.isDestroying is deprecated',
+      !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
+      {
+        id: 'ember-modifier.use-destroyables',
+        until: '4.0.0',
+        for: 'ember-modifier',
+        since: {
+          available: '3.2.0',
+          enabled: '3.2.0',
+        },
+      }
+    );
+
+    if (DEBUG && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor)) {
+      SEEN_CLASSES_FOR_DESTROYABLES.add(this.constructor);
+    }
 
     return isDestroying(this);
   }
@@ -192,15 +239,23 @@ export default class ClassBasedModifier<S = DefaultSignature> {
    * @deprecated Until 4.0. Use `isDestroyed` from `@ember/destroyables`.
    */
   get isDestroyed(): boolean {
-    deprecate('Modifier.isDestroyed is deprecated', false, {
-      id: 'ember-modifier.use-destroyables',
-      until: '4.0.0',
-      for: 'ember-modifier',
-      since: {
-        available: '3.2.0',
-        enabled: '3.2.0',
-      },
-    });
+    deprecate(
+      'Modifier.isDestroyed is deprecated',
+      !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
+      {
+        id: 'ember-modifier.use-destroyables',
+        until: '4.0.0',
+        for: 'ember-modifier',
+        since: {
+          available: '3.2.0',
+          enabled: '3.2.0',
+        },
+      }
+    );
+
+    if (DEBUG && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor)) {
+      SEEN_CLASSES_FOR_DESTROYABLES.add(this.constructor);
+    }
 
     return isDestroyed(this);
   }
