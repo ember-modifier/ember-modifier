@@ -8,6 +8,12 @@ import {
 } from '../signature';
 import FunctionalModifierManager from './modifier-manager';
 
+// Provide a singleton manager for each of the options. (If we extend this to
+// many more options in the future, we can revisit, but for now this means we
+// only ever allocate two managers.)
+const EAGER_MANAGER = new FunctionalModifierManager({ eager: true });
+const LAZY_MANAGER = new FunctionalModifierManager({ eager: false });
+
 // Type-only utilities used for representing the type of a Modifier in a way
 // that (a) has no runtime overhead and (b) makes no public API commitment: by
 // extending it with an interface representing the modifier, its internals
@@ -163,8 +169,9 @@ export default function modifier(
   // type of `setModifierManager` today is `void`; we pretend it actually
   // returns an opaque `Modifier` type so that we can provide a result from this
   // type which is useful to TS-aware tooling (e.g. Glint).
+  const isEager = !options || options?.eager;
   return setModifierManager(
-    () => new FunctionalModifierManager(options),
+    () => (isEager ? EAGER_MANAGER : LAZY_MANAGER),
     fn
   ) as unknown as FunctionBasedModifier<{
     Element: Element;
