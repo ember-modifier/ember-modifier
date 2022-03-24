@@ -33,7 +33,7 @@ export interface FunctionBasedModifier<S = DefaultSignature>
  * cleanup or teardown -- for example, removing an event listener from an
  * element besides the one passed into the modifier.
  */
-type Teardown = () => unknown;
+export type Teardown = () => unknown;
 
 /**
  * An API for writing simple modifiers.
@@ -55,9 +55,67 @@ type Teardown = () => unknown;
 export default function modifier<
   E extends Element,
   P extends unknown[],
-  N extends Record<string, unknown>
+  N extends object
 >(
   fn: (element: E, positional: P, named: N) => void | Teardown
+): FunctionBasedModifier<{
+  Args: { Named: N; Positional: P };
+  Element: E;
+}>;
+
+/**
+ * An API for writing simple modifiers.
+ *
+ * This function runs the first time when the element the modifier was applied
+ * to is inserted into the DOM, and it *autotracks* while running. Any values
+ * that it accesses will be tracked, including the arguments it receives, and if
+ * any of them changes, the function will run again.
+ *
+ * The modifier can also optionally return a *destructor*. The destructor
+ * function will be run just before the next update, and when the element is
+ * being removed entirely. It should generally clean up the changes that the
+ * modifier made in the first place.
+ *
+ * @param fn The function which defines the modifier.
+ */
+// This overload allows users to write types directly on the callback passed to
+// the `modifier` function and infer the resulting type correctly.
+export default function modifier<
+  E extends Element,
+  P extends unknown[],
+  N extends object
+>(
+  fn: (element: E, positional: P, named: N) => void | Teardown,
+  options: { eager: true }
+): FunctionBasedModifier<{
+  Args: { Named: N; Positional: P };
+  Element: E;
+}>;
+
+/**
+ * An API for writing simple modifiers.
+ *
+ * This function runs the first time when the element the modifier was applied
+ * to is inserted into the DOM, and it *autotracks* while running. Any values
+ * that it accesses will be tracked, including the arguments it receives, and if
+ * any of them changes, the function will run again.
+ *
+ * The modifier can also optionally return a *destructor*. The destructor
+ * function will be run just before the next update, and when the element is
+ * being removed entirely. It should generally clean up the changes that the
+ * modifier made in the first place.
+ *
+ * @param fn The function which defines the modifier.
+ */
+// This overload allows users to write types directly on the callback passed to
+// the `modifier` function and infer the resulting type correctly.
+export default function modifier<
+  E extends Element,
+  P extends unknown[],
+  N extends object
+>(
+  fn: (element: E, positional: P, named: N) => void | Teardown,
+  options: { eager: false }
 ): FunctionBasedModifier<{
   Args: { Named: N; Positional: P };
   Element: E;
@@ -73,7 +131,8 @@ export default function modifier<S>(
     element: ElementFor<S>,
     positional: PositionalArgs<S>,
     named: NamedArgs<S>
-  ) => void | Teardown
+  ) => void | Teardown,
+  options: { eager: false }
 ): FunctionBasedModifier<{
   Element: ElementFor<S>;
   Args: {
@@ -90,12 +149,13 @@ export default function modifier(
   fn: (
     element: Element,
     positional: unknown[],
-    named: Record<string, undefined>
-  ) => void | Teardown
+    named: object
+  ) => void | Teardown,
+  options?: { eager: boolean }
 ): FunctionBasedModifier<{
   Element: Element;
   Args: {
-    Named: Record<string, unknown>;
+    Named: object;
     Positional: unknown[];
   };
 }> {
@@ -104,12 +164,12 @@ export default function modifier(
   // returns an opaque `Modifier` type so that we can provide a result from this
   // type which is useful to TS-aware tooling (e.g. Glint).
   return setModifierManager(
-    () => FunctionalModifierManager,
+    () => new FunctionalModifierManager(options),
     fn
   ) as unknown as FunctionBasedModifier<{
     Element: Element;
     Args: {
-      Named: Record<string, unknown>;
+      Named: object;
       Positional: unknown[];
     };
   }>;

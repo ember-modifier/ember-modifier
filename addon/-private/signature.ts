@@ -30,7 +30,7 @@ export type PositionalArgs<S> = 'Args' extends keyof S
   ? Args<S['Args'], 'Positional', DefaultPositional>
   : Args<S, 'positional', DefaultPositional>;
 
-type DefaultNamed = Record<string, unknown>;
+type DefaultNamed = object;
 
 /** @private */
 export type NamedArgs<S> = 'Args' extends keyof S
