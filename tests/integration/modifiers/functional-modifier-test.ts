@@ -50,7 +50,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
     test('named arguments are passed', async function (this: TestContext, assert) {
       this.registerModifier(
         'songbird',
-        modifier((_, __, { a, b }) => {
+        modifier((_, __, { a, b }: Record<string, string>) => {
           assert.equal(a, '1');
           assert.equal(b, '2');
         })
