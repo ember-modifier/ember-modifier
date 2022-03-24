@@ -214,15 +214,19 @@ export default class ClassBasedModifier<S = DefaultSignature> {
    * @deprecated Until 4.0. Use `isDestroying` from `@ember/destroyables`.
    */
   get isDestroying(): boolean {
-    deprecate('Modifier.isDestroying is deprecated', false, {
-      id: 'ember-modifier.use-destroyables',
-      until: '4.0.0',
-      for: 'ember-modifier',
-      since: {
-        available: '3.2.0',
-        enabled: '3.2.0',
-      },
-    });
+    deprecate(
+      'Modifier.isDestroying is deprecated',
+      !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
+      {
+        id: 'ember-modifier.use-destroyables',
+        until: '4.0.0',
+        for: 'ember-modifier',
+        since: {
+          available: '3.2.0',
+          enabled: '3.2.0',
+        },
+      }
+    );
 
     if (DEBUG && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor)) {
       SEEN_CLASSES_FOR_DESTROYABLES.add(this.constructor);
