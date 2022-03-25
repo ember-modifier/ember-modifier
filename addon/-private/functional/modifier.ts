@@ -7,6 +7,12 @@ import {
 } from '../signature';
 import FunctionalModifierManager from './modifier-manager';
 
+// Provide a singleton manager for each of the options. (If we extend this to
+// many more options in the future, we can revisit, but for now this means we
+// only ever allocate two managers.)
+const EAGER_MANAGER = new FunctionalModifierManager({ eager: true });
+const LAZY_MANAGER = new FunctionalModifierManager({ eager: false });
+
 // Type-only utilities used for representing the type of a Modifier in a way
 // that (a) has no runtime overhead and (b) makes no public API commitment: by
 // extending it with an interface representing the modifier, its internals
@@ -32,15 +38,19 @@ export interface FunctionBasedModifier<S = DefaultSignature>
  * cleanup or teardown -- for example, removing an event listener from an
  * element besides the one passed into the modifier.
  */
-type Teardown = () => unknown;
+export type Teardown = () => unknown;
 
 /**
  * An API for writing simple modifiers.
  *
  * This function runs the first time when the element the modifier was applied
  * to is inserted into the DOM, and it *autotracks* while running. Any values
- * that it accesses will be tracked, including the arguments it receives, and if
- * any of them changes, the function will run again.
+ * that it accesses will be tracked, and if any of them changes, the function
+ * will run again.
+ *
+ * **Note:** this will rerun if any of its arguments change, *whether or not you
+ * access them*. This is legacy behavior and you should switch to using the
+ * `{ eager: false }` variant, which has normal auto-tracking semantics.
  *
  * The modifier can also optionally return a *destructor*. The destructor
  * function will be run just before the next update, and when the element is
@@ -54,7 +64,7 @@ type Teardown = () => unknown;
 export default function modifier<
   E extends Element,
   P extends unknown[],
-  N extends Record<string, unknown>
+  N extends object
 >(
   fn: (element: E, positional: P, named: N) => void | Teardown
 ): FunctionBasedModifier<{
@@ -62,6 +72,94 @@ export default function modifier<
   Element: E;
 }>;
 
+/**
+ * An API for writing simple modifiers.
+ *
+ * This function runs the first time when the element the modifier was applied
+ * to is inserted into the DOM, and it *autotracks* while running. Any values
+ * that it accesses will be tracked, and if any of them changes, the function
+ * will run again.
+ *
+ * **Note:** this will rerun if any of its arguments change, *whether or not you
+ * access them*. This is legacy behavior and you should switch to using the
+ * `{ eager: false }` variant, which has normal auto-tracking semantics.
+ *
+ * The modifier can also optionally return a *destructor*. The destructor
+ * function will be run just before the next update, and when the element is
+ * being removed entirely. It should generally clean up the changes that the
+ * modifier made in the first place.
+ *
+ * @param fn The function which defines the modifier.
+ * @param options Configuration for the modifier.
+ */
+// This overload allows users to write types directly on the callback passed to
+// the `modifier` function and infer the resulting type correctly.
+export default function modifier<
+  E extends Element,
+  P extends unknown[],
+  N extends object
+>(
+  fn: (element: E, positional: P, named: N) => void | Teardown,
+  options: { eager: true }
+): FunctionBasedModifier<{
+  Args: { Named: N; Positional: P };
+  Element: E;
+}>;
+
+/**
+ * An API for writing simple modifiers.
+ *
+ * This function runs the first time when the element the modifier was applied
+ * to is inserted into the DOM, and it *autotracks* while running. Any values
+ * that it accesses will be tracked, including any of its arguments that it
+ * accesses, and if any of them changes, the function will run again.
+ *
+ * **Note:** this will *not* automatically rerun because an argument changes. It
+ * will only rerun if it is *using* that argument (the same as with auto-tracked
+ * state in general).
+ *
+ * The modifier can also optionally return a *destructor*. The destructor
+ * function will be run just before the next update, and when the element is
+ * being removed entirely. It should generally clean up the changes that the
+ * modifier made in the first place.
+ *
+ * @param fn The function which defines the modifier.
+ * @param options Configuration for the modifier.
+ */
+// This overload allows users to write types directly on the callback passed to
+// the `modifier` function and infer the resulting type correctly.
+export default function modifier<
+  E extends Element,
+  P extends unknown[],
+  N extends object
+>(
+  fn: (element: E, positional: P, named: N) => void | Teardown,
+  options: { eager: false }
+): FunctionBasedModifier<{
+  Args: { Named: N; Positional: P };
+  Element: E;
+}>;
+
+/**
+ * An API for writing simple modifiers.
+ *
+ * This function runs the first time when the element the modifier was applied
+ * to is inserted into the DOM, and it *autotracks* while running. Any values
+ * that it accesses will be tracked, including any of its arguments that it
+ * accesses, and if any of them changes, the function will run again.
+ *
+ * **Note:** this will *not* automatically rerun because an argument changes. It
+ * will only rerun if it is *using* that argument (the same as with auto-tracked
+ * state in general).
+ *
+ * The modifier can also optionally return a *destructor*. The destructor
+ * function will be run just before the next update, and when the element is
+ * being removed entirely. It should generally clean up the changes that the
+ * modifier made in the first place.
+ *
+ * @param fn The function which defines the modifier.
+ * @param options Configuration for the modifier.
+ */
 // This overload allows users to provide a `Signature` type explicitly at the
 // modifier definition site, e.g. `modifier<Sig>((el, pos, named) => {...})`.
 // **Note:** this overload must appear second, since TS' inference engine will
@@ -72,7 +170,8 @@ export default function modifier<S>(
     element: ElementFor<S>,
     positional: PositionalArgs<S>,
     named: NamedArgs<S>
-  ) => void | Teardown
+  ) => void | Teardown,
+  options: { eager: false }
 ): FunctionBasedModifier<{
   Element: ElementFor<S>;
   Args: {
@@ -89,12 +188,13 @@ export default function modifier(
   fn: (
     element: Element,
     positional: unknown[],
-    named: Record<string, undefined>
-  ) => void | Teardown
+    named: object
+  ) => void | Teardown,
+  options: { eager: boolean } = { eager: true }
 ): FunctionBasedModifier<{
   Element: Element;
   Args: {
-    Named: Record<string, unknown>;
+    Named: object;
     Positional: unknown[];
   };
 }> {
@@ -103,12 +203,12 @@ export default function modifier(
   // returns an opaque `Modifier` type so that we can provide a result from this
   // type which is useful to TS-aware tooling (e.g. Glint).
   return setModifierManager(
-    () => FunctionalModifierManager,
+    () => (options.eager ? EAGER_MANAGER : LAZY_MANAGER),
     fn
   ) as unknown as FunctionBasedModifier<{
     Element: Element;
     Args: {
-      Named: Record<string, unknown>;
+      Named: object;
       Positional: unknown[];
     };
   }>;

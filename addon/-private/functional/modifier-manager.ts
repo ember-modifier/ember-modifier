@@ -1,98 +1,101 @@
 import { capabilities } from '@ember/modifier';
 import { gte } from 'ember-compatibility-helpers';
-import type { FunctionalModifierDefinition } from './modifier';
+import type { FunctionalModifierDefinition, Teardown } from './modifier';
 import type { ArgsFor, ElementFor } from '../signature';
 import { consumeArgs, Factory, isFactory } from '../compat';
-import { assert } from '@ember/debug';
 
-type ElementMap = {
-  get<S>(key: FunctionalModifierDefinition<S>): ElementFor<S> | null;
-  set<S>(key: FunctionalModifierDefinition<S>, value: ElementFor<S>): void;
-};
-
-type TeardownMap = {
-  get<S>(key: FunctionalModifierDefinition<S>): unknown;
-  set<S>(key: FunctionalModifierDefinition<S>, value: unknown): void;
-};
-
-const MODIFIER_ELEMENTS = new WeakMap() as ElementMap;
-const MODIFIER_TEARDOWNS = new WeakMap() as TeardownMap;
-
-function teardown<S>(modifier: FunctionalModifierDefinition<S>): void {
-  const teardown = MODIFIER_TEARDOWNS.get(modifier);
-
-  if (teardown && typeof teardown === 'function') {
-    teardown();
-  }
+interface State<S> {
+  instance: FunctionalModifierDefinition<S>;
 }
 
-function setup<S>(
-  modifier: FunctionalModifierDefinition<S>,
-  element: ElementFor<S>,
-  args: ArgsFor<S>
-): void {
-  const { positional, named } = args;
-  const teardown = modifier(element, positional, named);
-
-  MODIFIER_TEARDOWNS.set(modifier, teardown);
+interface CreatedState<S> extends State<S> {
+  element: null;
 }
 
-class FunctionalModifierManager<S> {
+interface InstalledState<S> extends State<S> {
+  element: ElementFor<S>;
+  teardown?: Teardown;
+}
+
+// Wraps the unsafe (b/c it mutates, rather than creating new state) code that
+// TS does not yet understand.
+function installElement<S>(
+  state: CreatedState<S>,
+  element: ElementFor<S>
+): InstalledState<S> {
+  // SAFETY: this cast represents how we are actually handling the state machine
+  // transition: from this point forward in the lifecycle of the modifier, it
+  // always behaves as `InstalledState<S>`. It is safe because, and *only*
+  // because, we immediately initialize `element`. (We cannot create a new state
+  // from the old one because the modifier manager API expects mutation of a
+  // single state bucket rather than updating it at hook calls.)
+  const installedState = state as State<S> as InstalledState<S>;
+  installedState.element = element;
+  return installedState;
+}
+
+export default class FunctionalModifierManager<S> {
   capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
+
+  options: { eager: boolean };
+
+  constructor(options?: { eager: boolean }) {
+    this.options = {
+      eager: options?.eager ?? true,
+    };
+  }
 
   createModifier(
     factoryOrClass:
       | Factory<FunctionalModifierDefinition<S>>
       | FunctionalModifierDefinition<S>
-  ): FunctionalModifierDefinition<S> {
-    const Modifier = isFactory(factoryOrClass)
+  ): CreatedState<S> {
+    const instance = isFactory(factoryOrClass)
       ? factoryOrClass.class
       : factoryOrClass;
 
-    // This looks superfluous, but this is creating a new instance
-    // of a function -- this is important so that each instance of the
-    // created modifier can have its own state which is stored in
-    // the MODIFIER_ELEMENTS and MODIFIER_TEARDOWNS WeakMaps
-    return (...args) => Modifier(...args);
+    return {
+      element: null,
+      instance: instance,
+    };
   }
 
   installModifier(
-    modifier: FunctionalModifierDefinition<S>,
+    createdState: CreatedState<S>,
     element: ElementFor<S>,
     args: ArgsFor<S>
   ): void {
-    MODIFIER_ELEMENTS.set(modifier, element);
+    const state = installElement(createdState, element);
 
-    if (gte('3.22.0')) {
-      consumeArgs(args);
+    const { positional, named } = args;
+    const teardown = createdState.instance(element, positional, named);
+    if (teardown) {
+      state.teardown = teardown;
     }
 
-    setup(modifier, element, args);
-  }
-
-  updateModifier(
-    modifier: FunctionalModifierDefinition<S>,
-    args: ArgsFor<S>
-  ): void {
-    const element = MODIFIER_ELEMENTS.get(modifier);
-
-    assert(
-      'ember-modifier: called updateModifier without a registered element.\nThis is an internal error; please open a bug!',
-      !!element
-    );
-
-    teardown(modifier);
-
-    if (gte('3.22.0')) {
+    if (gte('3.22.0') && this.options.eager) {
       consumeArgs(args);
     }
-
-    setup(modifier, element, args);
   }
 
-  destroyModifier(modifier: FunctionalModifierDefinition<S>): void {
-    teardown(modifier);
+  updateModifier(state: InstalledState<S>, args: ArgsFor<S>): void {
+    if (state.teardown) {
+      state.teardown();
+    }
+
+    const teardown = state.instance(state.element, args.positional, args.named);
+    if (teardown) {
+      state.teardown = teardown;
+    }
+
+    if (gte('3.22.0') && this.options.eager) {
+      consumeArgs(args);
+    }
+  }
+
+  destroyModifier(state: InstalledState<S>): void {
+    if (state.teardown) {
+      state.teardown();
+    }
   }
 }
-
-export default new FunctionalModifierManager();

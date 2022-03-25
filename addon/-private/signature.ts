@@ -5,7 +5,7 @@ export interface ModifierArgs {
   /** Positional arguments to a modifier, `{{foo @bar this.baz}}` */
   positional: unknown[];
   /** Named arguments to a modifier, `{{foo bar=this.baz}}` */
-  named: Record<string, unknown>;
+  named: object;
 }
 
 // --- Type utilities for use with Signature types --- //
@@ -30,7 +30,7 @@ export type PositionalArgs<S> = 'Args' extends keyof S
   ? Args<S['Args'], 'Positional', DefaultPositional>
   : Args<S, 'positional', DefaultPositional>;
 
-type DefaultNamed = Record<string, unknown>;
+type DefaultNamed = object;
 
 /** @private */
 export type NamedArgs<S> = 'Args' extends keyof S
