@@ -190,7 +190,7 @@ export default function modifier(
     positional: unknown[],
     named: object
   ) => void | Teardown,
-  options?: { eager: boolean }
+  options: { eager: boolean } = { eager: true }
 ): FunctionBasedModifier<{
   Element: Element;
   Args: {
@@ -202,9 +202,8 @@ export default function modifier(
   // type of `setModifierManager` today is `void`; we pretend it actually
   // returns an opaque `Modifier` type so that we can provide a result from this
   // type which is useful to TS-aware tooling (e.g. Glint).
-  const isEager = !options || options?.eager;
   return setModifierManager(
-    () => (isEager ? EAGER_MANAGER : LAZY_MANAGER),
+    () => (options.eager ? EAGER_MANAGER : LAZY_MANAGER),
     fn
   ) as unknown as FunctionBasedModifier<{
     Element: Element;
