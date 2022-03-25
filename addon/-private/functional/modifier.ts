@@ -46,8 +46,12 @@ export type Teardown = () => unknown;
  *
  * This function runs the first time when the element the modifier was applied
  * to is inserted into the DOM, and it *autotracks* while running. Any values
- * that it accesses will be tracked, including the arguments it receives, and if
- * any of them changes, the function will run again.
+ * that it accesses will be tracked, and if any of them changes, the function
+ * will run again.
+ *
+ * **Note:** this will rerun if any of its arguments change, *whether or not you
+ * access them*. This is legacy behavior and you should switch to using the
+ * `{ eager: false }` variant, which has normal auto-tracking semantics.
  *
  * The modifier can also optionally return a *destructor*. The destructor
  * function will be run just before the next update, and when the element is
@@ -74,8 +78,12 @@ export default function modifier<
  *
  * This function runs the first time when the element the modifier was applied
  * to is inserted into the DOM, and it *autotracks* while running. Any values
- * that it accesses will be tracked, including the arguments it receives, and if
- * any of them changes, the function will run again.
+ * that it accesses will be tracked, and if any of them changes, the function
+ * will run again.
+ *
+ * **Note:** this will rerun if any of its arguments change, *whether or not you
+ * access them*. This is legacy behavior and you should switch to using the
+ * `{ eager: false }` variant, which has normal auto-tracking semantics.
  *
  * The modifier can also optionally return a *destructor*. The destructor
  * function will be run just before the next update, and when the element is
@@ -83,6 +91,7 @@ export default function modifier<
  * modifier made in the first place.
  *
  * @param fn The function which defines the modifier.
+ * @param options Configuration for the modifier.
  */
 // This overload allows users to write types directly on the callback passed to
 // the `modifier` function and infer the resulting type correctly.
@@ -103,8 +112,12 @@ export default function modifier<
  *
  * This function runs the first time when the element the modifier was applied
  * to is inserted into the DOM, and it *autotracks* while running. Any values
- * that it accesses will be tracked, including the arguments it receives, and if
- * any of them changes, the function will run again.
+ * that it accesses will be tracked, including any of its arguments that it
+ * accesses, and if any of them changes, the function will run again.
+ *
+ * **Note:** this will *not* automatically rerun because an argument changes. It
+ * will only rerun if it is *using* that argument (the same as with auto-tracked
+ * state in general).
  *
  * The modifier can also optionally return a *destructor*. The destructor
  * function will be run just before the next update, and when the element is
@@ -112,6 +125,7 @@ export default function modifier<
  * modifier made in the first place.
  *
  * @param fn The function which defines the modifier.
+ * @param options Configuration for the modifier.
  */
 // This overload allows users to write types directly on the callback passed to
 // the `modifier` function and infer the resulting type correctly.
@@ -127,6 +141,26 @@ export default function modifier<
   Element: E;
 }>;
 
+/**
+ * An API for writing simple modifiers.
+ *
+ * This function runs the first time when the element the modifier was applied
+ * to is inserted into the DOM, and it *autotracks* while running. Any values
+ * that it accesses will be tracked, including any of its arguments that it
+ * accesses, and if any of them changes, the function will run again.
+ *
+ * **Note:** this will *not* automatically rerun because an argument changes. It
+ * will only rerun if it is *using* that argument (the same as with auto-tracked
+ * state in general).
+ *
+ * The modifier can also optionally return a *destructor*. The destructor
+ * function will be run just before the next update, and when the element is
+ * being removed entirely. It should generally clean up the changes that the
+ * modifier made in the first place.
+ *
+ * @param fn The function which defines the modifier.
+ * @param options Configuration for the modifier.
+ */
 // This overload allows users to provide a `Signature` type explicitly at the
 // modifier definition site, e.g. `modifier<Sig>((el, pos, named) => {...})`.
 // **Note:** this overload must appear second, since TS' inference engine will
