@@ -1,3 +1,4 @@
+import { deprecate } from '@ember/debug';
 import { setModifierManager } from '@ember/modifier';
 import {
   DefaultSignature,
@@ -57,6 +58,11 @@ export type Teardown = () => unknown;
  * being removed entirely. It should generally clean up the changes that the
  * modifier made in the first place.
  *
+ * @deprecated Until 4.0. Calling `modifier()` without an options argument is
+ *   deprecated. It is supported until 4.0 so that existing modifiers can be
+ *   migrated individually. Please update your function-based modifiers to pass
+ *   `{ eager: false }`.
+ *
  * @param fn The function which defines the modifier.
  */
 // This overload allows users to write types directly on the callback passed to
@@ -88,6 +94,11 @@ export default function modifier<
  * function will be run just before the next update, and when the element is
  * being removed entirely. It should generally clean up the changes that the
  * modifier made in the first place.
+ *
+ * @deprecated Until 4.0. Calling `modifier()` with `{ eager: true }` is
+ *   deprecated. It is supported until 4.0 so that existing modifiers can be
+ *   migrated individually. Please update your function-based modifiers to pass
+ *   `{ eager: false }`.
  *
  * @param fn The function which defines the modifier.
  * @param options Configuration for the modifier.
@@ -198,6 +209,38 @@ export default function modifier(
     Positional: unknown[];
   };
 }> {
+  deprecate(
+    `ember-modifier (for ${fn.name ?? fn} at ${
+      new Error().stack
+    }): creating a function-based modifier without options is deprecated and will be removed at v4.0`,
+    options === undefined,
+    {
+      id: 'ember-modifier.function-based-options',
+      for: 'ember-modifier',
+      since: {
+        available: '3.2.0',
+        enabled: '3.2.0',
+      },
+      until: '4.0.0',
+    }
+  );
+
+  deprecate(
+    `ember-modifier (for ${fn.name ?? fn} at ${
+      new Error().stack
+    }): creating a function-based modifier with \`{ eager: true }\` is deprecated and will be removed at v4.0`,
+    options?.eager === true,
+    {
+      id: 'ember-modifier.function-based-options',
+      for: 'ember-modifier',
+      since: {
+        available: '3.2.0',
+        enabled: '3.2.0',
+      },
+      until: '4.0.0',
+    }
+  );
+
   // SAFETY: the cast here is a *lie*, but it is a useful one. The actual return
   // type of `setModifierManager` today is `void`; we pretend it actually
   // returns an opaque `Modifier` type so that we can provide a result from this
