@@ -37,7 +37,7 @@ The point is to give you a path to decouple the upgrade and the migration work:
 
 ### Function-based modifiers
 
-For function-based modifiers, you simply need to pass a new options argument to the `modifier()` call.
+For function-based modifiers, the only change you need to make is to pass a new options argument to the `modifier()` call.
 
 Previously, you would write this:
 
@@ -50,17 +50,23 @@ export default modifier((el, pos, named) => {
 The exactly equivalent behavior with the new options object is:
 
 ```js
-export default modifier((el, pos, named) => {
-  // ...
-}, { eager: true });
+export default modifier(
+  (el, pos, named) => {
+    // ...
+  },
+  { eager: true }
+);
 ```
 
 To migrate to the behavior required for v4, you need to pass `{ eager: false }`:
 
 ```js
-export default modifier((el, pos, named) => {
-  // ...
-}, { eager: false });
+export default modifier(
+  (el, pos, named) => {
+    // ...
+  },
+  { eager: false }
+);
 ```
 
 
@@ -71,7 +77,7 @@ Previously, any time any argument passed to a modifier changed, Ember would re-r
 
 ### Class-based modifiers
 
-For class-based modifiers,  you need to migrate to the new `modify()` API. *All* of the old lifecycle hooks are deprecated, as are the `element`, `args`, and `isDestroying` and `isDestroyed` fields. Additionally, the  new `modify()` hook which replaces the previous lifecycle hooks is *lazy*, like auto-tracking in general. After installation, it will only be re-executed when some tracked state it uses actually changes, where previously it.
+For class-based modifiers,  you need to migrate to the new `modify()` API. *All* of the old lifecycle hooks are deprecated, as are the `element`, `args`, and `isDestroying` and `isDestroyed` fields. Additionally, the  new `modify()` hook which replaces the previous lifecycle hooks is *lazy*, like auto-tracking in general. After installation, it will only be re-executed when some tracked state it uses actually changes, where previously both `didReceiveArguments()` and `didUpdateArguments()` would be re-executed whenever any arguments to it changed, whether they used them or not.
 
 
 #### Lifecycle hooks
