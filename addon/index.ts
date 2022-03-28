@@ -3,4 +3,9 @@ export {
   default as modifier,
   FunctionBasedModifier,
 } from './-private/functional/modifier';
-export type { ModifierArgs, ArgsFor } from './-private/signature';
+export type {
+  ModifierArgs,
+  ArgsFor,
+  NamedArgs,
+  PositionalArgs,
+} from './-private/signature';
