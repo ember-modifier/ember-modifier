@@ -1,35 +1,24 @@
 import { deprecate } from '@ember/debug';
 import { setModifierManager } from '@ember/modifier';
+import Opaque from '../opaque';
 import {
   DefaultSignature,
   ElementFor,
   NamedArgs,
   PositionalArgs,
 } from '../signature';
-import FunctionalModifierManager from './modifier-manager';
+import FunctionBasedModifierManager from './modifier-manager';
 
 // Provide a singleton manager for each of the options. (If we extend this to
 // many more options in the future, we can revisit, but for now this means we
 // only ever allocate two managers.)
-const EAGER_MANAGER = new FunctionalModifierManager({ eager: true });
-const LAZY_MANAGER = new FunctionalModifierManager({ eager: false });
-
-// Type-only utilities used for representing the type of a Modifier in a way
-// that (a) has no runtime overhead and (b) makes no public API commitment: by
-// extending it with an interface representing the modifier, its internals
-// become literally invisible. The private field for the "brand" is not visible
-// when interacting with an interface which extends this, but it makes the type
-// non-substitutable with an empty object. This is borrowed from, and basically
-// identical to, the same time used internally in Ember's types.
-declare const Brand: unique symbol;
-declare class Opaque<T> {
-  private readonly [Brand]: T;
-}
+const EAGER_MANAGER = new FunctionBasedModifierManager({ eager: true });
+const LAZY_MANAGER = new FunctionBasedModifierManager({ eager: false });
 
 // This provides a signature whose only purpose here is to represent the runtime
 // type of a function-based modifier: an opaque item. The fact that it's an
-// empty interface is actually the point: it makes the private `[Brand]` above
-// is not visible to end users.
+// empty interface is actually the point: it *only* hooks the type parameter
+// into the opaque (nominal) type.
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface FunctionBasedModifier<S = DefaultSignature>
   extends Opaque<S> {}

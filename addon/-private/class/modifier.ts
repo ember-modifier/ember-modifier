@@ -11,6 +11,7 @@ import {
 } from '../signature';
 import { assert, deprecate } from '@ember/debug';
 import { DEBUG } from '@glimmer/env';
+import Opaque from '../opaque';
 
 // SAFETY: these sets are dev-only code to avoid showing deprecations for the
 // same class more than once.
@@ -55,6 +56,18 @@ export const Element = Symbol('Element');
 
 /** @internal */
 export const Args = Symbol('Args');
+
+// Preserve the signature on a class-based modifier so it can be plucked off
+// later (by e.g. Glint), using interface merging with an opaque item to
+// preserve it in the type system. The fact that it's an empty interface is
+// actually the point: it *only* hooks the type parameter into the opaque
+// (nominal) type. Note that this is distinct from the function-based modifier
+// type intentionally, because it is actually the static class side of a
+// class-based modifier which corresponds to the result of calling `modifier()`
+// with a callback defining a function-based modifier.
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export default interface ClassBasedModifier<S = DefaultSignature>
+  extends Opaque<S> {}
 
 /**
  * A base class for modifiers which need more capabilities than function-based
