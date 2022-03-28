@@ -34,7 +34,7 @@ function installElement<S>(
   return installedState;
 }
 
-export default class FunctionalModifierManager<S> {
+export default class FunctionBasedModifierManager<S> {
   capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
 
   options: { eager: boolean };

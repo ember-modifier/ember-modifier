@@ -1,7 +1,7 @@
 import { expectTypeOf } from 'expect-type';
 
 import Modifier, { modifier, ModifierArgs } from 'ember-modifier';
-import { FunctionBasedModifier } from 'ember-modifier/-private/functional/modifier';
+import { FunctionBasedModifier } from 'ember-modifier/-private/function-based/modifier';
 
 // --- function modifier --- //
 expectTypeOf(modifier).toMatchTypeOf<

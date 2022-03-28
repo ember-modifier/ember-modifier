@@ -2,7 +2,7 @@ export { default } from './-private/class/modifier';
 export {
   default as modifier,
   FunctionBasedModifier,
-} from './-private/functional/modifier';
+} from './-private/function-based/modifier';
 export type {
   ModifierArgs,
   ArgsFor,
