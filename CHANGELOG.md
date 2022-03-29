@@ -16,6 +16,11 @@
 * [#218](https://github.com/ember-modifier/ember-modifier/pull/218) Add TS 4.6 to CI and README ([@chriskrycho](https://github.com/chriskrycho))
 * [#198](https://github.com/ember-modifier/ember-modifier/pull/198) README: autotracking clarification and misc. cleanup ([@chriskrycho](https://github.com/chriskrycho)
 
+#### :no_entry_sign: Deprecations
+* [#223](https://github.com/ember-modifier/ember-modifier/pull/223) Deprecate modifier() without { eager: false }
+* [#221](https://github.com/ember-modifier/ember-modifier/pull/221) Deprecate this.element and this.args on class-based modifiers
+* [#220](https://github.com/ember-modifier/ember-modifier/pull/220) Deprecate didInstall, didReceiveArguments, and didUpdateArguments
+
 #### :house: Internal
 * [#226](https://github.com/ember-modifier/ember-modifier/pull/226) Upgrade to latest @types for @ember/modifier ([@chriskrycho](https://github.com/chriskrycho))
 * [#219](https://github.com/ember-modifier/ember-modifier/pull/219) Add ':no_entry_sign: Deprecations' to lerna config ([@chriskrycho](https://github.com/chriskrycho))
