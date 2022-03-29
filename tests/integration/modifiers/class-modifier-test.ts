@@ -1,11 +1,17 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
-import type { TestContext as BaseContext } from 'ember-test-helpers';
+import type { TestContext as BaseContext } from '@ember/test-helpers';
 import Service, { inject as service } from '@ember/service';
 import { hbs } from 'ember-cli-htmlbars';
-import Modifier, { ModifierArgs } from 'ember-modifier';
+import Modifier, { ArgsFor } from 'ember-modifier';
 import ClassBasedModifier from 'ember-modifier';
+import {
+  DefaultSignature,
+  NamedArgs,
+  PositionalArgs,
+} from 'ember-modifier/-private/signature';
+import { tracked } from '@glimmer/tracking';
 
 // `any` required for the inference to work correctly here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,7 +39,7 @@ interface Context extends BaseContext {
   hook(assertions: (instance: ClassBasedModifier) => void): void;
 }
 
-function testHook({
+function testLifecycleHook({
   name,
   insert,
   update,
@@ -400,8 +406,8 @@ function testHooksOrdering(factory: Factory): void {
   });
 }
 
-function testHooks(factory: Factory): void {
-  testHook({
+function testLegacyHooks(factory: Factory): void {
+  testLifecycleHook({
     name: 'constructor',
     insert: true,
     update: false,
@@ -410,7 +416,7 @@ function testHooks(factory: Factory): void {
     factory,
   });
 
-  testHook({
+  testLifecycleHook({
     name: 'didReceiveArguments',
     insert: true,
     update: true,
@@ -419,7 +425,7 @@ function testHooks(factory: Factory): void {
     factory,
   });
 
-  testHook({
+  testLifecycleHook({
     name: 'didUpdateArguments',
     insert: false,
     update: true,
@@ -428,7 +434,7 @@ function testHooks(factory: Factory): void {
     factory,
   });
 
-  testHook({
+  testLifecycleHook({
     name: 'didInstall',
     insert: true,
     update: false,
@@ -437,7 +443,7 @@ function testHooks(factory: Factory): void {
     factory,
   });
 
-  testHook({
+  testLifecycleHook({
     name: 'willRemove',
     insert: false,
     update: false,
@@ -446,7 +452,7 @@ function testHooks(factory: Factory): void {
     factory,
   });
 
-  testHook({
+  testLifecycleHook({
     name: 'willDestroy',
     insert: false,
     update: false,
@@ -463,10 +469,11 @@ module(
   function (hooks) {
     setupRenderingTest(hooks);
 
-    testHooks(
+    // NOTE: this can be removed at 4.0.
+    testLegacyHooks(
       (callback) =>
         class NativeModifier extends Modifier {
-          constructor(owner: unknown, args: ModifierArgs) {
+          constructor(owner: unknown, args: ArgsFor<DefaultSignature>) {
             super(owner, args);
             callback('constructor', this);
           }
@@ -493,6 +500,197 @@ module(
         }
     );
 
+    test('the constructor', async function (assert) {
+      let callCount = 0;
+      class UsingConstructor extends Modifier {
+        constructor(owner: unknown, args: ArgsFor<DefaultSignature>) {
+          super(owner, args);
+          assert.equal(callCount, 0, 'has initially never been called');
+          callCount += 1;
+
+          assert.equal(arguments.length, 2, 'receives exactly two arguments');
+          assert.true('named' in args, 'the `args` has a `named` field');
+          assert.equal(typeof args.named, 'object', 'which is an object');
+          assert.true(
+            'positional' in args,
+            'the `args` has a `positional` field'
+          );
+          assert.true(Array.isArray(args.positional), 'which is an array');
+        }
+      }
+
+      this.owner.register('modifier:using-constructor', UsingConstructor);
+
+      class State {
+        @tracked pos = 'pos';
+        @tracked named = 'named';
+      }
+      const state = new State();
+      this.set('state', state);
+
+      await render(hbs`
+        <h1 id="expected" {{using-constructor this.state.pos named=this.state.named}}>Hello</h1>
+      `);
+
+      assert.step('construction');
+
+      state.pos = 'new pos';
+      await settled();
+      assert.step('first rerender');
+
+      state.named = 'new named';
+      await settled();
+      assert.step('second rerender');
+
+      assert.equal(callCount, 1, 'only gets called once');
+      assert.verifySteps(['construction', 'first rerender', 'second rerender']);
+    });
+
+    test('the `modify` hook', async function (assert) {
+      interface ModifySig {
+        Element: HTMLParagraphElement;
+        Args: {
+          Named: {
+            name: string;
+            age: number;
+          };
+          Positional: [greet: string, farewell: string];
+        };
+      }
+
+      class State {
+        @tracked greet = 'hello';
+        @tracked farewell = 'goodbye';
+        @tracked name = 'Chris';
+        @tracked age = 34;
+      }
+
+      const state = new State();
+      this.set('state', state); // RFC 785
+
+      let modifyCallCount = 0;
+
+      class UsingModify extends Modifier<ModifySig> {
+        constructor(owner: unknown, args: ArgsFor<ModifySig>) {
+          super(owner, args);
+          assert.equal(arguments.length, 2, '');
+        }
+
+        modify(
+          element: HTMLParagraphElement,
+          positional: PositionalArgs<ModifySig>,
+          named: NamedArgs<ModifySig>
+        ): void {
+          modifyCallCount += 1;
+          assert.true(
+            element instanceof HTMLParagraphElement,
+            'receives the element correctly'
+          );
+          assert.equal(positional.length, 2, 'receives all positional args');
+          assert.equal(
+            positional[0],
+            state.greet,
+            'receives 1st positional arg'
+          );
+          assert.equal(
+            positional[1],
+            state.farewell,
+            'receives 2nd positional arg'
+          );
+
+          // Intentionally do not use `named.age`, so that we can test that
+          // modify is appropriately "lazy" about what it consumes: triggering
+          // a `set` operation on it will not
+          assert.equal(typeof named, 'object', 'receives a named args object');
+          assert.equal(named.name, state.name, 'receives correct named args');
+        }
+      }
+
+      this.owner.register('modifier:using-modify', UsingModify);
+
+      await render(hbs`
+        <p {{using-modify this.state.greet this.state.farewell name=this.state.name}}></p>
+      `);
+
+      assert.step('initial render');
+
+      state.greet = 'ahoy';
+      await settled();
+      assert.step('second render');
+
+      state.name = 'Krycho';
+      await settled();
+      assert.step('third render');
+
+      // This should *not* trigger `modify`, so the call count will remain 3.
+      state.age = 35;
+      await settled();
+      assert.step('fourth render');
+
+      assert.equal(
+        modifyCallCount,
+        3,
+        'is called once each for installation and each update to args it actually uses'
+      );
+      assert.verifySteps([
+        'initial render',
+        'second render',
+        'third render',
+        'fourth render',
+      ]);
+    });
+
+    // TODO: remove at 4.0
+    module('using modify with legacy hooks', function () {
+      test('didInstall', function (assert) {
+        class WithDI extends Modifier {
+          didInstall(): void {
+            /* no op */
+          }
+          modify(): void {
+            /* no op */
+          }
+        }
+
+        assert.throws(
+          () => new WithDI({}, { named: {}, positional: [] }),
+          'throws'
+        );
+      });
+
+      test('didReceiveArguments', function (assert) {
+        class WithDRA extends Modifier {
+          didReceiveArguments(): void {
+            /* no op */
+          }
+          modify(): void {
+            /* no op */
+          }
+        }
+
+        assert.throws(
+          () => new WithDRA({}, { named: {}, positional: [] }),
+          'throws'
+        );
+      });
+
+      test('didUpdateArguments', function (assert) {
+        class WithDUA extends Modifier {
+          didUpdateArguments(): void {
+            /* no op */
+          }
+          modify(): void {
+            /* no op */
+          }
+        }
+
+        assert.throws(
+          () => new WithDUA({}, { named: {}, positional: [] }),
+          'throws'
+        );
+      });
+    });
+
     module('service injection', function () {
       test('can participate in ember dependency injection', async function (this: Context, assert) {
         let called = false;
@@ -517,7 +715,7 @@ module(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           @service('bar' as any) baz!: Bar;
 
-          constructor(owner: unknown, args: ModifierArgs) {
+          constructor(owner: unknown, args: ArgsFor<DefaultSignature>) {
             super(owner, args);
 
             called = true;

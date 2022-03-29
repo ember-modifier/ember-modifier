@@ -2,49 +2,41 @@ ember-modifier
 ==============================================================================
 
 This addon provides an API for authoring [element modifiers] in Ember. It
-mirrors Ember's [helper] API, with variations for writing simple _functional_
-modifiers and for writing more complicated _class_ modifiers.
+mirrors Ember's [helper] API, with variations for writing both simple
+function-based modifiers and more complicated class-based modifiers.
 
 [element modifiers]: https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html
 [helper]: https://octane-guides-preview.emberjs.com/release/templates/writing-helpers
 
-<i>This addon is the next iteration of both [ember-class-based-modifier] and
-[ember-functional-modifiers]. Some breaking changes to the APIs have been made.
-For a list of differences, see the [API differences](#api-differences) section.</i>
-
-<i>Huge thanks to @sukima and @spencer516 for their contributions! This project
-is based on their work, and wouldn't have been possible without them.</i>
-
-[ember-class-based-modifier]: https://github.com/sukima/ember-class-based-modifier
-[ember-functional-modifiers]: https://github.com/spencer516/ember-functional-modifiers
-
 - [Compatibility](#compatibility)
+  - [TypeScript](#typescript)
 - [Installation](#installation)
 - [Philosophy](#philosophy)
-  - [Woah woah woah, hold on, what's a _"side effect"_?](#woah-woah-woah-hold-on-whats-a-side-effect)
+  - [Whoa whoa whoa, hold on, what's a _"side effect"_?](#whoa-whoa-whoa-hold-on-whats-a-side-effect)
   - [Managing "side effects" effectively](#managing-side-effects-effectively)
   - [Should modifiers _always_ be self-contained?](#should-modifiers-always-be-self-contained)
 - [Usage](#usage)
-  - [Functional Modifiers](#functional-modifiers)
-    - [Generating a Functional Modifier](#generating-a-functional-modifier)
+  - [Function-Based Modifiers](#function-based-modifiers)
+    - [Generating a Function-Based Modifier](#generating-a-function-based-modifier)
     - [Example without Cleanup](#example-without-cleanup)
     - [Example with Cleanup](#example-with-cleanup)
-  - [Class Modifiers](#class-modifiers)
+  - [Class-Based Modifiers](#class-based-modifiers)
     - [Generating a Class Modifier](#generating-a-class-modifier)
     - [Example without Cleanup](#example-without-cleanup-1)
     - [Example with Cleanup](#example-with-cleanup-1)
     - [Example with Service Injection](#example-with-service-injection)
     - [API](#api)
-      - [Lifecycle Summary](#lifecycle-summary)
-- [TypeScript](#typescript)
+- [TypeScript](#typescript-1)
+  - [The `Signature` type](#the-signature-type)
   - [Examples with TypeScript](#examples-with-typescript)
-    - [Functional modifier](#functional-modifier)
+    - [Function-based modifier](#function-based-modifier)
     - [Class-based](#class-based)
   - [Additional reading](#additional-reading)
 - [API Differences](#api-differences)
   - [API differences from ember-functional-modifiers](#api-differences-from-ember-functional-modifiers)
   - [API differences from ember-class-based-modifier](#api-differences-from-ember-class-based-modifier)
   - [API differences from ember-oo-modifiers](#api-differences-from-ember-oo-modifiers)
+- [History](#history)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -59,7 +51,7 @@ Compatibility
 
 This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] proposal.
 
-- **Currently supported TypeScript versions:** v4.2, v4.3, v4.4, and v4.5
+- **Currently supported TypeScript versions:** v4.2, v4.3, v4.4, v4.5, and v4.6
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published types not in a `-private` module are public
 
@@ -92,10 +84,10 @@ value that _isn't_ in an element, it is probably a _helper_ instead), and they
 are passed the element when applying their effects.
 
 Conceptually, modifiers take _tracked, derived state_, and turn it into some
-sort of _side effect_ - usually, mutating the DOM node they are applied to in
-some way, but they might also trigger other types of side effects.
+sort of _side effect_ related in some way to the DOM element they are applied
+to.
 
-### Woah woah woah, hold on, what's a _"side effect"_?
+### Whoa whoa whoa, hold on, what's a _"side effect"_?
 
 A "side effect" is something that happens in programming all the time. Here's an
 example of one in an Ember component that attempts to make a button like in the
@@ -122,7 +114,7 @@ export default class MyButton extends Component {
 ```
 
 We can see by looking at the `setupEventListener` getter that it isn't actually
-returning a value, instead it always returns `undefined`. However, it also adds
+returning a value. Instead, it always returns `undefined`. However, it also adds
 the `@onClick` argument as an _event listener_ to the button in the template
 when the getter is run, as the template is rendering, which is a _side effect_
 - it is an effect of running the code that doesn't have anything to do with the
@@ -131,8 +123,9 @@ value. In fact, this code doesn't compute a value at all, so this component is
 _misusing_ the getter in order to run its side effect whenever it is rendered in
 the template.
 
-Side effects can make code very difficult to reason about, since any function
-could be updating a value elsewhere. In fact, the code above is very buggy:
+Unmanaged side effects can make code very difficult to reason about, since any
+function could be updating a value elsewhere. In fact, the code above is very
+buggy:
 
 1. If the `@onClick` argument ever changes, it won't remove the old event
    listener, it'll just keep adding new ones.
@@ -207,32 +200,18 @@ modifiers, they should be designed with this in mind. Which specific effects are
 they trying to accomplish, how to manage them effectively, and how to do it in
 a way that is _transparent_ to the user of the modifier.
 
-### Should modifiers _always_ be self-contained?
-
-Sometimes modifiers won't be completely self-contained. For instance, the
-[`@ember/render-modifiers`](https://github.com/emberjs/ember-render-modifiers)
-package provides modifiers that call component methods directly, giving the
-component the ability to manage the side effect. This is ok, but it limits the
-reusability of whatever the component is doing, so breaking those effects out
-into individual modifiers is generally preferable.
-
-
 Usage
 ------------------------------------------------------------------------------
 
-This addon does not provide any modifiers out of the box; instead, this library
+This addon does not provide any modifiers out of the box. Instead, this library
 allows you to write your own. There are two ways to write modifiers:
 
-1. Functional modifiers
+1. Function-based modifiers
 2. Class-based modifiers
-
-```js
-import Modifier, { modifier } from 'ember-modifier';
-```
 
 These are analogous to Ember's Helper APIs, `helper` and `Helper`.
 
-### Functional Modifiers
+### Function-Based Modifiers
 
 `modifier` is an API for writing simple modifiers. For instance, you could
 implement Ember's built-in `{{on}}` modifier like so with `modifier`:
@@ -250,7 +229,7 @@ export default modifier((element, [eventName, handler]) => {
 });
 ```
 
-Functional modifiers consist of a function that receives:
+Function-based modifiers consist of a function that receives:
 
 1. The `element`
 2. An array of positional arguments
@@ -261,16 +240,18 @@ modifier((element, positional, named) => { /* */ });
 ```
 
 This function runs the first time when the element the modifier was applied to
-is inserted into the DOM, and it _autotracks_ while running. Any values that it
-accesses will be tracked, including the arguments it receives, and if any of
-them changes, the function will run again.
+is inserted into the DOM, and it _autotracks_ while running. Any tracked values
+that it accesses will be tracked, including the arguments it receives, and if
+any of them changes, the function will run again.[^changes]
 
 The modifier can also optionally return a _destructor_. The destructor function
 will be run just before the next update, and when the element is being removed
 entirely. It should generally clean up the changes that the modifier made in the
 first place.
 
-#### Generating a Functional Modifier
+[^changes]: As with autotracking in general, “changes” here actually means that the tracked property was set—even if it was set to the same value. This is because autotracking does not cache the *values* of properties, only the last time they changed. See [this blog post](https://v5.chriskrycho.com/journal/autotracking-elegant-dx-via-cutting-edge-cs/) for a deep dive on how it works!
+
+#### Generating a Function-Based Modifier
 
 To create a modifier (and a corresponding integration test), run:
 
@@ -281,8 +262,9 @@ ember g modifier scroll-top
 #### Example without Cleanup
 
 For example, if you wanted to implement your own `scrollTop` modifier (similar
-to [this](https://github.com/emberjs/ember-render-modifiers#example-scrolling-an-element-to-a-position)),
-you may do something like this:
+to [this][scroll-example]), you may do something like this:
+
+[scroll-example]: https://github.com/emberjs/ember-render-modifiers#example-scrolling-an-element-to-a-position
 
 ```js
 // app/modifiers/scroll-top.js
@@ -330,10 +312,10 @@ export default modifier(element => {
 </button>
 ```
 
-### Class Modifiers
+### Class-Based Modifiers
 
 Sometimes you may need to do something more complicated than what can be handled
-by functional modifiers. For instance:
+by function-based modifiers. For instance:
 
 1. You may need to inject services and access them
 2. You may need fine-grained control of updates, either for performance or
@@ -341,54 +323,52 @@ by functional modifiers. For instance:
    every time only to set it up again.
 3. You may need to store some local state within your modifier.
 
-In these cases, you can use a _class modifier_ instead. Here's how you would
-implement the `{{on}}` modifier with a class:
+In these cases, you can use a _class-based modifier_ instead. Here's how you
+would implement the `{{on}}` modifier with a class:
 
 ```js
 import Modifier from 'ember-modifier';
+import { registerDestructor } from '@ember/destroyable';
+
+function cleanup(instance: OnModifier) {
+  let { element, event, handler } = instance;
+
+  if (element && event && handler) {
+    element.removeEventListener(event, handler);
+
+    instance.element = null;
+    instance.event = null;
+    instance.handler = null;
+  }
+}
 
 export default class OnModifier extends Modifier {
+  element = null;
   event = null;
   handler = null;
 
-  // methods for reuse
-  addEventListener() {
-    let [event, handler] = this.args.positional;
+  modify(element, [event, handler]) {
+    this.addEventListener(element, event, handler);
+    registerDestructor(this, this.removeEventListener)
+  }
 
-    // Store the current event and handler for when we need to remove them
+  // methods for reuse
+  addEventListener = (element, event, handler) => {
+    // Store the current element, event, and handler for when we need to remove
+    // them during cleanup.
+    this.element = element;
     this.event = event;
     this.handler = handler;
 
-    this.element.addEventListener(event, handler);
-  }
-
-  removeEventListener() {
-    let { event, handler } = this;
-
-    if (event && handler) {
-      this.element.removeEventListener(event, handler);
-
-      this.event = null;
-      this.handler = null;
-    }
-  }
-
-  // lifecycle hooks
-  didReceiveArguments() {
-    this.removeEventListener();
-    this.addEventListener();
-  }
-
-  willDestroy() {
-    this.removeEventListener();
-  }
+    element.addEventListener(event, handler);
+  };
 }
 ```
 
-This may seem more complicated than the functional version, but that complexity
-comes along with much more _control_.
+While this is slightly more complicated than the function-based version, but
+that complexity comes along with much more _control_.
 
-As with functional modifiers, the lifecycle hooks of class modifiers are
+As with function-based modifiers, the lifecycle hooks of class modifiers are
 _tracked_. When they run, then any values they access will be added to the
 modifier, and the modifier will update if any of those values change.
 
@@ -409,35 +389,19 @@ This modifier can be attached to any element and accepts a single positional
 argument. When the element is inserted, and whenever the argument is updated, it
 will set the element's `scrollTop` property to the value of its argument.
 
+(Note that this example does not require the use of a class, and could be
+implemented equally well with a function-based modifier!)
+
 ```js
 // app/modifiers/scroll-position.js
-
 import Modifier from 'ember-modifier';
 
 export default class ScrollPositionModifier extends Modifier {
-  get scrollPosition() {
-    // get the first positional argument passed to the modifier
-    //
-    // {{scoll-position @someNumber relative=@someBoolean}}
-    //                  ~~~~~~~~~~~
-    //
-    return this.args.positional[0];
-  }
-
-  get isRelative() {
-    // get the named argument "relative" passed to the modifier
-    //
-    // {{scoll-position @someNumber relative=@someBoolean}}
-    //                                       ~~~~~~~~~~~~
-    //
-    return this.args.named.relative
-  }
-
-  didReceiveArguments() {
-    if(this.isRelative) {
-      this.element.scrollTop += this.scrollPosition;
+  modify(element, [scrollPosition], { relative }) {
+    if(relative) {
+      element.scrollTop += scrollPosition;
     } else {
-      this.element.scrollTop = this.scrollPosition;
+      element.scrollTop = scrollPosition;
     }
   }
 }
@@ -486,7 +450,7 @@ export default class ScrollContainerComponent extends Component {
 #### Example with Cleanup
 
 If the functionality you add in the modifier needs to be torn down when the
-modifier is removed, you can use the `willDestroy` hook.
+modifier is removed, you can use `registerDestructor` from `@ember/destroyable`.
 
 For example, if you want to have your elements dance randomly on the page using
 `setInterval`, but you wanted to make sure that was canceled when the modifier
@@ -495,42 +459,45 @@ was removed, you could do this:
 ```js
 // app/modifiers/move-randomly.js
 
-import { action } from '@ember/object';
 import Modifier from 'ember-modifier';
+import { registerDestructor } from '@ember/destroyable'
 
 const { random, round } = Math;
 const DEFAULT_DELAY = 1000;
 
+function cleanup(instance) {
+  if (instance.setIntervalId !== null) {
+    clearInterval(instance.setIntervalId);
+    instance.setIntervalId = null;
+  }
+}
+
 export default class MoveRandomlyModifier extends Modifier {
+  element = null;
   setIntervalId = null;
 
-  get delay() {
-    // get the named argument "delay" passed to the modifier
-    //
-    // {{move-randomly delay=@someNumber}}
-    //                       ~~~~~~~~~~~
-    //
-    return this.args.named.delay || DEFAULT_DELAY;
+  constructor(owner, args) {
+    super(owner, args);
+    registerDestructor(this, cleanup);
   }
 
-  @action moveElement() {
+  modify(element, _, { delay }) {
+    // Save off the element the first time for convenience with #moveElement
+    if (!this.element) {
+      this.element = element;
+    }
+
+    // Reset from any previous state.
+    cleanup(this);
+
+    this.setIntervalId = setInterval(this.#moveElement, delay ?? DEFAULT_DELAY);
+  }
+
+  #moveElement = (element) => {
     let top = round(random() * 500);
     let left = round(random() * 500);
     this.element.style.transform = `translate(${left}px, ${top}px)`;
-  }
-
-  didReceiveArguments() {
-    if (this.setIntervalId !== null) {
-      clearInterval(this.setIntervalId);
-    }
-
-    this.setIntervalId = setInterval(this.moveElement, this.delay);
-  }
-
-  willDestroy() {
-    clearInterval(this.setIntervalId);
-    this.setIntervalId = null;
-  }
+  };
 }
 ```
 
@@ -551,42 +518,34 @@ For example, suppose you wanted to track click events with `ember-metrics`:
 ```js
 // app/modifiers/track-click.js
 
-import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Modifier from 'ember-modifier';
+import { registerDestructor } from '@ember/destroyable';
 
-export default class TrackClickModifier extends Modifier {
+function cleanup(instance) {
+  instance.element?.removeEventListener('click', instance.onClick, true);
+}
+
+export default class TrackClick extends Modifier {
   @service metrics;
 
-  get eventName() {
-    // get the first positional argument passed to the modifier
-    //
-    // {{track-click "like-button-click" page="some page" title="some title"}}
-    //               ~~~~~~~~~~~~~~~~~~~
-    //
-    return this.args.positional[0];
+  constructor(owner, args) {
+    super(owner, args);
+    registerDestructor(this, this.cleanup);
   }
 
-  get options() {
-    // get the named arguments passed to the modifier
-    //
-    // {{track-click "like-button-click" page="some page" title="some title"}}
-    //                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //
-    return this.args.named;
+  modify(element, [eventName], options) {
+    this.element = element;
+    this.eventName = eventName;
+    this.options = options;
+
+    this.cleanup();
+    element.addEventListener('click', this.onClick, true);
   }
 
-  @action onClick() {
+  onClick = () => {
     this.metrics.trackEvent(this.eventName, this.options);
-  }
-
-  didInstall() {
-    this.element.addEventListener('click', this.onClick, true);
-  }
-
-  willDestroy() {
-    this.element.removeEventListener('click', this.onClick, true);
-  }
+  };
 }
 ```
 
@@ -601,6 +560,18 @@ Usage:
 #### API
 
 <dl>
+<dt><code>constructor(owner, args)</code>
+<dd>Constructor for the modifier. You must call <code>super(...arguments)</code> before performing other initialization.</dd>
+<dt><code>modify(element, positionalArgs, namedArgs)</code>
+<dd>The primary hook for running a modifier. It gets called when the modifier is installed on the element, and any time any tracked state it uses changes. That tracked state can be from its arguments, which are auto-tracked, or from any other kind of tracked state, including but not limited to state on injected services.</dd>
+</dl>
+
+##### Deprecated
+
+These fields and hooks exist on the class until 4.0. You should migrate away
+from them to use `modify()` and the `@ember/destroyable` API as appropriate. (See [MIGRATIONS.md](./MIGRATIONS.md)).
+
+<dl>
 <dt><code>element</code></dt>
 <dd>The DOM element the modifier is attached to.</dd>
 <dt><code>args</code>: <code>{ positional: Array, named: Object }</code></dt>
@@ -609,8 +580,6 @@ Usage:
 <dd><code>true</code> if the modifier is in the process of being destroyed, or has already been destroyed.</dd>
 <dt><code>isDestroyed</code></dt>
 <dd><code>true</code> if the modifier has already been destroyed.</dd>
-<dt><code>constructor(owner, args)</code>
-<dd>Constructor for the modifier. You must call <code>super(...arguments)</code> before performing other initialization. The <code>element</code> is not yet available at this point (i.e. its value is <code>null</code> during construction).</dd>
 <dt><code>didReceiveArguments()</code></dt>
 <dd>Called when the modifier is installed <strong>and</strong> anytime the arguments are updated.</dd>
 <dt><code>didUpdateArguments()</code></dt>
@@ -625,9 +594,18 @@ Usage:
 
 ##### Lifecycle Summary
 
+Note: this table only applies to the legacy lifecycle hooks. `modify()` is mutually exclusive with all hooks except the `constructor`, and runs on installation and update, but not remove.
+
+Key:
+
+* (#) Indicates the order of invocation for the lifecycle event.
+* ❌  Indicates that the method is not invoked for a given lifecycle / property is not available.
+* ✔️  Indicates that the property is available during the invocation of the given method.
+
 <table>
 <thead><tr>
-  <th></th>
+  <th scope='column'>hook name</th>
+  <th>Create</th>
   <th>Install</th>
   <th>Update</th>
   <th>Remove</th>
@@ -636,8 +614,9 @@ Usage:
 </tr></thead>
 <tbody>
   <tr>
-    <th><code>constructor()</code></th>
-    <td>(1)</td>
+    <th scope='row'><code>constructor()</code></th>
+    <td>✔️</td>
+    <td>❌</td>
     <td>❌</td>
     <td>❌</td>
     <td>❌</td>
@@ -645,45 +624,48 @@ Usage:
   </tr>
 
   <tr>
-    <th><code>didUpdateArguments()</code></th>
-    <td>❌</td>
-    <td>(1)</td>
-    <td>❌</td>
-    <td>✔️</td>
-    <td>✔️</td>
-  </tr>
-
-  <tr>
-    <th><code>didReceiveArguments()</code></th>
-    <td>(2)</td>
-    <td>(2)</td>
-    <td>❌</td>
-    <td>✔️</td>
-    <td>✔️</td>
-  </tr>
-
-  <tr>
-    <th><code>didInstall()</code></th>
-    <td>(3)</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>✔️</td>
-    <td>✔️</td>
-  </tr>
-
-
-
-  <tr>
-    <th><code>willRemove()</code></th>
+    <th scope='row'><code>didUpdateArguments()</code></th>
     <td>❌</td>
     <td>❌</td>
     <td>(1)</td>
+    <td>❌</td>
     <td>✔️</td>
     <td>✔️</td>
   </tr>
 
   <tr>
-    <th><code>willDestroy()</code></th>
+    <th scope='row'><code>didReceiveArguments()</code></th>
+    <td>❌</td>
+    <td>(1)</td>
+    <td>(2)</td>
+    <td>❌</td>
+    <td>✔️</td>
+    <td>✔️</td>
+  </tr>
+
+  <tr>
+    <th scope='row'><code>didInstall()</code></th>
+    <td>❌</td>
+    <td>(2)</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>✔️</td>
+    <td>✔️</td>
+  </tr>
+
+  <tr>
+    <th scope='row'><code>willRemove()</code></th>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>(1)</td>
+    <td>✔️</td>
+    <td>✔️</td>
+  </tr>
+
+  <tr>
+    <th scope='row'><code>willDestroy()</code></th>
+    <td>❌</td>
     <td>❌</td>
     <td>❌</td>
     <td>(2)</td>
@@ -693,17 +675,23 @@ Usage:
 </tbody>
 </table>
 
-* (#) Indicates the order of invocation for the lifecycle event.
-* ❌  Indicates that the method is not invoked for a given lifecycle / property is not available.
-* ✔️  Indicates that the property is available during the invocation of the given method.
-
 ## TypeScript
 
-Both the functional and class APIs can be used with TypeScript!
+Both the function- and class-based APIs can be used with TypeScript!
 
 Before checking out the [Examples with Typescript](#examples-with-type-script) below, there is an important caveat you should understand about type safety!
 
-True type safety requires runtime checking, since templates are not currently type-checked: the arguments passed to your modifier can be *anything*. They’re typed as `unknown` by default, which means by default TypeScript will *require* you to work out the type passed to you at runtime. For example, with the `ScrollPositionModifier` shown above, you can combine TypeScript’s [type narrowing] with the default types for the class to provide runtime errors if the caller passes the wrong types, while providing safety throughout the rest of the body of the modifier. Here, `didReceiveArguments` would be *guaranteed* to have the correct types for `this.scrollPosition` and `this.isRelative`:
+There are, today, two basic approaches you can take to dealing with your modifier's arguments and element in a type safe way:
+
+1. You can use a type definition which specifies those for the outside world, relying on tooling like [Glint][glint] to check that the invocation is correct, and treat input as safe accordingly.
+2. You can provide the minimal public interface which *all* modifiers conform to, and do runtime type checking with `assert` calls to make your internal implementation safe.
+
+If you have a code base which is strictly typed from end to end, including with template type checking via Glint, then (1) is a great choice. If you have a mixed code base, or are publishing an addon for others to use, then [it's usually best to do both (1) *and* (2)][safe-ts-libs]!
+
+[glint]: https://github.com/typed-ember/glint
+[safe-ts-libs]: https://v5.chriskrycho.com/journal/writing-robust-typescript-libraries/s
+
+To handle runtime checking, for non-type-checked templates (including projects not yet using Glint or supporting external callers), you should *act* as though the arguments passed to your modifier can be *anything*. They’re typed as `unknown` by default, which means by default TypeScript will *require* you to work out the type passed to you at runtime. For example, with the `ScrollPositionModifier` shown above, you can combine TypeScript’s [type narrowing] with the default types for the class to provide runtime errors if the caller passes the wrong types, while providing safety throughout the rest of the body of the modifier. Here, `modify` would be *guaranteed* to have the correct types for `scrollPosition` and `relative`:
 
 [type narrowing]: https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types
 
@@ -712,75 +700,202 @@ import Modifier from 'ember-modifier';
 import { assert } from '@ember/debug';
 
 export class ScrollPositionModifier extends ClassBasedModifier {
-  get scrollPosition(): number {
-    const scrollValue = this.args.positional[0];
+  modify(element, [scrollPosition], { relative }) {
     assert(,
-      `first argument to 'scroll-position' must be a number, but ${scrollValue} was ${typeof scrollValue}`,
-      typeof scrollValue === "number"
+      `first argument to 'scroll-position' must be a number, but ${scrollPosition} was ${typeof scrollPosition}`,
+      typeof scrollPosition === "number"
     );
 
-    return scrollValue;
-  }
-
-  get isRelative(): boolean {
-    const { relative } = this.args.named;
     assert(
       `'relative' argument to 'scroll-position' must be a boolean, but ${relative} was ${typeof relative}`,
       typeof relative === "boolean"
     );
 
-    return relative;
-  }
-
-  didReceiveArguments() {
-    if (this.isRelative) {
-      this.element.scrollTop += this.scrollPosition;
+    if (relative) {
+      element.scrollTop += scrollPosition;
     } else {
-      this.element.scrollTop = this.scrollPosition;
+      element.scrollTop = scrollPosition;
     }
   }
 }
 ```
 
-You can also avoid writing these runtime checks by extending `Modifier` with predefined args, similar to the way you would define your args for a Glimmer Component:
+If you were writing for a fully-typed context, you can define your `Modifier` with a `Signature` interface, similar to the way you would define your signature for a Glimmer Component:
 
 ```ts
 // app/modifiers/scroll-position.ts
 import Modifier from 'ember-modifier';
 
-interface ScrollPositionModifierArgs {
-  positional: [number],
-  named: {
-    relative: boolean
-  }
+interface ScrollPositionModifierSignature {
+  Args: {
+    Positional: [number];
+    Named: {
+      relative: boolean;
+    };
+  };
 }
 
-export default class ScrollPositionModifier extends Modifier<ScrollPositionModifierArgs> {
-  get scrollPosition(): number {
-    return this.args.positional[0];
-  }
-
-  get isRelative(): boolean {
-    return this.args.named.relative
-  }
-
-  didReceiveArguments() {
-    if(this.isRelative) {
-      this.element.scrollTop += this.scrollPosition;
+export default class ScrollPositionModifier
+    extends Modifier<ScrollPositionModifierSignature> {
+  modify(element, [scrollPosition], { relative }) {
+    if (relative) {
+      element.scrollTop += scrollPosition;
     } else {
-      this.element.scrollTop = this.scrollPosition;
+      element.scrollTop = scrollPosition;
     }
   }
 }
 ```
 
-However, while doing so is slightly more convenient, it means you get *much worse* feedback in tests or at runtime if someone passes the wrong kind of arguments to your modifier.
+Besides supporting integration with [Glint][glint], this also provides nice hooks for documentation tooling. Note, however, that it can result in *much worse* feedback in tests or at runtime if someone passes the wrong kind of arguments to your modifier and you *haven't* included assertions: users who pass the wrong thing will just have the modifier fail. For example, if you fail to pass the positional argument, `scrollPosition` would simply be `undefined`, and then `element.scrollTop` could end up being set to `NaN`. Whoops! For that reason, if your modifier will be used by non-TypeScript consumers, you should both publish the types for it *and* add dev-time assertions:
+
+```ts
+// app/modifiers/scroll-position.ts
+import Modifier from 'ember-modifier';
+
+interface ScrollPositionModifierSignature {
+  Args: {
+    Positional: [scrollPosition: number];
+    Named: {
+      relative: boolean;
+    };
+  };
+  Element: Element; // not required: it'll be set by default
+}
+
+export default class ScrollPositionModifier
+    extends Modifier<ScrollPositionModifierSignature> {
+  modify(element, [scrollPosition], { relative }) {
+    assert(,
+      `first argument to 'scroll-position' must be a number, but ${scrollPosition} was ${typeof scrollPosition}`,
+      typeof scrollPosition === "number"
+    );
+
+    assert(
+      `'relative' argument to 'scroll-position' must be a boolean, but ${relative} was ${typeof relative}`,
+      typeof relative === "boolean"
+    );
+
+    if (relative) {
+      element.scrollTop += scrollPosition;
+    } else {
+      element.scrollTop = scrollPosition;
+    }
+  }
+}
+```
+
+### The `Signature` type
+
+The `Signature` for a modifier is the combination of the positional and named arguments it receives and the element to which it may be applied.
+
+```ts
+interface Signature {
+  Args: {
+    Named: {
+      [argName: string]: unknown;
+    };
+    Positional: unknown[];
+  };
+  Element: Element;
+}
+```
+
+When writing a signature yourself, all of those are optional: the types for modifiers will fall back to the correct defaults of `Element`, an object for named arguments, and an array for positional arguments. You can apply a signature when defining either a function-based or a class-based modifier.
+
+In a function-based modifier, the callback arguments will be inferred from the signature, so you do not need to specify the types twice:
+
+```ts
+interface MySignature {
+  Element: HTMLMediaElement;
+  Args: {
+    Named: {
+      when: boolean;
+    };
+    Positional: [];
+  };
+}
+
+const play = modifier<MySignature>((el, _, { when: shouldPlay }) => {
+  if (shouldPlay) {
+    el.play();
+  } else {
+    el.pause();
+  }
+})
+```
+
+You never *need* to specify a signature in this way for a function-based modifier: you can simply write the types inline instead:
+
+```ts
+const play = modifier(
+  (el: HTMLMediaElement, _: [], { when: shouldPlay }: { when: boolean}) => {
+    if (shouldPlay) {
+      el.play();
+    } else {
+      el.pause();
+    }
+  }
+);
+```
+
+However, the explicit `modifier<Signature>(...)` form is tested to keep working, since it can be useful for documentation!
+
+The same basic approach works with a class-based modifier:
+
+```ts
+interface MySignature {
+  // ...
+}
+
+export default class MyModifier extends Modifier<MySignature> {
+  // ...
+}
+```
+
+In that case, the `element` and `args` will always have the right types throughout the body. Since the type of `args` in the constructor are derived from the signature, you can use the `ArgsFor` type helper to avoid having to write the type out separately:
+
+```ts
+import Modifier, { ArgsFor } from 'ember-modifier';
+
+interface MySignature {
+  // ...
+}
+
+export default class MyModifier extends Modifier<MySignature> {
+  constructor(owner: unknown, args: ArgsFor<MySignature>) {
+    // ...
+  }
+}
+```
+
+`ArgsFor` isn't magic: it just takes the `Args` from the `Signature` you provide and turns it into the right shape for the constructor: the `Named` type ends up as the `named` field and the `Positional` type ends up as the type for `args.positional`, so you could write it out yourself if you preferred:
+
+```ts
+import Modifier from 'ember-modifier';
+
+interface MySignature {
+  // ...
+}
+
+export default class MyModifier extends Modifier<MySignature> {
+  constructor(
+    owner: unknown,
+    args: {
+      named: MySignature['Args']['Named'];
+      positional: MySignature['Args']['Positional'];
+    }
+  ) {
+    // ...
+  }
+}
+```
 
 ### Examples with TypeScript
 
-#### Functional modifier
+#### Function-based modifier
 
-Let’s look at a variant of the `move-randomly` example from above, implemented in TypeScript, and now requiring a named argument, the maximum offset. Using the recommended runtime type-checking, it would look like this:
+Let’s look at a variant of the `move-randomly` example from above, implemented in TypeScript, and now requiring a named argument, the maximum offset. Using the recommended combination of types and runtime type-checking, it would look like this:
 
 ```ts
 // app/modifiers/move-randomly.js
@@ -789,7 +904,9 @@ import { assert } from '@ember/debug';
 
 const { random, round } = Math;
 
-export default modifier((element, _, named) => {
+export default modifier(
+  (element: HTMLElement, _: [], named: { maxOffset: number }
+) => {
   assert(
     'move-randomly can only be installed on HTML elements!',
     element instanceof HTMLElement
@@ -813,7 +930,7 @@ export default modifier((element, _, named) => {
 
 A few things to notice here:
 
-1.  TypeScript correctly infers the types of the arguments for the function passed to the modifier; you don't need to specify what `element` or `positional` or `named` are.
+1.  TypeScript correctly infers the *base* types of the arguments for the function passed to the modifier; you don't need to specify what `element` or `positional` or `named` are unless you are doing like we are in this example and providing a usefully more-specific type to callers.
 
 2.  If we returned a teardown function which had the wrong type signature, that would also be an error.
 
@@ -830,10 +947,7 @@ A few things to notice here:
     TypeScript will report:
 
     > ```
-    > Argument of type '(element: Element, _: Positional, named: Record<string, unknown>) => Timeout' is not assignable to parameter of type 'FunctionalModifier<Positional, Record<string, unknown>>'.
-    >   Type 'Timeout' is not assignable to type 'void | Teardown'.
-    >     Type 'Timeout' is not assignable to type 'Teardown'.
-    >       Type 'Timeout' provides no match for the signature '(): void'.
+    > Type 'Timeout' is not assignable to type 'void | Teardown'.
     > ```
 
     Likewise, if we return a function with the wrong signature, we will see the same kinds of errors. If we expected to receive an argument in the teardown callback, like this:
@@ -849,57 +963,63 @@ A few things to notice here:
     TypeScript will report:
 
     > ```
-    > Argument of type '(element: Element, _: Positional, named: Record<string, unknown>) => (interval: number) => void' is not assignable to parameter of type 'FunctionalModifier<Positional, Record<string, unknown>>'.
-    >   Type '(interval: number) => void' is not assignable to type 'void | Teardown'.
-    >     Type '(interval: number) => void' is not assignable to type 'Teardown'.
+    > Type '(interval: number) => void' is not assignable to type 'void | Teardown'.
     > ```
 
 ####  Class-based
 
-To support correctly typing `args` in the `constructor` for the case where you do runtime type checking, we supply a `ModifierArgs` interface import. Here’s what a fully typed modifier that alerts "This is a typesafe modifier!" an amount of time after receiving arguments that depends on the length of the first argument and an *optional* multiplier (a nonsensical thing to do, but one that illustrates a fully type-safe class-based modifier):
+To support correctly typing `args` in the `constructor` for the case where you do runtime type checking, we supply an `ArgsFor` type utility. (This is useful because the `Signature` type, matching Glimmer Component and other "invokable" items in Ember/Glimmer, has capital letters for the names of the types, while `args.named` and `args.positional` are lower-case.) Here’s how that would look with a fully typed modifier that alerts "This is a typesafe modifier!" an amount of time after receiving arguments that depends on the length of the first argument and an *optional* multiplier (a nonsensical thing to do, but one that illustrates a fully type-safe class-based modifier):
 
 ```ts
-import Modifier, { ModifierArgs } from 'ember-modifier';
+import Modifier, { ArgsFor, PositionalArgs, NamedArgs } from 'ember-modifier';
 import { assert } from '@ember/debug';
 
-export default class NeatModifier extends Modifier {
+interface NeatSignature {
+  Args: {
+    Named: {
+      multiplier?: number;
+    };
+    Positional: [string];
+  }
+}
+
+
+function cleanup(instance: Neat) => {
+  if (instance.interval) {
+    clearInterval(instance.interval);
+  }
+}
+
+export default class Neat extends Modifier<NeatSignature> {
   interval?: number;
 
-  constructor(owner: unknown, args: ModifierArgs) {
+  constructor(owner: unknown, args: ArgsFor<NeatSignature>) {
     super(owner, args);
-    // other setup you might do
+    registerDestructor(this, cleanup);
   }
 
-  get lengthOfInput(): number {
-  	assert(
-  	  `positional arg must be 'string' but was ${typeof this.args.positional[0]}`,
-  	  typeof this.args.positional[0] === 'string'
+  modify(
+    element: Element,
+    [lengthOfInput]: PositionalArgs<NeatSignature>,
+    { multiplier }: NamedArgs<NeatSignature>
+  ) {
+    assert(
+  	  `positional arg must be 'string' but was ${typeof lengthOfInput}`,
+  	  typeof lengthOfInput === 'string'
   	);
 
-    return this.args.positional[0].length;
-  }
-
-  get multiplier(): number {
-    if (this.args.named.multiplier === undefined) {
-      return 1000;
-    }
-
     assert(
-    	`'multiplier' arg must be a number but was ${typeof this.args.named.multiplier}`,
-    	typeof this.args.named.multiplier === "number"
+    	`'multiplier' arg must be a number but was ${typeof multiplier}`,
+    	multiplier ? typeof multiplier === "number" : true
     );
 
-    return this.args.named.multiplier;
-  }
+    multiplier = modifier ?? 1000;
 
-  didReceiveArguments() {
+    let updateTime = multiplier * lengthOfInput;
     this.interval = setInterval(() => {
-      alert("this is a typesafe modifier!");
-    }, this.multiplier * this.lengthOfInput);
-  }
-
-  willDestroy() {
-    clearInterval(this.interval);
+      element.innerText =
+        `Behold, a type safe modifier moved after ${updateTime / 1000}s`;
+    }, updateTime)
   }
 }
 ```
@@ -933,6 +1053,21 @@ See [this pull request comment](https://github.com/sukima/ember-class-based-modi
 * Renamed `didInsertElement` to `didInstall` and `willDestroyElement` to `willRemove`. This is to emphasize that when the modifier is installed or removed, the underlying element may not be freshly inserted or about to go away. Therefore, it is important to perform clean-up work in the `willRemove` to reverse any modifications you made to the element.
 * Changed life-cycle hook order: `didReceiveArguments` fires before `didInstall`, and `didUpdateArguments` fires before `didReceiveArguments`, mirroring the classic component life-cycle hooks ordering.
 * Added `willDestroy`, `isDestroying` and `isDestroyed` with the same semantics as Ember objects and Glimmer components.
+
+History
+------------------------------------------------------------------------------
+
+This addon is the next iteration of both [ember-class-based-modifier] and
+[ember-functional-modifiers]. Some breaking changes to the APIs have been made.
+For a list of differences, see the [API differences](#api-differences) section.
+
+Huge thanks to [**@sukima**](https://github.com/sukima) and [**@spencer516**](https://github.com/spencer516) for their contributions! This project
+is based on their work, and wouldn't have been possible without them!
+
+[ember-class-based-modifier]: https://github.com/sukima/ember-class-based-modifier
+[ember-functional-modifiers]: https://github.com/spencer516/ember-functional-modifiers
+
+
 
 Contributing
 ------------------------------------------------------------------------------
