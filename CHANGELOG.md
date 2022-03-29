@@ -1,6 +1,38 @@
 
 ## v3.2.0 (2022-03-29)
 
+#### :rocket: Enhancement
+* [#230](https://github.com/ember-modifier/ember-modifier/pull/230) Solidify types for release ([@chriskrycho](https://github.com/chriskrycho))
+* [#222](https://github.com/ember-modifier/ember-modifier/pull/222) Introduce `eager` option to function-based modifiers ([@chriskrycho](https://github.com/chriskrycho))
+* [#217](https://github.com/ember-modifier/ember-modifier/pull/217) Introduce new `modify` hook ([@chriskrycho](https://github.com/chriskrycho))
+* [#218](https://github.com/ember-modifier/ember-modifier/pull/218) Add TS 4.6 to CI and README ([@chriskrycho](https://github.com/chriskrycho))
+* [#210](https://github.com/ember-modifier/ember-modifier/pull/210) Support `Signature` types for modifiers ([@chriskrycho](https://github.com/chriskrycho))
+* [#135](https://github.com/ember-modifier/ember-modifier/pull/135) Add TypeScript 4.5 to testing matrix ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### :bug: Bug Fix
+* [#134](https://github.com/ember-modifier/ember-modifier/pull/134) Properly re-export types ([@mydea](https://github.com/mydea))
+
+#### :memo: Documentation
+* [#227](https://github.com/ember-modifier/ember-modifier/pull/227) Update docs and export type utils ([@chriskrycho](https://github.com/chriskrycho))
+* [#218](https://github.com/ember-modifier/ember-modifier/pull/218) Add TS 4.6 to CI and README ([@chriskrycho](https://github.com/chriskrycho))
+* [#198](https://github.com/ember-modifier/ember-modifier/pull/198) README: autotracking clarification and misc. cleanup ([@chriskrycho](https://github.com/chriskrycho)
+
+#### :house: Internal
+* [#226](https://github.com/ember-modifier/ember-modifier/pull/226) Upgrade to latest @types for @ember/modifier ([@chriskrycho](https://github.com/chriskrycho))
+* [#219](https://github.com/ember-modifier/ember-modifier/pull/219) Add ':no_entry_sign: Deprecations' to lerna config ([@chriskrycho](https://github.com/chriskrycho))
+* [#163](https://github.com/ember-modifier/ember-modifier/pull/163) Drop support for Classic and jQuery scenarios ([@chriskrycho](https://github.com/chriskrycho))
+* [#162](https://github.com/ember-modifier/ember-modifier/pull/162) Remove babel.config.js ([@chriskrycho](https://github.com/chriskrycho))
+* [#161](https://github.com/ember-modifier/ember-modifier/pull/161) CI config: tweak how TS versions are tested ([@chriskrycho](https://github.com/chriskrycho))
+* [#123](https://github.com/ember-modifier/ember-modifier/pull/123) Update npmignore file ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#109](https://github.com/ember-modifier/ember-modifier/pull/109) Create dependabot.yml ([@banupriya-bp](https://github.com/banupriya-bp))
+* [#108](https://github.com/ember-modifier/ember-modifier/pull/108) Actually remove `<N>` from `ModifierArgs` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 4
+- Banupriya ([@banupriya-bp](https://github.com/banupriya-bp))
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Francesco Novy ([@mydea](https://github.com/mydea))
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+
 ## v3.1.0 (2022-01-25)
 
 #### :rocket: Enhancement
