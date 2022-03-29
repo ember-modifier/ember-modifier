@@ -8,13 +8,14 @@ function-based modifiers and more complicated class-based modifiers.
 [element modifiers]: https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html
 [helper]: https://octane-guides-preview.emberjs.com/release/templates/writing-helpers
 
+:warning: **NOTE:** this is the README for the unreleased v4 version! For the v3 README, see [here](https://github.com/ember-modifier/ember-modifier/blob/v3/README.md). :warning:
+
 - [Compatibility](#compatibility)
   - [TypeScript](#typescript)
 - [Installation](#installation)
 - [Philosophy](#philosophy)
   - [Whoa whoa whoa, hold on, what's a _"side effect"_?](#whoa-whoa-whoa-hold-on-whats-a-side-effect)
   - [Managing "side effects" effectively](#managing-side-effects-effectively)
-  - [Should modifiers _always_ be self-contained?](#should-modifiers-always-be-self-contained)
 - [Usage](#usage)
   - [Function-Based Modifiers](#function-based-modifiers)
     - [Generating a Function-Based Modifier](#generating-a-function-based-modifier)
@@ -31,12 +32,6 @@ function-based modifiers and more complicated class-based modifiers.
   - [Examples with TypeScript](#examples-with-typescript)
     - [Function-based modifier](#function-based-modifier)
     - [Class-based](#class-based)
-  - [Additional reading](#additional-reading)
-- [API Differences](#api-differences)
-  - [API differences from ember-functional-modifiers](#api-differences-from-ember-functional-modifiers)
-  - [API differences from ember-class-based-modifier](#api-differences-from-ember-class-based-modifier)
-  - [API differences from ember-oo-modifiers](#api-differences-from-ember-oo-modifiers)
-- [History](#history)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -566,115 +561,6 @@ Usage:
 <dd>The primary hook for running a modifier. It gets called when the modifier is installed on the element, and any time any tracked state it uses changes. That tracked state can be from its arguments, which are auto-tracked, or from any other kind of tracked state, including but not limited to state on injected services.</dd>
 </dl>
 
-##### Deprecated
-
-These fields and hooks exist on the class until 4.0. You should migrate away
-from them to use `modify()` and the `@ember/destroyable` API as appropriate. (See [MIGRATIONS.md](./MIGRATIONS.md)).
-
-<dl>
-<dt><code>element</code></dt>
-<dd>The DOM element the modifier is attached to.</dd>
-<dt><code>args</code>: <code>{ positional: Array, named: Object }</code></dt>
-<dd>The arguments passed to the modifier. <code>args.positional</code> is an array of positional arguments, and <code>args.named</code> is an object containing the named arguments. (See <a href='#typescript'>below</a> for a discussion of the types.)</dd>
-<dt><code>isDestroying</code></dt>
-<dd><code>true</code> if the modifier is in the process of being destroyed, or has already been destroyed.</dd>
-<dt><code>isDestroyed</code></dt>
-<dd><code>true</code> if the modifier has already been destroyed.</dd>
-<dt><code>didReceiveArguments()</code></dt>
-<dd>Called when the modifier is installed <strong>and</strong> anytime the arguments are updated.</dd>
-<dt><code>didUpdateArguments()</code></dt>
-<dd>Called anytime the arguments are updated but <strong>not</strong> on the initial install. Called before <code>didReceiveArguments</code>.</dd>
-<dt><code>didInstall()</code></dt>
-<dd>Called when the modifier is installed on the DOM element. Called after <code>didReceiveArguments</code>.</dd>
-<dt><code>willRemove()</code></dt>
-<dd>Called when the DOM element is about to be destroyed; use for removing event listeners on the element and other similar clean-up tasks. <em><strong>Deprecated since 2.0.</strong> Prefer <code>willDestroy()</code>.</em></dd>
-<dt><code>willDestroy()</code></dt>
-<dd>Called when the modifier itself is about to be destroyed; use for teardown code. Called after <code>willRemove</code>.</dd>
-</dl>
-
-##### Lifecycle Summary
-
-Note: this table only applies to the legacy lifecycle hooks. `modify()` is mutually exclusive with all hooks except the `constructor`, and runs on installation and update, but not remove.
-
-Key:
-
-* (#) Indicates the order of invocation for the lifecycle event.
-* ❌  Indicates that the method is not invoked for a given lifecycle / property is not available.
-* ✔️  Indicates that the property is available during the invocation of the given method.
-
-<table>
-<thead><tr>
-  <th scope='column'>hook name</th>
-  <th>Create</th>
-  <th>Install</th>
-  <th>Update</th>
-  <th>Remove</th>
-  <th><code>this.element</code></th>
-  <th><code>this.args</code></th>
-</tr></thead>
-<tbody>
-  <tr>
-    <th scope='row'><code>constructor()</code></th>
-    <td>✔️</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>after <code>super()</code></td>
-  </tr>
-
-  <tr>
-    <th scope='row'><code>didUpdateArguments()</code></th>
-    <td>❌</td>
-    <td>❌</td>
-    <td>(1)</td>
-    <td>❌</td>
-    <td>✔️</td>
-    <td>✔️</td>
-  </tr>
-
-  <tr>
-    <th scope='row'><code>didReceiveArguments()</code></th>
-    <td>❌</td>
-    <td>(1)</td>
-    <td>(2)</td>
-    <td>❌</td>
-    <td>✔️</td>
-    <td>✔️</td>
-  </tr>
-
-  <tr>
-    <th scope='row'><code>didInstall()</code></th>
-    <td>❌</td>
-    <td>(2)</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>✔️</td>
-    <td>✔️</td>
-  </tr>
-
-  <tr>
-    <th scope='row'><code>willRemove()</code></th>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>(1)</td>
-    <td>✔️</td>
-    <td>✔️</td>
-  </tr>
-
-  <tr>
-    <th scope='row'><code>willDestroy()</code></th>
-    <td>❌</td>
-    <td>❌</td>
-    <td>❌</td>
-    <td>(2)</td>
-    <td>✔️</td>
-    <td>✔️</td>
-  </tr>
-</tbody>
-</table>
-
 ## TypeScript
 
 Both the function- and class-based APIs can be used with TypeScript!
@@ -1023,51 +909,6 @@ export default class Neat extends Modifier<NeatSignature> {
   }
 }
 ```
-
-### Additional reading
-
-See [this pull request comment](https://github.com/sukima/ember-class-based-modifier/pull/5#discussion_r326687943) for background discussion about using TypeScript with your Modifiers.
-
-## API Differences
-
-### API differences from [ember-functional-modifiers](https://github.com/spencer516/ember-functional-modifiers)
-
-* Renamed package to `ember-modifier`
-* Renamed `makeFunctionalModifier` to `modifier`, and to a named export instead of the default
-* Removed `isRemoving` flag from modifier destructors. In cases where fine-grained control over the lifecycle is needed, class modifiers should be used instead.
-* Removed service injection from functional modifiers. In cases where services are needed, class modifiers should be used instead.
-
-### API differences from [ember-class-based-modifier](https://github.com/sukima/ember-class-based-modifier)
-
-* Renamed package to `ember-modifier`
-* Removed classic API
-
-### API differences from [ember-oo-modifiers](https://github.com/sukima/ember-class-based-modifier/tree/maintenance/ember-oo-modifiers)
-
-* Renamed package to `ember-modifier`.
-* Removed classic API
-* No `Modifier.modifier()` function.
-* Arguments, both positional and named, are available on `this.args`.
-* Named arguments do not become properties on the modifier instance.
-* Arguments are not passed to life-cycle hooks.
-* Renamed `didInsertElement` to `didInstall` and `willDestroyElement` to `willRemove`. This is to emphasize that when the modifier is installed or removed, the underlying element may not be freshly inserted or about to go away. Therefore, it is important to perform clean-up work in the `willRemove` to reverse any modifications you made to the element.
-* Changed life-cycle hook order: `didReceiveArguments` fires before `didInstall`, and `didUpdateArguments` fires before `didReceiveArguments`, mirroring the classic component life-cycle hooks ordering.
-* Added `willDestroy`, `isDestroying` and `isDestroyed` with the same semantics as Ember objects and Glimmer components.
-
-History
-------------------------------------------------------------------------------
-
-This addon is the next iteration of both [ember-class-based-modifier] and
-[ember-functional-modifiers]. Some breaking changes to the APIs have been made.
-For a list of differences, see the [API differences](#api-differences) section.
-
-Huge thanks to [**@sukima**](https://github.com/sukima) and [**@spencer516**](https://github.com/spencer516) for their contributions! This project
-is based on their work, and wouldn't have been possible without them!
-
-[ember-class-based-modifier]: https://github.com/sukima/ember-class-based-modifier
-[ember-functional-modifiers]: https://github.com/spencer516/ember-functional-modifiers
-
-
 
 Contributing
 ------------------------------------------------------------------------------
