@@ -2,7 +2,7 @@ import { expectTypeOf } from 'expect-type';
 
 import Modifier, { modifier, ModifierArgs } from 'ember-modifier';
 import { FunctionBasedModifier } from 'ember-modifier/-private/function-based/modifier';
-import { EmptyObject } from 'ember-modifier/-private/signature';
+import { ArgsFor, EmptyObject } from 'ember-modifier/-private/signature';
 
 // --- function modifier --- //
 expectTypeOf(modifier).toMatchTypeOf<
@@ -20,9 +20,9 @@ expectTypeOf(modifier).toMatchTypeOf<
 
 // --- class-based modifier --- //
 expectTypeOf(Modifier).constructorParameters.toEqualTypeOf<
-  [unknown, ModifierArgs]
+  [unknown, ArgsFor<unknown>]
 >();
-expectTypeOf<Modifier['args']>().toEqualTypeOf<ModifierArgs>();
+expectTypeOf<Modifier['args']>().toEqualTypeOf<ArgsFor<unknown>>();
 expectTypeOf<Modifier['element']>().toEqualTypeOf<Element>();
 expectTypeOf<Modifier['didReceiveArguments']>().toEqualTypeOf<() => void>();
 expectTypeOf<Modifier['didUpdateArguments']>().toEqualTypeOf<() => void>();
