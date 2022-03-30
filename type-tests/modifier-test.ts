@@ -49,7 +49,7 @@ expectTypeOf(basicFunctionBased).toEqualTypeOf<
   FunctionBasedModifier<{
     Element: Element;
     Args: {
-      Positionnal: unknown[];
+      Positional: unknown[];
       Named: Record<string, unknown>;
     };
   }>
