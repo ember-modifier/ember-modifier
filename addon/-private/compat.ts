@@ -42,7 +42,11 @@ if (gte('3.22.0')) {
       pos[i];
     }
 
-    Object.values(named);
+    // SAFETY: TS 4.7 does not see that `named` will always be an object here.
+    // However, it is guaranteed to be resolved as such by the types. This *may*
+    // be a bug (https://github.com/microsoft/TypeScript/issues/48468), but it
+    // *should* also stop being relevant once we ship 4.0.
+    Object.values(named as object);
   };
 }
 
