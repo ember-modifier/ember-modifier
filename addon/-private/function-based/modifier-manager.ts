@@ -1,11 +1,10 @@
 import { capabilities } from '@ember/modifier';
 import { gte } from 'ember-compatibility-helpers';
-import type { FunctionalModifierDefinition, Teardown } from './modifier';
+import type { FunctionBasedModifierDefinition, Teardown } from './modifier';
 import type { ArgsFor, ElementFor } from '../signature';
-import { consumeArgs, Factory, isFactory } from '../compat';
 
 interface State<S> {
-  instance: FunctionalModifierDefinition<S>;
+  instance: FunctionBasedModifierDefinition<S>;
 }
 
 interface CreatedState<S> extends State<S> {
@@ -37,27 +36,10 @@ function installElement<S>(
 export default class FunctionBasedModifierManager<S> {
   capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
 
-  options: { eager: boolean };
-
-  constructor(options?: { eager: boolean }) {
-    this.options = {
-      eager: options?.eager ?? true,
-    };
-  }
-
   createModifier(
-    factoryOrClass:
-      | Factory<FunctionalModifierDefinition<S>>
-      | FunctionalModifierDefinition<S>
+    instance: FunctionBasedModifierDefinition<S>
   ): CreatedState<S> {
-    const instance = isFactory(factoryOrClass)
-      ? factoryOrClass.class
-      : factoryOrClass;
-
-    return {
-      element: null,
-      instance: instance,
-    };
+    return { element: null, instance };
   }
 
   installModifier(
@@ -72,10 +54,6 @@ export default class FunctionBasedModifierManager<S> {
     if (teardown) {
       state.teardown = teardown;
     }
-
-    if (gte('3.22.0') && this.options.eager) {
-      consumeArgs(args);
-    }
   }
 
   updateModifier(state: InstalledState<S>, args: ArgsFor<S>): void {
@@ -86,10 +64,6 @@ export default class FunctionBasedModifierManager<S> {
     const teardown = state.instance(state.element, args.positional, args.named);
     if (teardown) {
       state.teardown = teardown;
-    }
-
-    if (gte('3.22.0') && this.options.eager) {
-      consumeArgs(args);
     }
   }
 

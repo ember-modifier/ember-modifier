@@ -1,7 +1,6 @@
 import { setOwner } from '@ember/application';
 import { setModifierManager } from '@ember/modifier';
 import Manager from './modifier-manager';
-import { isDestroying, isDestroyed } from '@ember/destroyable';
 import {
   ElementFor,
   ArgsFor,
@@ -9,53 +8,7 @@ import {
   PositionalArgs,
   NamedArgs,
 } from '../signature';
-import { assert, deprecate } from '@ember/debug';
-import { DEBUG } from '@glimmer/env';
 import Opaque from '../opaque';
-
-// SAFETY: these sets are dev-only code to avoid showing deprecations for the
-// same class more than once.
-type ClassBasedModifierClass = ClassBasedModifier['constructor'];
-let SEEN_CLASSES_FOR_LIFECYCLE: Set<ClassBasedModifierClass>;
-if (DEBUG) {
-  SEEN_CLASSES_FOR_LIFECYCLE = new Set();
-}
-
-let SEEN_CLASSES_FOR_DESTROYABLES: Set<ClassBasedModifierClass>;
-if (DEBUG) {
-  SEEN_CLASSES_FOR_DESTROYABLES = new Set();
-}
-
-let SEEN_CLASSES_FOR_ARGS: Set<ClassBasedModifierClass>;
-if (DEBUG) {
-  SEEN_CLASSES_FOR_ARGS = new Set();
-}
-
-let SEEN_CLASSES_FOR_ELEMENTS: Set<ClassBasedModifierClass>;
-if (DEBUG) {
-  SEEN_CLASSES_FOR_ELEMENTS = new Set();
-}
-
-/** @internal */
-export const _implementsModify = <S>(
-  instance: ClassBasedModifier<S>
-): boolean => instance.modify !== ClassBasedModifier.prototype.modify;
-
-/** @internal */
-export const _implementsLegacyHooks = <S>(
-  instance: ClassBasedModifier<S>
-): boolean =>
-  instance.didInstall !== ClassBasedModifier.prototype.didInstall ||
-  instance.didUpdateArguments !==
-    ClassBasedModifier.prototype.didUpdateArguments ||
-  instance.didReceiveArguments !==
-    ClassBasedModifier.prototype.didReceiveArguments;
-
-/** @internal */
-export const Element = Symbol('Element');
-
-/** @internal */
-export const Args = Symbol('Args');
 
 // Preserve the signature on a class-based modifier so it can be plucked off
 // later (by e.g. Glint), using interface merging with an opaque item to
@@ -84,92 +37,17 @@ export default interface ClassBasedModifier<S = DefaultSignature>
  * update if any of those values change.
  */
 export default class ClassBasedModifier<S = DefaultSignature> {
-  // Done this way with the weird combination of `declare` and `defineProperty`
-  // so that subclasses which are overriding this by writing their own `args`
-  // field type declarations continue to type check correctly. (If we introduced
-  // a getter here, existing classes defining their args via a `declare args:`
-  // would stop type checking, because TS -- correctly! -- differentiates
-  // between class fields and getters).
+  // `args` is passed here for the sake of subclasses to have access to args in
+  // their constructors while having constructors which are properly asssignable
+  // for the superclass.
   /**
-   * The arguments passed to the modifier. `args.positional` is an array of
-   * positional arguments, and `args.named` is an object containing the named
-   * arguments.
    *
-   * @deprecated Until 4.0. Access positional and named arguments directly in
-   *   the `modify` hook instead.
+   * @param owner An instance of an Owner (for service injection etc.).
+   * @param args The positional and named arguments passed to the modifier.
    */
-  declare readonly args: ArgsFor<S>;
-
-  // Done this way with the weird combination of `declare` and `defineProperty`
-  // so that subclasses which are overriding this by writing their own `element`
-  // field declarations continue to type check correctly.
-  /**
-   * The element the modifier is applied to.
-   *
-   * @warning `element` is ***not*** available during `constructor` or
-   *   `willDestroy`.
-   * @deprecated Until 4.0. Access the `element` as an argument in the `modify`
-   *   hook instead.
-   */
-  declare element: ElementFor<S>;
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(owner: unknown, args: ArgsFor<S>) {
     setOwner(this, owner);
-
-    // SAFETY: the point here is (for the period where we are providing `args`
-    // and `element`) to provide an internal-only way of setting and update the
-    // `args` for the modifier instance; we use the `InternalClassBasedModifier`
-    // interface to represent the internal-only API in a way that end users do
-    // *not* have access to when subclassing `ClassBasedModifier`.
-    (this as unknown as InternalClassBasedModifier<S>)[Args] = args;
-
-    assert(
-      'ember-modifier: You cannot implement both `modify` and any of the deprecated legacy lifecycle hooks (`didInstall`, `didReceiveArguments`, and `didUpdateArguments`)',
-      !(_implementsModify(this) && _implementsLegacyHooks(this))
-    );
-
-    deprecate(
-      `ember-modifier (in ${this.constructor.name} at ${
-        new Error().stack
-      }): \`willDestroy\`, \`isDestroyed\`, and \`isDestroyed\` are deprecated. Use the corresponding API from '@ember/destroyable' instead.`,
-      (['willDestroy', 'isDestroying', 'isDestroyed'] as const).some(
-        (name) => this[name] !== ClassBasedModifier.prototype[name]
-      ) && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
-      {
-        id: 'ember-modifier.use-destroyables',
-        until: '4.0.0',
-        for: 'ember-modifier',
-        since: {
-          available: '3.2.0',
-          enabled: '3.2.0',
-        },
-      }
-    );
-
-    if (DEBUG && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor)) {
-      SEEN_CLASSES_FOR_DESTROYABLES.add(this.constructor);
-    }
-
-    deprecate(
-      `ember-modifier (in ${this.constructor.name} at ${
-        new Error().stack
-      }): The \`didInstall\`, \`didReceiveArguments\`, and \`didUpdateArguments\` hooks are deprecated. Use the new \`modify\` hook instead.`,
-      !_implementsModify(this) &&
-        !SEEN_CLASSES_FOR_LIFECYCLE.has(this.constructor),
-      {
-        id: 'ember-modifier.use-modify',
-        until: '4.0.0',
-        for: 'ember-modifier',
-        since: {
-          available: '3.2.0',
-          enabled: '3.2.0',
-        },
-      }
-    );
-
-    if (DEBUG && !SEEN_CLASSES_FOR_LIFECYCLE.has(this.constructor)) {
-      SEEN_CLASSES_FOR_LIFECYCLE.add(this.constructor);
-    }
   }
 
   /**
@@ -216,163 +94,6 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   ): void {
     /* no op, for subclassing */
   }
-
-  /**
-   * Called when the modifier is installed **and** anytime the arguments are
-   * updated.
-   *
-   * @deprecated Until 4.0. Use `modify()`.
-   */
-  didReceiveArguments(): void {
-    /* no op, for subclassing */
-  }
-
-  /**
-   * Called anytime the arguments are updated but **not** on the initial
-   * install. Called before `didReceiveArguments`.
-   *
-   * @deprecated Until 4.0. Use `modify()`.
-   */
-  didUpdateArguments(): void {
-    /* no op, for subclassing */
-  }
-
-  /**
-   * Called when the modifier is installed on the DOM element. Called after
-   * `didReceiveArguments`.
-   *
-   * @deprecated Until 4.0. Use `modify()`.
-   */
-  didInstall(): void {
-    /* no op, for subclassing */
-  }
-
-  /**
-   * Called when the modifier itself is about to be destroyed; use for teardown
-   * code. Called after `willRemove`.
-   *
-   * @deprecated Until 4.0. Use `registerDestructor` from `@ember/destroyables`.
-   */
-  willDestroy(): void {
-    /* no op, for subclassing */
-  }
-
-  /**
-   * @deprecated Until 4.0. Use `isDestroying` from `@ember/destroyables`.
-   */
-  get isDestroying(): boolean {
-    deprecate(
-      'Modifier.isDestroying is deprecated',
-      !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
-      {
-        id: 'ember-modifier.use-destroyables',
-        until: '4.0.0',
-        for: 'ember-modifier',
-        since: {
-          available: '3.2.0',
-          enabled: '3.2.0',
-        },
-      }
-    );
-
-    if (DEBUG && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor)) {
-      SEEN_CLASSES_FOR_DESTROYABLES.add(this.constructor);
-    }
-
-    return isDestroying(this);
-  }
-
-  /**
-   * @deprecated Until 4.0. Use `isDestroyed` from `@ember/destroyables`.
-   */
-  get isDestroyed(): boolean {
-    deprecate(
-      'Modifier.isDestroyed is deprecated',
-      !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
-      {
-        id: 'ember-modifier.use-destroyables',
-        until: '4.0.0',
-        for: 'ember-modifier',
-        since: {
-          available: '3.2.0',
-          enabled: '3.2.0',
-        },
-      }
-    );
-
-    if (DEBUG && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor)) {
-      SEEN_CLASSES_FOR_DESTROYABLES.add(this.constructor);
-    }
-
-    return isDestroyed(this);
-  }
-}
-
-// We apply these here, against the prototype, so that there is only one of
-// these, rather than one per instance. We also only issue the deprecation once
-// per class for each of `args` and `element`.
-Object.defineProperty(ClassBasedModifier.prototype, 'args', {
-  enumerable: true,
-  get(this: InternalClassBasedModifier<unknown>) {
-    deprecate(
-      `ember-modifier (in ${this.constructor.name} at ${
-        new Error().stack
-      }): using \`this.args\` is deprecated. Access positional and named arguments directly in the \`modify\` hook instead.`,
-      !SEEN_CLASSES_FOR_ARGS.has(this.constructor),
-      {
-        id: 'ember-modifier.no-args-property',
-        for: 'ember-modifier',
-        since: {
-          available: '3.2.0',
-          enabled: '3.2.0',
-        },
-        until: '4.0.0',
-      }
-    );
-
-    if (DEBUG && !SEEN_CLASSES_FOR_ARGS.has(this.constructor)) {
-      SEEN_CLASSES_FOR_ARGS.add(this.constructor);
-    }
-
-    return this[Args];
-  },
-});
-
-Object.defineProperty(ClassBasedModifier.prototype, 'element', {
-  enumerable: true,
-  get(this: InternalClassBasedModifier<unknown>) {
-    deprecate(
-      `ember-modifier (in ${this.constructor.name} at ${
-        new Error().stack
-      }): using \`this.element\` is deprecated. Access the \`element\` as an argument in the \`modify\` hook instead.`,
-      !SEEN_CLASSES_FOR_ELEMENTS.has(this.constructor),
-      {
-        id: 'ember-modifier.no-element-property',
-        for: 'ember-modifier',
-        since: {
-          available: '3.2.0',
-          enabled: '3.2.0',
-        },
-        until: '4.0.0',
-      }
-    );
-
-    if (DEBUG && !SEEN_CLASSES_FOR_ELEMENTS.has(this.constructor)) {
-      SEEN_CLASSES_FOR_ELEMENTS.add(this.constructor);
-    }
-
-    return this[Element] ?? null;
-  },
-});
-
-/**
- * @internal This provides an interface we can use to backwards-compatibly set
- *   up the element in a way that external callers will not have access to or
- *   even see.
- */
-export interface InternalClassBasedModifier<S> extends ClassBasedModifier<S> {
-  [Element]: ElementFor<S>;
-  [Args]: ArgsFor<S>;
 }
 
 setModifierManager((owner) => new Manager(owner), ClassBasedModifier);

@@ -1,7 +1,12 @@
 import { expectTypeOf } from 'expect-type';
 
-import Modifier, { modifier, ModifierArgs } from 'ember-modifier';
+import Modifier, { ArgsFor, modifier } from 'ember-modifier';
 import { FunctionBasedModifier } from 'ember-modifier/-private/function-based/modifier';
+import { registerDestructor } from '@ember/destroyable';
+
+// Importing private API to confirm that (a) this is stable and (b) it is used
+// where we expect to normalize types.
+import { EmptyObject } from 'ember-modifier/-private/signature';
 
 // --- function modifier --- //
 expectTypeOf(modifier).toMatchTypeOf<
@@ -19,16 +24,8 @@ expectTypeOf(modifier).toMatchTypeOf<
 
 // --- class-based modifier --- //
 expectTypeOf(Modifier).constructorParameters.toEqualTypeOf<
-  [unknown, ModifierArgs]
+  [unknown, ArgsFor<unknown>]
 >();
-expectTypeOf<Modifier['args']>().toEqualTypeOf<ModifierArgs>();
-expectTypeOf<Modifier['element']>().toEqualTypeOf<Element>();
-expectTypeOf<Modifier['didReceiveArguments']>().toEqualTypeOf<() => void>();
-expectTypeOf<Modifier['didUpdateArguments']>().toEqualTypeOf<() => void>();
-expectTypeOf<Modifier['didInstall']>().toEqualTypeOf<() => void>();
-expectTypeOf<Modifier['willDestroy']>().toEqualTypeOf<() => void>();
-expectTypeOf<Modifier['isDestroying']>().toEqualTypeOf<boolean>();
-expectTypeOf<Modifier['isDestroyed']>().toEqualTypeOf<boolean>();
 
 declare enum Foo {
   Bar,
@@ -66,8 +63,7 @@ const narrowerFnWithEagerFalse = modifier(
     div.addEventListener('mouseenter', handler);
 
     return () => div.removeEventListener('mouseenter', handler);
-  },
-  { eager: false }
+  }
 );
 
 // Additionally, the type of the resulting modifier should be as we expect.
@@ -81,41 +77,15 @@ expectTypeOf(narrowerFnWithEagerFalse).toEqualTypeOf<
   }>
 >();
 
-const narrowerFnWithEagerTrue = modifier(
-  (div: HTMLIFrameElement, pos: [string], named: Record<Foo, number>) => {
-    function handler(event: MouseEvent): void {
-      console.log(event.clientX, event.clientY, pos[0], named[Foo.Bar]);
-    }
-    div.addEventListener('mouseenter', handler);
-
-    return () => div.removeEventListener('mouseenter', handler);
-  },
-  { eager: true }
-);
-
-// Additionally, the type of the resulting modifier should be as we expect.
-expectTypeOf(narrowerFnWithEagerTrue).toEqualTypeOf<
-  FunctionBasedModifier<{
-    Args: {
-      Named: Record<Foo, number>;
-      Positional: [string];
-    };
-    Element: HTMLIFrameElement;
-  }>
->();
-
 interface TestElementOnly {
   Element: HTMLCanvasElement;
 }
 
-const elementOnly = modifier<TestElementOnly>(
-  (el, pos, named) => {
-    expectTypeOf(el).toEqualTypeOf<HTMLCanvasElement>();
-    expectTypeOf(pos).toEqualTypeOf<unknown[]>();
-    expectTypeOf(named).toEqualTypeOf<object>();
-  },
-  { eager: false }
-);
+const elementOnly = modifier<TestElementOnly>((el, pos, named) => {
+  expectTypeOf(el).toEqualTypeOf<HTMLCanvasElement>();
+  expectTypeOf(pos).toEqualTypeOf<[]>();
+  expectTypeOf(named).toEqualTypeOf<EmptyObject>();
+});
 
 expectTypeOf(elementOnly).toEqualTypeOf<
   FunctionBasedModifier<{
@@ -132,14 +102,11 @@ interface NamedArgsOnly {
   };
 }
 
-const namedArgsOnly = modifier<NamedArgsOnly>(
-  (el, pos, named) => {
-    expectTypeOf(el).toEqualTypeOf<Element>();
-    expectTypeOf(pos).toEqualTypeOf<unknown[]>();
-    expectTypeOf(named).toEqualTypeOf<NamedArgsOnly['Args']['Named']>();
-  },
-  { eager: false }
-);
+const namedArgsOnly = modifier<NamedArgsOnly>((el, pos, named) => {
+  expectTypeOf(el).toEqualTypeOf<Element>();
+  expectTypeOf(pos).toEqualTypeOf<[]>();
+  expectTypeOf(named).toEqualTypeOf<NamedArgsOnly['Args']['Named']>();
+});
 
 expectTypeOf(namedArgsOnly).toEqualTypeOf<
   FunctionBasedModifier<{
@@ -157,14 +124,11 @@ interface PositionalArgsOnly {
   };
 }
 
-const positionalArgsOnly = modifier<PositionalArgsOnly>(
-  (el, pos, named) => {
-    expectTypeOf(el).toEqualTypeOf<Element>();
-    expectTypeOf(pos).toEqualTypeOf<PositionalArgsOnly['Args']['Positional']>();
-    expectTypeOf(named).toEqualTypeOf<object>();
-  },
-  { eager: false }
-);
+const positionalArgsOnly = modifier<PositionalArgsOnly>((el, pos, named) => {
+  expectTypeOf(el).toEqualTypeOf<Element>();
+  expectTypeOf(pos).toEqualTypeOf<PositionalArgsOnly['Args']['Positional']>();
+  expectTypeOf(named).toEqualTypeOf<EmptyObject>();
+});
 
 expectTypeOf(positionalArgsOnly).toEqualTypeOf<
   FunctionBasedModifier<{
@@ -185,14 +149,11 @@ interface ArgsOnly {
   };
 }
 
-const argsOnly = modifier<ArgsOnly>(
-  (el, pos, named) => {
-    expectTypeOf(el).toEqualTypeOf<Element>();
-    expectTypeOf(pos).toEqualTypeOf<ArgsOnly['Args']['Positional']>();
-    expectTypeOf(named).toEqualTypeOf<ArgsOnly['Args']['Named']>();
-  },
-  { eager: false }
-);
+const argsOnly = modifier<ArgsOnly>((el, pos, named) => {
+  expectTypeOf(el).toEqualTypeOf<Element>();
+  expectTypeOf(pos).toEqualTypeOf<ArgsOnly['Args']['Positional']>();
+  expectTypeOf(named).toEqualTypeOf<ArgsOnly['Args']['Named']>();
+});
 
 expectTypeOf(argsOnly).toEqualTypeOf<
   FunctionBasedModifier<{
@@ -212,19 +173,17 @@ interface Full {
   };
 }
 
-const full = modifier<Full>(
-  (el, pos, named) => {
-    expectTypeOf(el).toEqualTypeOf<Full['Element']>();
-    expectTypeOf(pos).toEqualTypeOf<Full['Args']['Positional']>();
-    expectTypeOf(named).toEqualTypeOf<Full['Args']['Named']>();
-  },
-  { eager: false }
-);
+const full = modifier<Full>((el, pos, named) => {
+  expectTypeOf(el).toEqualTypeOf<Full['Element']>();
+  expectTypeOf(pos).toEqualTypeOf<Full['Args']['Positional']>();
+  expectTypeOf(named).toEqualTypeOf<Full['Args']['Named']>();
+});
 
 expectTypeOf(full).toEqualTypeOf<FunctionBasedModifier<Full>>();
 
-// This will be removed at v4 but is currently supported!
-const deprecatedForm = modifier<HTMLAnchorElement, [string], { neat: true }>(
+// This form is allowed (because we cannot make the inference-driven appraoch
+// work otherwise!), but `Signature` is preferred
+const uselessForm = modifier<HTMLAnchorElement, [string], { neat: true }>(
   (el, pos, named) => {
     expectTypeOf(el).toEqualTypeOf<HTMLAnchorElement>();
     expectTypeOf(pos).toEqualTypeOf<[string]>();
@@ -232,7 +191,7 @@ const deprecatedForm = modifier<HTMLAnchorElement, [string], { neat: true }>(
   }
 );
 
-expectTypeOf(deprecatedForm).toEqualTypeOf<
+expectTypeOf(uselessForm).toEqualTypeOf<
   FunctionBasedModifier<{
     Element: HTMLAnchorElement;
     Args: {
@@ -244,45 +203,6 @@ expectTypeOf(deprecatedForm).toEqualTypeOf<
 
 // This is here simply to "assert" by way of type-checking that it's possible
 // for each of the (type) arguments to be narrowed.
-class DeprecatedClass extends Modifier<{
-  named: { onMessage: (desc: string, data: unknown) => void };
-  positional: [string];
-}> {
-  declare element: HTMLIFrameElement;
-
-  didInstall(): void {
-    this.element.contentWindow?.addEventListener('message', this._handle);
-  }
-
-  willRemove(): void {
-    this.element.contentWindow?.removeEventListener('message', this._handle);
-  }
-
-  _handle(event: MessageEvent): void {
-    this.args.named.onMessage(this.args.positional[0], event.data);
-  }
-}
-
-const deprecatedClass = new DeprecatedClass(
-  { iAmAnOwner: 'yep' },
-  {
-    named: {
-      onMessage(desc, data) {
-        console.log(desc, JSON.stringify(data, null, 2));
-      },
-    },
-    positional: ['hello'],
-  }
-);
-
-expectTypeOf(deprecatedClass).toMatchTypeOf<{
-  args: {
-    named: { onMessage: (desc: string, data: unknown) => void };
-    positional: [string];
-  };
-  element: HTMLIFrameElement;
-}>();
-
 interface ClassBasedSignature {
   Args: {
     Named: { onMessage: (desc: string, data: unknown) => void };
@@ -293,19 +213,29 @@ interface ClassBasedSignature {
 
 // This is the preferred form going forward, and serves to validate that
 // narrowing works and that inference flows from the signature as expected.
+function cleanup({ element, handle }: ClassBased): void {
+  if (element && handle) {
+    element.contentWindow?.removeEventListener('message', handle);
+  }
+}
+
 class ClassBased extends Modifier<ClassBasedSignature> {
-  declare element: HTMLIFrameElement;
+  element?: ClassBasedSignature['Element'];
+  handle?: (event: MessageEvent) => void;
 
-  didInstall(): void {
-    this.element.contentWindow?.addEventListener('message', this._handle);
+  constructor(owner: unknown, args: ArgsFor<ClassBasedSignature>) {
+    super(owner, args);
+    registerDestructor(this, cleanup);
   }
 
-  willRemove(): void {
-    this.element.contentWindow?.removeEventListener('message', this._handle);
-  }
-
-  _handle(event: MessageEvent): void {
-    this.args.named.onMessage(this.args.positional[0], event.data);
+  modify(
+    element: HTMLIFrameElement,
+    [desc]: [string],
+    { onMessage }: { onMessage: (desc: string, data: unknown) => void }
+  ): void {
+    this.element = element;
+    this.handle = (event) => onMessage(desc, event.data);
+    element.contentWindow?.addEventListener('message', this.handle);
   }
 }
 
@@ -321,13 +251,13 @@ const classBased = new ClassBased(
   }
 );
 
-expectTypeOf(classBased).toMatchTypeOf<{
-  args: {
-    named: { onMessage: (desc: string, data: unknown) => void };
-    positional: [string];
-  };
-  element: HTMLIFrameElement;
-}>();
+expectTypeOf(classBased.modify).parameters.toEqualTypeOf<
+  [
+    element: ClassBasedSignature['Element'],
+    positional: ClassBasedSignature['Args']['Positional'],
+    named: ClassBasedSignature['Args']['Named']
+  ]
+>();
 
 // @ts-expect-error -- we should reject returning anything other than a function
 // for teardown.
@@ -348,7 +278,3 @@ modifier((el) => {
 });
 
 // --- type utilities --- //
-expectTypeOf<ModifierArgs>().toEqualTypeOf<{
-  named: object;
-  positional: unknown[];
-}>();
