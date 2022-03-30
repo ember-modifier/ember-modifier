@@ -3,13 +3,14 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
 import type { TestContext as BaseContext } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
-import { modifier } from 'ember-modifier';
+import { FunctionBasedModifier, modifier } from 'ember-modifier';
 import { tracked } from '@glimmer/tracking';
 
-type ModifierReturn = ReturnType<typeof modifier>;
-
 interface TestContext extends BaseContext {
-  registerModifier(name: string, modifier: ModifierReturn): void;
+  registerModifier(
+    name: string,
+    modifier: FunctionBasedModifier<unknown>
+  ): void;
   shouldRender?: boolean;
   isRendered?: boolean;
   value?: number;

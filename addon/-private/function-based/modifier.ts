@@ -60,7 +60,7 @@ export type Teardown = () => unknown;
 export default function modifier<
   E extends Element,
   P extends unknown[],
-  N extends object
+  N extends object = Record<string, unknown>
 >(
   fn: (element: E, positional: P, named: N) => void | Teardown
 ): FunctionBasedModifier<{
@@ -98,7 +98,7 @@ export default function modifier<
 export default function modifier<
   E extends Element,
   P extends unknown[],
-  N extends object
+  N extends object = Record<string, unknown>
 >(
   fn: (element: E, positional: P, named: N) => void | Teardown,
   options: { eager: true }
@@ -132,7 +132,7 @@ export default function modifier<
 export default function modifier<
   E extends Element,
   P extends unknown[],
-  N extends object
+  N extends object = Record<string, unknown>
 >(
   fn: (element: E, positional: P, named: N) => void | Teardown,
   options: { eager: false }
