@@ -203,7 +203,7 @@ export default function modifier(
     `ember-modifier (for ${fn.name ?? fn} at ${
       new Error().stack
     }): creating a function-based modifier without options is deprecated and will be removed at v4.0`,
-    options === undefined,
+    options !== undefined,
     {
       id: 'ember-modifier.function-based-options',
       for: 'ember-modifier',
