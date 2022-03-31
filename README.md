@@ -344,7 +344,7 @@ export default class OnModifier extends Modifier {
 
   modify(element, [event, handler]) {
     this.addEventListener(element, event, handler);
-    registerDestructor(this, this.removeEventListener)
+    registerDestructor(this, cleanup)
   }
 
   // methods for reuse
