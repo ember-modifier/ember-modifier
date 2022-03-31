@@ -1,4 +1,14 @@
 
+
+## v3.2.2 (2022-03-31)
+
+#### :bug: Bug Fix
+* [#253](https://github.com/ember-modifier/ember-modifier/pull/253) Check type of teardown before saving or using it ([@chriskrycho](https://github.com/chriskrycho))
+* [#252](https://github.com/ember-modifier/ember-modifier/pull/252) Invert deprecation for missing options ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## v3.2.1 (2022-03-31)
 
 #### :bug: Bug Fix
