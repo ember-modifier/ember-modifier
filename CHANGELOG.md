@@ -1,3 +1,15 @@
+
+## v3.2.1 (2022-03-31)
+
+#### :bug: Bug Fix
+* [#247](https://github.com/ember-modifier/ember-modifier/pull/247) Fix "default" positional and named argument types ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#246](https://github.com/ember-modifier/ember-modifier/pull/246) Don't commit generated .d.ts files ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## v3.2.0 (2022-03-29)
 
 #### :rocket: Enhancement
