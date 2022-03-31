@@ -1,13 +1,3 @@
-/**
- * @deprecated use a `Signature` instead (see the README for details).
- */
-export interface ModifierArgs {
-  /** Positional arguments to a modifier, `{{foo @bar this.baz}}` */
-  positional: unknown[];
-  /** Named arguments to a modifier, `{{foo bar=this.baz}}` */
-  named: object;
-}
-
 // --- Type utilities for use with Signature types --- //
 
 /** @private */
@@ -17,13 +7,9 @@ export type ElementFor<S> = 'Element' extends keyof S
     : Element
   : Element;
 
-type DefaultPositional = unknown[];
+type DefaultPositional = [];
 
-type GetWithFallback<T, K, Fallback> = K extends keyof T
-  ? T[K] extends Fallback
-    ? T[K]
-    : Fallback
-  : Fallback;
+type GetOrElse<T, K, Fallback> = K extends keyof T ? T[K] : Fallback;
 
 /**
  * A convenience type utility, primarily for working with args in the `modify`
@@ -74,10 +60,15 @@ type GetWithFallback<T, K, Fallback> = K extends keyof T
  * useful to illustrate how to use the type utility.)
  */
 export type PositionalArgs<S> = 'Args' extends keyof S
-  ? GetWithFallback<S['Args'], 'Positional', DefaultPositional>
-  : GetWithFallback<S, 'positional', DefaultPositional>;
+  ? GetOrElse<S['Args'], 'Positional', DefaultPositional>
+  : DefaultPositional;
 
-type DefaultNamed = object;
+declare const Empty: unique symbol;
+export interface EmptyObject {
+  [Empty]?: true;
+}
+
+type DefaultNamed = EmptyObject;
 
 /**
  * A convenience type utility, primarily for working with args in the `modify`
@@ -111,8 +102,8 @@ type DefaultNamed = object;
  * useful to illustrate the point.)
  */
 export type NamedArgs<S> = 'Args' extends keyof S
-  ? GetWithFallback<S['Args'], 'Named', DefaultNamed>
-  : GetWithFallback<S, 'named', DefaultNamed>;
+  ? GetOrElse<S['Args'], 'Named', DefaultNamed>
+  : DefaultNamed;
 
 /** @private */
 export interface DefaultSignature {

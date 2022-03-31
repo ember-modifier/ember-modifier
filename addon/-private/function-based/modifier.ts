@@ -1,27 +1,22 @@
-import { deprecate } from '@ember/debug';
 import { setModifierManager } from '@ember/modifier';
 import Opaque from '../opaque';
 import {
-  DefaultSignature,
   ElementFor,
+  EmptyObject,
   NamedArgs,
   PositionalArgs,
 } from '../signature';
 import FunctionBasedModifierManager from './modifier-manager';
 
-// Provide a singleton manager for each of the options. (If we extend this to
-// many more options in the future, we can revisit, but for now this means we
-// only ever allocate two managers.)
-const EAGER_MANAGER = new FunctionBasedModifierManager({ eager: true });
-const LAZY_MANAGER = new FunctionBasedModifierManager({ eager: false });
+// Provide a singleton manager.
+const MANAGER = new FunctionBasedModifierManager();
 
 // This provides a signature whose only purpose here is to represent the runtime
 // type of a function-based modifier: an opaque item. The fact that it's an
 // empty interface is actually the point: it *only* hooks the type parameter
 // into the opaque (nominal) type.
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface FunctionBasedModifier<S = DefaultSignature>
-  extends Opaque<S> {}
+export interface FunctionBasedModifier<S> extends Opaque<S> {}
 
 /**
  * The (optional) return type for a modifier which needs to perform some kind of
@@ -35,22 +30,17 @@ export type Teardown = () => unknown;
  *
  * This function runs the first time when the element the modifier was applied
  * to is inserted into the DOM, and it *autotracks* while running. Any values
- * that it accesses will be tracked, and if any of them changes, the function
- * will run again.
+ * that it accesses will be tracked, including any of its arguments that it
+ * accesses, and if any of them changes, the function will run again.
  *
- * **Note:** this will rerun if any of its arguments change, *whether or not you
- * access them*. This is legacy behavior and you should switch to using the
- * `{ eager: false }` variant, which has normal auto-tracking semantics.
+ * **Note:** this will *not* automatically rerun because an argument changes. It
+ * will only rerun if it is *using* that argument (the same as with auto-tracked
+ * state in general).
  *
  * The modifier can also optionally return a *destructor*. The destructor
  * function will be run just before the next update, and when the element is
  * being removed entirely. It should generally clean up the changes that the
  * modifier made in the first place.
- *
- * @deprecated Until 4.0. Calling `modifier()` without an options argument is
- *   deprecated. It is supported until 4.0 so that existing modifiers can be
- *   migrated individually. Please update your function-based modifiers to pass
- *   `{ eager: false }`.
  *
  * @param fn The function which defines the modifier.
  */
@@ -59,50 +49,14 @@ export type Teardown = () => unknown;
 export default function modifier<
   E extends Element,
   P extends unknown[],
-  N extends object
+  N = EmptyObject
 >(
   fn: (element: E, positional: P, named: N) => void | Teardown
 ): FunctionBasedModifier<{
-  Args: { Named: N; Positional: P };
-  Element: E;
-}>;
-
-/**
- * An API for writing simple modifiers.
- *
- * This function runs the first time when the element the modifier was applied
- * to is inserted into the DOM, and it *autotracks* while running. Any values
- * that it accesses will be tracked, and if any of them changes, the function
- * will run again.
- *
- * **Note:** this will rerun if any of its arguments change, *whether or not you
- * access them*. This is legacy behavior and you should switch to using the
- * `{ eager: false }` variant, which has normal auto-tracking semantics.
- *
- * The modifier can also optionally return a *destructor*. The destructor
- * function will be run just before the next update, and when the element is
- * being removed entirely. It should generally clean up the changes that the
- * modifier made in the first place.
- *
- * @deprecated Until 4.0. Calling `modifier()` with `{ eager: true }` is
- *   deprecated. It is supported until 4.0 so that existing modifiers can be
- *   migrated individually. Please update your function-based modifiers to pass
- *   `{ eager: false }`.
- *
- * @param fn The function which defines the modifier.
- * @param options Configuration for the modifier.
- */
-// This overload allows users to write types directly on the callback passed to
-// the `modifier` function and infer the resulting type correctly.
-export default function modifier<
-  E extends Element,
-  P extends unknown[],
-  N extends object
->(
-  fn: (element: E, positional: P, named: N) => void | Teardown,
-  options: { eager: true }
-): FunctionBasedModifier<{
-  Args: { Named: N; Positional: P };
+  Args: {
+    Positional: P;
+    Named: N;
+  };
   Element: E;
 }>;
 
@@ -124,41 +78,6 @@ export default function modifier<
  * modifier made in the first place.
  *
  * @param fn The function which defines the modifier.
- * @param options Configuration for the modifier.
- */
-// This overload allows users to write types directly on the callback passed to
-// the `modifier` function and infer the resulting type correctly.
-export default function modifier<
-  E extends Element,
-  P extends unknown[],
-  N extends object
->(
-  fn: (element: E, positional: P, named: N) => void | Teardown,
-  options: { eager: false }
-): FunctionBasedModifier<{
-  Args: { Named: N; Positional: P };
-  Element: E;
-}>;
-
-/**
- * An API for writing simple modifiers.
- *
- * This function runs the first time when the element the modifier was applied
- * to is inserted into the DOM, and it *autotracks* while running. Any values
- * that it accesses will be tracked, including any of its arguments that it
- * accesses, and if any of them changes, the function will run again.
- *
- * **Note:** this will *not* automatically rerun because an argument changes. It
- * will only rerun if it is *using* that argument (the same as with auto-tracked
- * state in general).
- *
- * The modifier can also optionally return a *destructor*. The destructor
- * function will be run just before the next update, and when the element is
- * being removed entirely. It should generally clean up the changes that the
- * modifier made in the first place.
- *
- * @param fn The function which defines the modifier.
- * @param options Configuration for the modifier.
  */
 // This overload allows users to provide a `Signature` type explicitly at the
 // modifier definition site, e.g. `modifier<Sig>((el, pos, named) => {...})`.
@@ -170,8 +89,7 @@ export default function modifier<S>(
     element: ElementFor<S>,
     positional: PositionalArgs<S>,
     named: NamedArgs<S>
-  ) => void | Teardown,
-  options: { eager: false }
+  ) => void | Teardown
 ): FunctionBasedModifier<{
   Element: ElementFor<S>;
   Args: {
@@ -189,8 +107,7 @@ export default function modifier(
     element: Element,
     positional: unknown[],
     named: object
-  ) => void | Teardown,
-  options: { eager: boolean } = { eager: true }
+  ) => void | Teardown
 ): FunctionBasedModifier<{
   Element: Element;
   Args: {
@@ -198,44 +115,12 @@ export default function modifier(
     Positional: unknown[];
   };
 }> {
-  deprecate(
-    `ember-modifier (for ${fn.name ?? fn} at ${
-      new Error().stack
-    }): creating a function-based modifier without options is deprecated and will be removed at v4.0`,
-    options === undefined,
-    {
-      id: 'ember-modifier.function-based-options',
-      for: 'ember-modifier',
-      since: {
-        available: '3.2.0',
-        enabled: '3.2.0',
-      },
-      until: '4.0.0',
-    }
-  );
-
-  deprecate(
-    `ember-modifier (for ${fn.name ?? fn} at ${
-      new Error().stack
-    }): creating a function-based modifier with \`{ eager: true }\` is deprecated and will be removed at v4.0`,
-    options?.eager === true,
-    {
-      id: 'ember-modifier.function-based-options',
-      for: 'ember-modifier',
-      since: {
-        available: '3.2.0',
-        enabled: '3.2.0',
-      },
-      until: '4.0.0',
-    }
-  );
-
   // SAFETY: the cast here is a *lie*, but it is a useful one. The actual return
   // type of `setModifierManager` today is `void`; we pretend it actually
   // returns an opaque `Modifier` type so that we can provide a result from this
   // type which is useful to TS-aware tooling (e.g. Glint).
   return setModifierManager(
-    () => (options.eager ? EAGER_MANAGER : LAZY_MANAGER),
+    () => MANAGER,
     fn
   ) as unknown as FunctionBasedModifier<{
     Element: Element;
@@ -249,9 +134,8 @@ export default function modifier(
 /**
  * @internal
  */
-export type FunctionalModifierDefinition<
-  S,
-  E extends ElementFor<S> = ElementFor<S>,
-  P extends PositionalArgs<S> = PositionalArgs<S>,
-  N extends NamedArgs<S> = NamedArgs<S>
-> = (element: E, positional: P, named: N) => void | Teardown;
+export type FunctionBasedModifierDefinition<S> = (
+  element: ElementFor<S>,
+  positional: PositionalArgs<S>,
+  named: NamedArgs<S>
+) => void | Teardown;
