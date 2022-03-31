@@ -9,6 +9,7 @@ export interface ModifierArgs {
 }
 
 // --- Type utilities for use with Signature types --- //
+type SignatureKeys = 'Element' | 'Args';
 
 /** @private */
 export type ElementFor<S> = 'Element' extends keyof S
@@ -17,13 +18,9 @@ export type ElementFor<S> = 'Element' extends keyof S
     : Element
   : Element;
 
-type DefaultPositional = unknown[];
+type DefaultPositional = [];
 
-type GetWithFallback<T, K, Fallback> = K extends keyof T
-  ? T[K] extends Fallback
-    ? T[K]
-    : Fallback
-  : Fallback;
+type GetOrElse<T, K, Fallback> = K extends keyof T ? T[K] : Fallback;
 
 /**
  * A convenience type utility, primarily for working with args in the `modify`
@@ -73,11 +70,21 @@ type GetWithFallback<T, K, Fallback> = K extends keyof T
  * (This example does not need to be, and should not be, class-based, but is
  * useful to illustrate how to use the type utility.)
  */
-export type PositionalArgs<S> = 'Args' extends keyof S
-  ? GetWithFallback<S['Args'], 'Positional', DefaultPositional>
-  : GetWithFallback<S, 'positional', DefaultPositional>;
+export type PositionalArgs<S> = keyof S extends SignatureKeys
+  ? 'Args' extends keyof S
+    ? GetOrElse<S['Args'], 'Positional', DefaultPositional>
+    : DefaultPositional
+  : GetOrElse<S, 'positional', unknown[]>; // for backwards compatibility
 
-type DefaultNamed = object;
+// This supports Glint showing errors when we don't have any named args, by
+// triggering TS' excess property checking in a way that an *actually* empty
+// object type does not.
+declare const Empty: unique symbol;
+export interface EmptyObject {
+  [Empty]?: true;
+}
+
+type DefaultNamed = EmptyObject;
 
 /**
  * A convenience type utility, primarily for working with args in the `modify`
@@ -110,9 +117,11 @@ type DefaultNamed = object;
  * (This example does not need to be, and should not be, class-based, but is
  * useful to illustrate the point.)
  */
-export type NamedArgs<S> = 'Args' extends keyof S
-  ? GetWithFallback<S['Args'], 'Named', DefaultNamed>
-  : GetWithFallback<S, 'named', DefaultNamed>;
+export type NamedArgs<S> = keyof S extends SignatureKeys
+  ? 'Args' extends keyof S
+    ? GetOrElse<S['Args'], 'Named', DefaultNamed>
+    : DefaultNamed
+  : GetOrElse<S, 'named', Record<string, unknown>>; // for backwards compatibility
 
 /** @private */
 export interface DefaultSignature {
