@@ -51,24 +51,24 @@ export default class FunctionBasedModifierManager<S> {
 
     const { positional, named } = args;
     const teardown = createdState.instance(element, positional, named);
-    if (teardown) {
+    if (typeof teardown === 'function') {
       state.teardown = teardown;
     }
   }
 
   updateModifier(state: InstalledState<S>, args: ArgsFor<S>): void {
-    if (state.teardown) {
+    if (typeof state.teardown === 'function') {
       state.teardown();
     }
 
     const teardown = state.instance(state.element, args.positional, args.named);
-    if (teardown) {
+    if (typeof teardown === 'function') {
       state.teardown = teardown;
     }
   }
 
   destroyModifier(state: InstalledState<S>): void {
-    if (state.teardown) {
+    if (typeof state.teardown === 'function') {
       state.teardown();
     }
   }
