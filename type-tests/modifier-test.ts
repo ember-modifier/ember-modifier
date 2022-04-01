@@ -304,6 +304,46 @@ expectTypeOf(deprecatedClass).toMatchTypeOf<{
   element: HTMLIFrameElement;
 }>();
 
+// Deprecated ModifierArgs form
+interface DeprecatedNamedArgs {
+  named:
+    | {
+        name: string;
+        age: number;
+      }
+    | { cool: boolean; things: string[] };
+}
+
+interface DeprecatedPosArgs {
+  positional: [string];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface FullDeprecatedArgs extends DeprecatedNamedArgs, DeprecatedPosArgs {}
+
+class DeprecatedNamed extends Modifier<DeprecatedNamedArgs> {}
+declare let deprecatedNamed: DeprecatedNamed;
+expectTypeOf(deprecatedNamed.args.named).toEqualTypeOf<
+  DeprecatedNamedArgs['named']
+>();
+expectTypeOf(deprecatedNamed.args.positional).toEqualTypeOf<unknown[]>();
+
+class DeprecatedPos extends Modifier<DeprecatedPosArgs> {}
+declare let deprecatedPos: DeprecatedPos;
+expectTypeOf(deprecatedPos.args.named).toEqualTypeOf<Record<string, unknown>>();
+expectTypeOf(deprecatedPos.args.positional).toEqualTypeOf<
+  DeprecatedPosArgs['positional']
+>();
+
+class DeprecatedBoth extends Modifier<FullDeprecatedArgs> {}
+declare let deprecatedBoth: DeprecatedBoth;
+expectTypeOf(deprecatedBoth.args.named).toEqualTypeOf<
+  FullDeprecatedArgs['named']
+>();
+expectTypeOf(deprecatedBoth.args.positional).toEqualTypeOf<
+  FullDeprecatedArgs['positional']
+>();
+
 interface ClassBasedSignature {
   Args: {
     Named: { onMessage: (desc: string, data: unknown) => void };
