@@ -1,7 +1,10 @@
 import { expectTypeOf } from 'expect-type';
 
 import Modifier, { ArgsFor, modifier } from 'ember-modifier';
-import { FunctionBasedModifier } from 'ember-modifier/-private/function-based/modifier';
+import {
+  FunctionBasedModifier,
+  FunctionBasedModifierInstance,
+} from 'ember-modifier/-private/function-based/modifier';
 import { registerDestructor } from '@ember/destroyable';
 
 // Importing private API to confirm that (a) this is stable and (b) it is used
@@ -200,6 +203,28 @@ expectTypeOf(uselessForm).toEqualTypeOf<
     };
   }>
 >();
+
+const genericModifier = modifier(
+  <T>(_: Element, positional: [item: T, callback: (item: T) => void]) => {
+    return () => positional[1](positional[0]);
+  }
+);
+
+expectTypeOf(genericModifier).toEqualTypeOf<
+  abstract new <T>() => FunctionBasedModifierInstance<{
+    Args: {
+      Positional: [item: T, callback: (item: T) => void];
+      Named: EmptyObject;
+    };
+    Element: Element;
+  }>
+>();
+
+// @ts-expect-error: functional modifiers are not constructible
+new genericModifier();
+
+// @ts-expect-error: it's not possible to subclass a functional modifier
+class GenericSubclass extends genericModifier<string> {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
 // This is here simply to "assert" by way of type-checking that it's possible
 // for each of the (type) arguments to be narrowed.

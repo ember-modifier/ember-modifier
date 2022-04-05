@@ -1,22 +1,36 @@
 import { setModifierManager } from '@ember/modifier';
-import Opaque from '../opaque';
 import {
   ElementFor,
   EmptyObject,
   NamedArgs,
   PositionalArgs,
 } from '../signature';
+import Modifier from '../class/modifier';
 import FunctionBasedModifierManager from './modifier-manager';
 
 // Provide a singleton manager.
 const MANAGER = new FunctionBasedModifierManager();
 
-// This provides a signature whose only purpose here is to represent the runtime
-// type of a function-based modifier: an opaque item. The fact that it's an
-// empty interface is actually the point: it *only* hooks the type parameter
-// into the opaque (nominal) type.
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface FunctionBasedModifier<S> extends Opaque<S> {}
+// This type exists to provide a non-user-constructible, non-subclassable
+// type representing the conceptual "instance type" of a function modifier.
+// The abstract field of type `never` prevents subclassing in userspace of
+// the value returned from `modifier()`. By extending `Modifier<S>`, any
+// augmentations of the `Modifier` type performed by tools like Glint will
+// also apply to function-based modifiers as well.
+export declare abstract class FunctionBasedModifierInstance<
+  S
+> extends Modifier<S> {
+  protected abstract __concrete__: never;
+}
+
+// This provides a type whose only purpose here is to represent the runtime
+// type of a function-based modifier: a virtually opaque item. The fact that it's
+// a bare constructor type allows `modifier()` to preserve type parameters from
+// a generic function it's passed, and by making it abstract and impossible to
+// subclass (see above) we prevent users from attempting to instantiate the return
+// value from a `modifier()` call.
+export type FunctionBasedModifier<S> =
+  abstract new () => FunctionBasedModifierInstance<S>;
 
 /**
  * The (optional) return type for a modifier which needs to perform some kind of
