@@ -1,5 +1,17 @@
 
 
+
+## v3.2.3 (2022-04-05)
+
+#### :bug: Bug Fix
+* [#278](https://github.com/ember-modifier/ember-modifier/pull/278) Make `FunctionBasedModifier` an (abstract) constructor type ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#261](https://github.com/ember-modifier/ember-modifier/pull/261) Add tests for unions in legacy args form ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## v3.2.2 (2022-03-31)
 
 #### :bug: Bug Fix
