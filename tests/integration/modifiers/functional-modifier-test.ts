@@ -7,10 +7,11 @@ import { FunctionBasedModifier, modifier } from 'ember-modifier';
 import { tracked } from '@glimmer/tracking';
 
 interface TestContext extends BaseContext {
-  registerModifier(
-    name: string,
-    modifier: FunctionBasedModifier<unknown>
-  ): void;
+  // We legitimately don't care what it is here; it's only used as a hook for
+  // the tests to reference it. (This also all gets ripped out for the v4
+  // branch, so it's not especially relevant long term.)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  registerModifier(name: string, modifier: FunctionBasedModifier<any>): void;
   shouldRender?: boolean;
   isRendered?: boolean;
   value?: number;
