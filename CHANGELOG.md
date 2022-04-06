@@ -1,6 +1,15 @@
 
 
 
+
+## v3.2.4 (2022-04-06)
+
+#### :bug: Bug Fix
+* [#280](https://github.com/ember-modifier/ember-modifier/pull/280) Use "export type" for FunctionBasedModifier interface ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## v3.2.3 (2022-04-05)
 
 #### :bug: Bug Fix
