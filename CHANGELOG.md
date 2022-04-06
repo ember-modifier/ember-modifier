@@ -1,3 +1,12 @@
+
+## v3.2.5 (2022-04-06)
+
+#### :bug: Bug Fix
+* [#281](https://github.com/ember-modifier/ember-modifier/pull/281) Fix deprecation notice ([@evoactivity](https://github.com/evoactivity))
+
+#### Committers: 1
+- Liam Potter ([@evoactivity](https://github.com/evoactivity))
+
 ## v3.2.4 (2022-04-06)
 
 #### :bug: Bug Fix
