@@ -1,25 +1,22 @@
-
-
-
-
 ## v3.2.4 (2022-04-06)
 
 #### :bug: Bug Fix
-* [#280](https://github.com/ember-modifier/ember-modifier/pull/280) Use "export type" for FunctionBasedModifier interface ([@chriskrycho](https://github.com/chriskrycho))
+* [#280](https://github.com/ember-modifier/ember-modifier/pull/280) Use "export type" for FunctionBasedModifier interface (back-ported from [#270](https://github.com/ember-modifier/ember-modifier/pull/270)) ([@ef4](https://github.com/ef4))
 
 #### Committers: 1
-- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Edward Faulkner ([@ef4](https://github.com/ef4))
 
 ## v3.2.3 (2022-04-05)
 
 #### :bug: Bug Fix
-* [#278](https://github.com/ember-modifier/ember-modifier/pull/278) Make `FunctionBasedModifier` an (abstract) constructor type ([@chriskrycho](https://github.com/chriskrycho))
+* [#278](https://github.com/ember-modifier/ember-modifier/pull/278) Make `FunctionBasedModifier` an (abstract) constructor type (backported from [#277](https://github.com/ember-modifier/ember-modifier/pull/277)) ([@dfreeman](https://github.com/dfreeman))
 
 #### :house: Internal
 * [#261](https://github.com/ember-modifier/ember-modifier/pull/261) Add tests for unions in legacy args form ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+#### Committers: 2
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Dan Freeman ([@dfreeman](https://github.com/dfreeman))
 
 ## v3.2.2 (2022-03-31)
 
