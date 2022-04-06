@@ -129,6 +129,7 @@
     },
     "github": {
       "release": true,
+      "releaseName": "v${version}",
       "tokenRef": "GITHUB_AUTH"
     }
   },
