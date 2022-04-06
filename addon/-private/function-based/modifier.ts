@@ -231,7 +231,7 @@ export default function modifier(
     `ember-modifier (for ${fn.name ?? fn} at ${
       new Error().stack
     }): creating a function-based modifier with \`{ eager: true }\` is deprecated and will be removed at v4.0`,
-    options?.eager === true,
+    options?.eager === false,
     {
       id: 'ember-modifier.function-based-options',
       for: 'ember-modifier',
