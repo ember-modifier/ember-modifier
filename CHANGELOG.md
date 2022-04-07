@@ -1,4 +1,13 @@
 
+
+## v3.2.6 (2022-04-07)
+
+#### :bug: Bug Fix
+* [#283](https://github.com/ember-modifier/ember-modifier/pull/283) Fix deprecations for class-based modifiers ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## v3.2.5 (2022-04-06)
 
 #### :bug: Bug Fix
