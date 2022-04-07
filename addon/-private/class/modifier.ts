@@ -132,9 +132,8 @@ export default class ClassBasedModifier<S = DefaultSignature> {
       `ember-modifier (in ${this.constructor.name} at ${
         new Error().stack
       }): \`willDestroy\`, \`isDestroyed\`, and \`isDestroyed\` are deprecated. Use the corresponding API from '@ember/destroyable' instead.`,
-      (['willDestroy', 'isDestroying', 'isDestroyed'] as const).some(
-        (name) => this[name] !== ClassBasedModifier.prototype[name]
-      ) && !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
+      this.willDestroy === ClassBasedModifier.prototype.willDestroy &&
+        !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
       {
         id: 'ember-modifier.use-destroyables',
         until: '4.0.0',
@@ -154,7 +153,7 @@ export default class ClassBasedModifier<S = DefaultSignature> {
       `ember-modifier (in ${this.constructor.name} at ${
         new Error().stack
       }): The \`didInstall\`, \`didReceiveArguments\`, and \`didUpdateArguments\` hooks are deprecated. Use the new \`modify\` hook instead.`,
-      !_implementsModify(this) &&
+      _implementsModify(this) &&
         !SEEN_CLASSES_FOR_LIFECYCLE.has(this.constructor),
       {
         id: 'ember-modifier.use-modify',
