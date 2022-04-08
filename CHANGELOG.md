@@ -1,5 +1,14 @@
 
 
+
+## v3.2.7 (2022-04-08)
+
+#### :bug: Bug Fix
+* [#288](https://github.com/ember-modifier/ember-modifier/pull/288) Prevent triggering deprecation messages incorrectly for class-based modifiers ([@bertdeblock](https://github.com/bertdeblock))
+
+#### Committers: 1
+- Bert De Block ([@bertdeblock](https://github.com/bertdeblock))
+
 ## v3.2.6 (2022-04-07)
 
 #### :bug: Bug Fix
