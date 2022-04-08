@@ -132,8 +132,8 @@ export default class ClassBasedModifier<S = DefaultSignature> {
       `ember-modifier (in ${this.constructor.name} at ${
         new Error().stack
       }): \`willDestroy\`, \`isDestroyed\`, and \`isDestroyed\` are deprecated. Use the corresponding API from '@ember/destroyable' instead.`,
-      this.willDestroy === ClassBasedModifier.prototype.willDestroy &&
-        !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
+      this.willDestroy === ClassBasedModifier.prototype.willDestroy ||
+        SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
       {
         id: 'ember-modifier.use-destroyables',
         until: '4.0.0',
@@ -153,8 +153,8 @@ export default class ClassBasedModifier<S = DefaultSignature> {
       `ember-modifier (in ${this.constructor.name} at ${
         new Error().stack
       }): The \`didInstall\`, \`didReceiveArguments\`, and \`didUpdateArguments\` hooks are deprecated. Use the new \`modify\` hook instead.`,
-      _implementsModify(this) &&
-        !SEEN_CLASSES_FOR_LIFECYCLE.has(this.constructor),
+      _implementsModify(this) ||
+        SEEN_CLASSES_FOR_LIFECYCLE.has(this.constructor),
       {
         id: 'ember-modifier.use-modify',
         until: '4.0.0',
@@ -274,7 +274,7 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   get isDestroying(): boolean {
     deprecate(
       'Modifier.isDestroying is deprecated',
-      !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
+      SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
       {
         id: 'ember-modifier.use-destroyables',
         until: '4.0.0',
@@ -299,7 +299,7 @@ export default class ClassBasedModifier<S = DefaultSignature> {
   get isDestroyed(): boolean {
     deprecate(
       'Modifier.isDestroyed is deprecated',
-      !SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
+      SEEN_CLASSES_FOR_DESTROYABLES.has(this.constructor),
       {
         id: 'ember-modifier.use-destroyables',
         until: '4.0.0',
@@ -329,7 +329,7 @@ Object.defineProperty(ClassBasedModifier.prototype, 'args', {
       `ember-modifier (in ${this.constructor.name} at ${
         new Error().stack
       }): using \`this.args\` is deprecated. Access positional and named arguments directly in the \`modify\` hook instead.`,
-      !SEEN_CLASSES_FOR_ARGS.has(this.constructor),
+      SEEN_CLASSES_FOR_ARGS.has(this.constructor),
       {
         id: 'ember-modifier.no-args-property',
         for: 'ember-modifier',
@@ -356,7 +356,7 @@ Object.defineProperty(ClassBasedModifier.prototype, 'element', {
       `ember-modifier (in ${this.constructor.name} at ${
         new Error().stack
       }): using \`this.element\` is deprecated. Access the \`element\` as an argument in the \`modify\` hook instead.`,
-      !SEEN_CLASSES_FOR_ELEMENTS.has(this.constructor),
+      SEEN_CLASSES_FOR_ELEMENTS.has(this.constructor),
       {
         id: 'ember-modifier.no-element-property',
         for: 'ember-modifier',
