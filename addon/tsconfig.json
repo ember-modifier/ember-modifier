@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "allowJs": false,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noEmitOnError": true,
+    "noEmit": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "baseUrl": ".",
+    "module": "es6",
+    "experimentalDecorators": true,
+    "paths": {
+      "ember-modifier": ["addon"],
+      "ember-modifier/*": ["addon/*"],
+      "ember-modifier/test-support": ["addon-test-support"],
+      "ember-modifier/test-support/*": ["addon-test-support/*"],
+      "@ember/destroyable": ["../node_modules/ember-destroyable-polyfill"]
+    }
+  },
+  "include": [
+    "addon/**/*",
+    "types/**/*",
+    "test-support/**/*",
+    "addon-test-support/**/*",
+    "type-tests/modifier-test.ts"
+  ]
+}
