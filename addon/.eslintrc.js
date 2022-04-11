@@ -2,16 +2,12 @@
 
 module.exports = {
   root: true,
-  parser: '@babel/eslint-parser',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
     ecmaFeatures: {
       legacyDecorators: true,
-    },
-    requireConfigFile: false,
-    babelOptions: {
-      plugins: [['@babel/plugin-proposal-decorators', { legacy: true }]],
     },
   },
   plugins: ['ember'],
@@ -30,10 +26,10 @@ module.exports = {
       files: [
         './.eslintrc.js',
         './.prettierrc.js',
+        './addon-main.js',
         './blueprints/*/index.js',
         './blueprints/test-framework-detector.js',
         './config/**/*.js',
-        './index.js',
       ],
       parserOptions: {
         sourceType: 'script',

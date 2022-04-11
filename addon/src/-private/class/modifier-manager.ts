@@ -1,9 +1,9 @@
 import { capabilities } from '@ember/modifier';
-import { gte } from 'ember-compatibility-helpers';
 import { destroy } from '@ember/destroyable';
+import { dependencySatisfies } from '@embroider/macros';
 
 import ClassBasedModifier from './modifier';
-import { ArgsFor, ElementFor } from 'ember-modifier/-private/signature';
+import { ArgsFor, ElementFor } from '../signature';
 
 /**
  * The state bucket used throughout the life-cycle of the modifier. Basically a
@@ -53,7 +53,9 @@ function installElement<S>(
 }
 
 export default class ClassBasedModifierManager<S> {
-  capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
+  capabilities = capabilities(
+    dependencySatisfies('ember-source', '^3.22.0 || ^4.0.0') ? '3.22' : '3.13'
+  );
 
   constructor(private owner: unknown) {}
 

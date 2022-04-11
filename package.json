@@ -3,21 +3,21 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/ember-animation/ember-animated.git"
+    "url": "https://github.com/ember-modifier/ember-modifier.git"
   },
   "workspaces": [
     "addon",
     "test-app"
   ],
   "scripts": {
-    "prepare": "echo 'cd addon && yarn build'",
+    "prepare": "cd addon && yarn build",
     "release": "release-it"
   },
   "resolutions": {
     "babel-import-util": "1.1.0"
   },
   "devDependencies": {
-    "release-it": "^14.14.1",
+    "release-it": "^14.14.2",
     "release-it-lerna-changelog": "^4.0.1",
     "release-it-yarn-workspaces": "^2.0.1"
   },

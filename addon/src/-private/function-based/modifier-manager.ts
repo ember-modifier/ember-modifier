@@ -1,5 +1,5 @@
 import { capabilities } from '@ember/modifier';
-import { gte } from 'ember-compatibility-helpers';
+import { dependencySatisfies } from '@embroider/macros';
 import type { FunctionBasedModifierDefinition, Teardown } from './modifier';
 import type { ArgsFor, ElementFor } from '../signature';
 
@@ -34,7 +34,9 @@ function installElement<S>(
 }
 
 export default class FunctionBasedModifierManager<S> {
-  capabilities = capabilities(gte('3.22.0') ? '3.22' : '3.13');
+  capabilities = capabilities(
+    dependencySatisfies('ember-source', '^3.22.0 || ^4.0.0') ? '3.22' : '3.13'
+  );
 
   createModifier(
     instance: FunctionBasedModifierDefinition<S>
