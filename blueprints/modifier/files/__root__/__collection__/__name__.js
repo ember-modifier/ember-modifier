@@ -5,5 +5,5 @@ export default modifier(function <%= camelizedModuleName %>(element/*, positiona
 });<% } else { %>import Modifier from 'ember-modifier';
 
 export default class <%= classifiedModuleName %>Modifier extends Modifier {
-
+  modify(element/*, positional, named*/) {}
 }<% } %>
