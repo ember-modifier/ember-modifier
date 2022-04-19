@@ -1129,9 +1129,9 @@
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
 "@glimmer/component@^1.0.4":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@glimmer/component/-/component-1.1.1.tgz#ed8252f6431b4c0c988338cd38bd98ac34da85b9"
-  integrity sha512-+nEj8nH/0WiCFz3dZOy50BLRuYiCZ3C2qrsckquJS/bQF9/nf0ZQ7Hwd53kAp7rLnxkYSLk4z4cUDBqiOf2nBQ==
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@glimmer/component/-/component-1.1.2.tgz#892ec0c9f0b6b3e41c112be502fde073cf24d17c"
+  integrity sha512-XyAsEEa4kWOPy+gIdMjJ8XlzA3qrGH55ZDv6nA16ibalCR17k74BI0CztxuRds+Rm6CtbUVgheCVlcCULuqD7A==
   dependencies:
     "@glimmer/di" "^0.1.9"
     "@glimmer/env" "^0.1.7"
@@ -10016,9 +10016,9 @@ qunit-dom@^2.0.0:
     ember-cli-version-checker "^5.1.1"
 
 qunit@^2.17.2:
-  version "2.18.1"
-  resolved "https://registry.yarnpkg.com/qunit/-/qunit-2.18.1.tgz#9e90e7798216f7275c351c88652816d491391397"
-  integrity sha512-A2Adgr/DeMQOJZFVllyQi2wiGJVVXGSRRwMe39fNfuuftUYHHpGRTWUhBa8wNblunCAOUCt+1uFcg1L7NaxQTA==
+  version "2.18.2"
+  resolved "https://registry.yarnpkg.com/qunit/-/qunit-2.18.2.tgz#87ed3c85f12feec6ea6bf8dd2f8867b059732cbc"
+  integrity sha512-Ux+x9pIU38/F+r3jOl35QzGHPPupMifUvhczCqHgzYWX76fCjPg6VqM84ox1D57fhAXHtpS4Jl91EV8gDoCHPg==
   dependencies:
     commander "7.2.0"
     node-watch "0.7.3"
