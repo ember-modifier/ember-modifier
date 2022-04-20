@@ -1,5 +1,10 @@
 'use strict';
 
+const rebuildAddons = process.env.EMBROIDER_REBUILD_ADDONS;
+
+process.env.EMBROIDER_REBUILD_ADDONS =
+  (rebuildAddons ? rebuildAddons + ',' : '') + 'ember-modifier';
+
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
