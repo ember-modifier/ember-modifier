@@ -1,0 +1,107 @@
+{
+  "name": "ember-modifier",
+  "version": "3.2.7",
+  "private": true,
+  "description": "A library for writing Ember modifiers",
+  "keywords": [
+    "ember-addon"
+  ],
+  "repository": "https://github.com/ember-modifier/ember-modifier",
+  "license": "MIT",
+  "author": "",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*",
+    "./addon-main.js": "./addon-main.js"
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/index.d.ts"
+      ],
+      "*": [
+        "./dist/*"
+      ],
+      "./-private/signature": [
+        "./dist/-private/signature.d.ts"
+      ]
+    }
+  },
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "files": [
+    "addon-main.js",
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup --config",
+    "lint": "eslint . --cache --ext .ts,.js",
+    "lint:fix": "eslint . --fix --ext .ts,.js",
+    "prepublishOnly": "rollup --config",
+    "start": "rollup --config --watch",
+    "test": "echo 'Please refer to test-app for addon tests'",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@embroider/addon-shim": "^1.6.0",
+    "ember-cli-normalize-entity-name": "^1.0.0",
+    "ember-cli-string-utils": "^1.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/eslint-parser": "^7.15.8",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-decorators": "^7.17.9",
+    "@babel/preset-typescript": "^7.15.0",
+    "@embroider/addon-dev": "^1.6.0",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@types/ember-qunit": "~5.0.0",
+    "@types/ember-resolver": "^5.0.10",
+    "@types/ember__debug": "~4.0.1",
+    "@types/ember__modifier": "~4.0.1",
+    "@types/ember__test-helpers": "^2.0.2",
+    "@types/qunit": "^2.11.2",
+    "@types/rsvp": "^4.0.4",
+    "@typescript-eslint/eslint-plugin": "^5.20.0",
+    "@typescript-eslint/parser": "^5.20.0",
+    "ember-destroyable-polyfill": "^2.0.3",
+    "eslint": "^8.13.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-ember": "^10.6.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "expect-type": "^0.13.0",
+    "prettier": "^2.4.1",
+    "rollup": "^2.70.1",
+    "rollup-plugin-ts": "^2.0.7",
+    "tslib": "^2.3.1",
+    "typescript": "^4.6.3"
+  },
+  "peerDependencies": {
+    "ember-source": "*"
+  },
+  "peerDependenciesMeta": {
+    "ember-source": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "14.* || 16.* || >= 18"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "ember-addon": {
+    "main": "addon-main.js",
+    "type": "addon",
+    "version": 2
+  },
+  "volta": {
+    "extends": "../package.json"
+  }
+}
