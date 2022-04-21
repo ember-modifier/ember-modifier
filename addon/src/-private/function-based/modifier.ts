@@ -5,7 +5,7 @@ import {
   NamedArgs,
   PositionalArgs,
 } from '../signature';
-import Modifier from '../class/modifier';
+import Modifier from '../class-based/modifier';
 import FunctionBasedModifierManager from './modifier-manager';
 
 // Provide a singleton manager.
