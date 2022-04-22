@@ -2,6 +2,64 @@
 
 
 
+
+## v4.0.0-beta.1 (2022-04-22)
+
+#### :boom: Breaking Change
+* [#296](https://github.com/ember-modifier/ember-modifier/pull/296) Convert to v2 addon ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#244](https://github.com/ember-modifier/ember-modifier/pull/244) Remove all deprecations targeting v4 ([@chriskrycho](https://github.com/chriskrycho))
+* [#238](https://github.com/ember-modifier/ember-modifier/pull/238) Drop support for Node 12 ([@chriskrycho](https://github.com/chriskrycho))
+* [#106](https://github.com/ember-modifier/ember-modifier/pull/106) Breaking: clean up type parameters. ([@chriskrycho](https://github.com/chriskrycho))
+* [#105](https://github.com/ember-modifier/ember-modifier/pull/105) Breaking: remove deprecated willRemove hook ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :rocket: Enhancement
+* [#296](https://github.com/ember-modifier/ember-modifier/pull/296) Convert to v2 addon ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#289](https://github.com/ember-modifier/ember-modifier/pull/289) Update class-based modifier in blueprint ([@bertdeblock](https://github.com/bertdeblock))
+* [#230](https://github.com/ember-modifier/ember-modifier/pull/230) Solidify types for release ([@chriskrycho](https://github.com/chriskrycho))
+* [#222](https://github.com/ember-modifier/ember-modifier/pull/222) Introduce `eager` option to function-based modifiers ([@chriskrycho](https://github.com/chriskrycho))
+* [#217](https://github.com/ember-modifier/ember-modifier/pull/217) Introduce new `modify` hook ([@chriskrycho](https://github.com/chriskrycho))
+* [#218](https://github.com/ember-modifier/ember-modifier/pull/218) Add TS 4.6 to CI and README ([@chriskrycho](https://github.com/chriskrycho))
+* [#210](https://github.com/ember-modifier/ember-modifier/pull/210) Support `Signature` types for modifiers ([@chriskrycho](https://github.com/chriskrycho))
+* [#135](https://github.com/ember-modifier/ember-modifier/pull/135) Add TypeScript 4.5 to testing matrix ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### :bug: Bug Fix
+* [#270](https://github.com/ember-modifier/ember-modifier/pull/270) Use "export type" for FunctionBasedModifier interface ([@ef4](https://github.com/ef4))
+* [#134](https://github.com/ember-modifier/ember-modifier/pull/134) Properly re-export types ([@mydea](https://github.com/mydea))
+
+#### :memo: Documentation
+* [#245](https://github.com/ember-modifier/ember-modifier/pull/245) Update Class-based modifier example ([@patocallaghan](https://github.com/patocallaghan))
+* [#237](https://github.com/ember-modifier/ember-modifier/pull/237) Update README for v4 development ([@chriskrycho](https://github.com/chriskrycho))
+* [#227](https://github.com/ember-modifier/ember-modifier/pull/227) Update docs and export type utils ([@chriskrycho](https://github.com/chriskrycho))
+* [#218](https://github.com/ember-modifier/ember-modifier/pull/218) Add TS 4.6 to CI and README ([@chriskrycho](https://github.com/chriskrycho))
+* [#198](https://github.com/ember-modifier/ember-modifier/pull/198) README: autotracking clarification and misc. cleanup ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#329](https://github.com/ember-modifier/ember-modifier/pull/329) The package must be public ([@chriskrycho](https://github.com/chriskrycho))
+* [#326](https://github.com/ember-modifier/ember-modifier/pull/326) Fix `watchDependencies` usage ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#318](https://github.com/ember-modifier/ember-modifier/pull/318) Use 'class-based' instead of 'class' in layout ([@chriskrycho](https://github.com/chriskrycho))
+* [#239](https://github.com/ember-modifier/ember-modifier/pull/239) Target both main and v3 in Dependabot config ([@chriskrycho](https://github.com/chriskrycho))
+* [#236](https://github.com/ember-modifier/ember-modifier/pull/236) Update `package.json` version field ([@chriskrycho](https://github.com/chriskrycho))
+* [#234](https://github.com/ember-modifier/ember-modifier/pull/234) Include 3.2 deprecations in CHANGELOG ([@chriskrycho](https://github.com/chriskrycho))
+* [#231](https://github.com/ember-modifier/ember-modifier/pull/231) Don't commit generated .d.ts files ([@chriskrycho](https://github.com/chriskrycho))
+* [#226](https://github.com/ember-modifier/ember-modifier/pull/226) Upgrade to latest @types for @ember/modifier ([@chriskrycho](https://github.com/chriskrycho))
+* [#219](https://github.com/ember-modifier/ember-modifier/pull/219) Add ':no_entry_sign: Deprecations' to lerna config ([@chriskrycho](https://github.com/chriskrycho))
+* [#163](https://github.com/ember-modifier/ember-modifier/pull/163) Drop support for Classic and jQuery scenarios ([@chriskrycho](https://github.com/chriskrycho))
+* [#162](https://github.com/ember-modifier/ember-modifier/pull/162) Remove babel.config.js ([@chriskrycho](https://github.com/chriskrycho))
+* [#161](https://github.com/ember-modifier/ember-modifier/pull/161) CI config: tweak how TS versions are tested ([@chriskrycho](https://github.com/chriskrycho))
+* [#123](https://github.com/ember-modifier/ember-modifier/pull/123) Update npmignore file ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#109](https://github.com/ember-modifier/ember-modifier/pull/109) Create dependabot.yml ([@banupriya-bp](https://github.com/banupriya-bp))
+* [#108](https://github.com/ember-modifier/ember-modifier/pull/108) Actually remove `<N>` from `ModifierArgs` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 8
+- Banupriya ([@banupriya-bp](https://github.com/banupriya-bp))
+- Bert De Block ([@bertdeblock](https://github.com/bertdeblock))
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Dan Freeman ([@dfreeman](https://github.com/dfreeman))
+- Edward Faulkner ([@ef4](https://github.com/ef4))
+- Francesco Novy ([@mydea](https://github.com/mydea))
+- Pat O'Callaghan ([@patocallaghan](https://github.com/patocallaghan))
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+
 ## v4.0.0-beta.0 (2022-04-21)
 
 #### :boom: Breaking Change
