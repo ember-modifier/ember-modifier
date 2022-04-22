@@ -1,5 +1,4 @@
 import typescript from 'rollup-plugin-ts';
-// import babel from '@rollup/plugin-babel';
 import { Addon } from '@embroider/addon-dev/rollup';
 
 const addon = new Addon({
