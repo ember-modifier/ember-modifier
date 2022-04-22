@@ -31,15 +31,15 @@
     "@embroider/test-setup": "^1.6.0",
     "@glimmer/component": "^1.1.2",
     "@glimmer/tracking": "^1.1.2",
-    "@types/ember-qunit": "~5.0.0",
-    "@types/ember-resolver": "^5.0.10",
-    "@types/ember__debug": "~4.0.1",
+    "@types/ember-qunit": "^5.0.0",
+    "@types/ember-resolver": "^5.0.11",
+    "@types/ember__debug": "^4.0.1",
     "@types/ember__modifier": "~4.0.1",
-    "@types/ember__test-helpers": "^2.0.2",
-    "@types/qunit": "^2.11.2",
+    "@types/ember__test-helpers": "^2.6.1",
+    "@types/qunit": "^2.11.3",
     "@types/rsvp": "^4.0.4",
-    "@typescript-eslint/eslint-plugin": "^5.2.0",
-    "@typescript-eslint/parser": "^5.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.20.0",
+    "@typescript-eslint/parser": "^5.20.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-auto-import": "^2.4.1",
     "ember-cli": "~4.3.0",
@@ -48,9 +48,9 @@
     "ember-cli-htmlbars": "^6.0.1",
     "ember-cli-inject-live-reload": "^2.1.0",
     "ember-cli-sri": "^2.1.1",
+    "ember-cli-terser": "^4.0.2",
     "ember-cli-typescript": "^5.1.0",
     "ember-cli-typescript-blueprints": "^3.0.0",
-    "ember-cli-uglify": "^3.0.0",
     "ember-disable-prototype-extensions": "^1.1.3",
     "ember-export-application-global": "^2.0.1",
     "ember-load-initializers": "^2.1.2",
@@ -59,7 +59,7 @@
     "ember-resolver": "^8.0.3",
     "ember-source": "~4.3.0",
     "ember-source-channel-url": "^3.0.0",
-    "ember-template-lint": "^4.4.2",
+    "ember-template-lint": "^4.5.0",
     "ember-try": "^2.0.0",
     "eslint": "^8.13.0",
     "eslint-config-prettier": "^8.5.0",
@@ -77,9 +77,6 @@
   },
   "engines": {
     "node": "14.* || 16.* || >= 18"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org"
   },
   "ember": {
     "edition": "octane"
