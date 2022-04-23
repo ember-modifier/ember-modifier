@@ -3,12 +3,13 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
 import Service, { inject as service } from '@ember/service';
 import { hbs } from 'ember-cli-htmlbars';
-import Modifier, { ArgsFor } from 'ember-modifier';
-import {
+import Modifier from 'ember-modifier';
+import type {
+  ArgsFor,
   DefaultSignature,
   NamedArgs,
   PositionalArgs,
-} from 'ember-modifier/-private/signature';
+} from 'ember-modifier';
 import { tracked } from '@glimmer/tracking';
 
 module(
