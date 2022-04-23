@@ -20,8 +20,7 @@
     "experimentalDecorators": true,
     "paths": {
       "ember-modifier": ["src"],
-      "ember-modifier/*": ["src/*"],
-      "@ember/destroyable": ["../node_modules/ember-destroyable-polyfill"]
+      "ember-modifier/*": ["src/*"]
     }
   },
   "include": [

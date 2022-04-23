@@ -14,9 +14,6 @@
     "release": "release-it",
     "test": "cd test-app && yarn test:ember"
   },
-  "resolutions": {
-    "babel-import-util": "1.1.0"
-  },
   "devDependencies": {
     "release-it": "^14.14.2",
     "release-it-lerna-changelog": "^4.0.1",
