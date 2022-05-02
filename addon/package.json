@@ -74,7 +74,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "expect-type": "^0.13.0",
     "prettier": "^2.4.1",
-    "rollup": "^2.70.2",
+    "rollup": "^2.71.1",
     "rollup-plugin-ts": "^2.0.7",
     "tslib": "^2.4.0",
     "typescript": "^4.6.4"
