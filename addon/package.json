@@ -55,7 +55,7 @@
     "@babel/plugin-proposal-class-properties": "^7.17.12",
     "@babel/plugin-proposal-decorators": "^7.17.12",
     "@babel/preset-typescript": "^7.17.12",
-    "@embroider/addon-dev": "^1.6.0",
+    "@embroider/addon-dev": "^1.7.1",
     "@rollup/plugin-babel": "^5.3.1",
     "@types/ember-qunit": "~5.0.0",
     "@types/ember-resolver": "^5.0.10",
