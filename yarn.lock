@@ -1065,12 +1065,12 @@
     walk-sync "^3.0.0"
     yargs "^17.0.1"
 
-"@embroider/addon-shim@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@embroider/addon-shim/-/addon-shim-1.6.0.tgz#d2d6d1d820605a48273a123a9adb49e163c8de1c"
-  integrity sha512-wHXsBsDsKxF6Ftnh67SBzV0OvwCBCBlgN5IVm661ByEdDacwWzYywFpVNcNJpCUttEJPMrqB5MJK7xf/xEqihg==
+"@embroider/addon-shim@^1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@embroider/addon-shim/-/addon-shim-1.7.1.tgz#a00471f2d02f09a820d988ccc1612e09473d2eb4"
+  integrity sha512-0xTQLZEAuGeMiZq4tF3KFlP4R/r1js7qq2QEQ89bhEDI8yKCDBScvPrpSpaT6aZj8bWByjDvXHFuSpInFl5gww==
   dependencies:
-    "@embroider/shared-internals" "^1.6.0"
+    "@embroider/shared-internals" "^1.7.1"
     semver "^7.3.5"
 
 "@embroider/macros@1.6.0", "@embroider/macros@^1.0.0", "@embroider/macros@^1.6.0":
