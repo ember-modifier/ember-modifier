@@ -63,7 +63,7 @@ export type Teardown = () => unknown;
  * @deprecated Until 4.0. Calling `modifier()` without an options argument is
  *   deprecated. It is supported until 4.0 so that existing modifiers can be
  *   migrated individually. Please update your function-based modifiers to pass
- *   `{ eager: false }`.
+ *   `{ eager: false }` like so: `modifier(() => {}, { eager: false }).
  *
  * @param fn The function which defines the modifier.
  */

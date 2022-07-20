@@ -236,7 +236,7 @@ Function-based modifiers consist of a function that receives:
 3. An object of named arguments
 
 ```js
-modifier((element, positional, named) => { /* */ });
+modifier((element, positional, named) => { /* */ }, options);
 ```
 
 This function runs the first time when the element the modifier was applied to
