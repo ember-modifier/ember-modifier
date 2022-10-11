@@ -6,6 +6,7 @@ import {
   FunctionBasedModifierInstance,
 } from 'ember-modifier/-private/function-based/modifier';
 import { registerDestructor } from '@ember/destroyable';
+import type Owner from '@ember/owner';
 
 // Importing private API to confirm that (a) this is stable and (b) it is used
 // where we expect to normalize types.
@@ -27,7 +28,7 @@ expectTypeOf(modifier).toMatchTypeOf<
 
 // --- class-based modifier --- //
 expectTypeOf(Modifier).constructorParameters.toEqualTypeOf<
-  [unknown, ArgsFor<unknown>]
+  [Owner, ArgsFor<unknown>]
 >();
 
 declare enum Foo {
@@ -248,7 +249,7 @@ class ClassBased extends Modifier<ClassBasedSignature> {
   element?: ClassBasedSignature['Element'];
   handle?: (event: MessageEvent) => void;
 
-  constructor(owner: unknown, args: ArgsFor<ClassBasedSignature>) {
+  constructor(owner: Owner, args: ArgsFor<ClassBasedSignature>) {
     super(owner, args);
     registerDestructor(this, cleanup);
   }
@@ -264,17 +265,14 @@ class ClassBased extends Modifier<ClassBasedSignature> {
   }
 }
 
-const classBased = new ClassBased(
-  { iAmAnOwner: 'yep' },
-  {
-    named: {
-      onMessage(desc, data) {
-        console.log(desc, JSON.stringify(data, null, 2));
-      },
+const classBased = new ClassBased({ iAmAnOwner: 'yep' } as unknown as Owner, {
+  named: {
+    onMessage(desc, data) {
+      console.log(desc, JSON.stringify(data, null, 2));
     },
-    positional: ['hello'],
-  }
-);
+  },
+  positional: ['hello'],
+});
 
 expectTypeOf(classBased.modify).parameters.toEqualTypeOf<
   [
