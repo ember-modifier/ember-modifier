@@ -1,6 +1,7 @@
 import { capabilities } from '@ember/modifier';
 import { destroy } from '@ember/destroyable';
 import { dependencySatisfies } from '@embroider/macros';
+import type Owner from '@ember/owner';
 
 import ClassBasedModifier from './modifier';
 import { ArgsFor, ElementFor } from '../signature';
@@ -57,7 +58,7 @@ export default class ClassBasedModifierManager<S> {
     dependencySatisfies('ember-source', '^3.22.0 || ^4.0.0') ? '3.22' : '3.13'
   );
 
-  constructor(private owner: unknown) {}
+  constructor(private owner: Owner) {}
 
   createModifier(
     modifierClass: typeof ClassBasedModifier,

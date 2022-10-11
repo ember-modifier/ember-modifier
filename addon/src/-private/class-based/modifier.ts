@@ -1,5 +1,6 @@
 import { setOwner } from '@ember/application';
 import { setModifierManager } from '@ember/modifier';
+import type Owner from '@ember/owner';
 import Manager from './modifier-manager';
 import {
   ElementFor,
@@ -46,7 +47,7 @@ export default class ClassBasedModifier<S = DefaultSignature> {
    * @param args The positional and named arguments passed to the modifier.
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  constructor(owner: unknown, args: ArgsFor<S>) {
+  constructor(owner: Owner, args: ArgsFor<S>) {
     setOwner(this, owner);
   }
 
