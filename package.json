@@ -23,6 +23,9 @@
     "registry": "https://registry.npmjs.org"
   },
   "release-it": {
+    "hooks": {
+      "before:init": "cp README.md LICENSE.md addon/"
+    },
     "plugins": {
       "release-it-lerna-changelog": {
         "infile": "CHANGELOG.md",
