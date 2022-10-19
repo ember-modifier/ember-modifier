@@ -585,7 +585,7 @@ To handle runtime checking, for non-type-checked templates (including projects n
 import Modifier from 'ember-modifier';
 import { assert } from '@ember/debug';
 
-export class ScrollPositionModifier extends ClassBasedModifier {
+export class ScrollPositionModifier extends Modifier {
   modify(element, [scrollPosition], { relative }) {
     assert(,
       `first argument to 'scroll-position' must be a number, but ${scrollPosition} was ${typeof scrollPosition}`,
