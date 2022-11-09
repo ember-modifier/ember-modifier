@@ -10,6 +10,7 @@ import {
   PositionalArgs,
 } from 'ember-modifier/-private/signature';
 import { tracked } from '@glimmer/tracking';
+import type Owner from '@ember/owner';
 
 module(
   'Integration | Modifier Manager | class-based modifier',
@@ -21,7 +22,7 @@ module(
 
       let callCount = 0;
       class UsingConstructor extends Modifier {
-        constructor(owner: unknown, args: ArgsFor<DefaultSignature>) {
+        constructor(owner: Owner, args: ArgsFor<DefaultSignature>) {
           super(owner, args);
           assert.strictEqual(callCount, 0, 'has initially never been called');
           callCount += 1;
@@ -95,7 +96,7 @@ module(
       let modifyCallCount = 0;
 
       class UsingModify extends Modifier<ModifySig> {
-        constructor(owner: unknown, args: ArgsFor<ModifySig>) {
+        constructor(owner: Owner, args: ArgsFor<ModifySig>) {
           super(owner, args);
           assert.strictEqual(arguments.length, 2, '');
         }
@@ -202,7 +203,7 @@ module(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           @service('bar' as any) baz!: Bar;
 
-          constructor(owner: unknown, args: ArgsFor<DefaultSignature>) {
+          constructor(owner: Owner, args: ArgsFor<DefaultSignature>) {
             super(owner, args);
 
             called = true;
