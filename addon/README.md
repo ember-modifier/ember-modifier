@@ -173,7 +173,7 @@ export default modifier((element, [eventName, handler]) => {
   return () => {
     element.removeEventListener(eventName, handler);
   }
-});
+}, { eager: false });
 ```
 
 Here, we setup the event listener using the positional parameters passed to the
@@ -221,7 +221,7 @@ export default modifier((element, [eventName, handler]) => {
   return () => {
     element.removeEventListener(eventName, handler);
   }
-});
+}, { eager: false });
 ```
 
 Function-based modifiers consist of a function that receives:
@@ -298,7 +298,7 @@ export default modifier(element => {
   }, 1000);
 
   return () => clearInterval(id);
-});
+}, { eager: false });
 
 ```
 ```hbs
@@ -708,7 +708,7 @@ const play = modifier<MySignature>((el, _, { when: shouldPlay }) => {
   } else {
     el.pause();
   }
-})
+}, { eager: false })
 ```
 
 You never *need* to specify a signature in this way for a function-based modifier: you can simply write the types inline instead:
@@ -721,7 +721,8 @@ const play = modifier(
     } else {
       el.pause();
     }
-  }
+  },
+  { eager: false }
 );
 ```
 
@@ -811,7 +812,7 @@ export default modifier(
   }, 1000);
 
   return () => clearInterval(id);
-});
+}, { eager: false });
 ```
 
 A few things to notice here:
@@ -843,7 +844,7 @@ A few things to notice here:
       // 
 
       return (interval: number) => clearTimeout(interval);
-    });
+    }, { eager: false });
     ```
 
     TypeScript will report:
