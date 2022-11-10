@@ -69,6 +69,7 @@ jobs:
         try-scenario:
           - ember-lts-3.24
           - ember-lts-3.28
+          - ember-lts-4.4
           - ember-release
           - ember-beta
           - ember-canary
@@ -105,6 +106,7 @@ jobs:
             typescript@4.4,
             typescript@4.5,
             typescript@4.6,
+            typescript@4.7,
             typescript@next,
           ]
 
