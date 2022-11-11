@@ -10,7 +10,6 @@
   "author": "",
   "exports": {
     ".": "./dist/index.js",
-    "./*": "./dist/*",
     "./addon-main.js": "./addon-main.js"
   },
   "typesVersions": {
@@ -20,9 +19,6 @@
       ],
       "*": [
         "./dist/*"
-      ],
-      "./-private/signature": [
-        "./dist/-private/signature.d.ts"
       ]
     }
   },
