@@ -1764,10 +1764,10 @@
   resolved "https://registry.yarnpkg.com/@types/ember__error/-/ember__error-4.0.0.tgz#c73037e65c1c3d7060b97f98135ba73c712972b1"
   integrity sha512-1WVMR65/QTqPzMWafK2vKEwGafILxRxItbWJng6eEJyKDHRvvHFCl3XzJ4dQjdFcfOlozsn0mmEYCpjKoyzMqA==
 
-"@types/ember__modifier@~4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@types/ember__modifier/-/ember__modifier-4.0.2.tgz#cb187b2f7ad20a162da306ac80e619d49200fdf5"
-  integrity sha512-ObMahQI6T9m5YsGPl3lgII0YH19lzbECiskn/5aRN9S2OoaknYAialPXimtze5Kgu9te++jHG/+SDNzcuIRVUA==
+"@types/ember__modifier@~4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@types/ember__modifier/-/ember__modifier-4.0.3.tgz#9f402f5ca6b02d1853141612abf2ba13398b1ca5"
+  integrity sha512-2Z4ty8OZNVO/UkypnVMoqdp57OxRd48dko3wYzYMbjhR7Wi2Gtd374dLlhoA6WXcWnEyrz7SUCot8zyBpBZwfg==
   dependencies:
     "@types/ember" "*"
     "@types/ember__owner" "*"

@@ -35,7 +35,7 @@
     "@types/ember-qunit": "^5.0.2",
     "@types/ember-resolver": "^5.0.11",
     "@types/ember__debug": "^4.0.1",
-    "@types/ember__modifier": "~4.0.2",
+    "@types/ember__modifier": "~4.0.3",
     "@types/ember__test-helpers": "^2.6.1",
     "@types/qunit": "^2.11.3",
     "@types/rsvp": "^4.0.4",
