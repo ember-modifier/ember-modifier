@@ -6,15 +6,8 @@ dist/
 # dependencies
 node_modules/
 
-# *.md copies from release
-/addon/README.md
-/addon/LICENSE.md
-
 # misc
 .env*
-.pnp*
 .eslintcache
-coverage/
-npm-debug.log*
 yarn-error.log
 .DS_Store
