@@ -73,7 +73,7 @@
     "eslint-plugin-ember": "^10.6.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "expect-type": "^0.13.0",
+    "expect-type": "^0.15.0",
     "prettier": "^2.4.1",
     "rollup": "^2.74.1",
     "rollup-plugin-ts": "^3.0.2",
