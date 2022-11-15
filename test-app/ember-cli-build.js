@@ -7,7 +7,6 @@ module.exports = function (defaults) {
     autoImport: {
       watchDependencies: ['ember-modifier'],
     },
-    // Add options here
   });
 
   // Use `app.import` to add additional libraries to the generated

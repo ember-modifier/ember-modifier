@@ -13,7 +13,7 @@ have been merged since the last release have been labeled with the appropriate
 represent something that would make sense to our users. Some great information
 on why this is important can be found at
 [keepachangelog.com](https://keepachangelog.com/en/1.0.0/), but the overall
-guiding principles here is that changelogs are for humans, not machines.
+guiding principle here is that changelogs are for humans, not machines.
 
 When reviewing merged PR's the labels to be used are:
 

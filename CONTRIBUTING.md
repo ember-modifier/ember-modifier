@@ -33,4 +33,4 @@ During development, if you'd like test app to pick up changes in the addon, make
 * `cd test-app && ember serve`
 * Visit the dummy application at [http://localhost:4200](http://localhost:4200).
 
-For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).
+For more information on using ember-cli, visit [https://cli.emberjs.com/release/](https://cli.emberjs.com/release/).
