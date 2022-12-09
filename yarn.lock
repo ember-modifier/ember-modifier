@@ -1719,10 +1719,10 @@
     "@types/ember__object" "*"
     "@types/ember__owner" "*"
 
-"@types/ember@*", "@types/ember@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-4.0.2.tgz#6454622a9c6b07c711d2b8707744690353d1d838"
-  integrity sha512-u6YtM35NR6W601xF2NOgX4aMkF4SLIq09h68xIiRJkcRpVlNrNu5/QowbSKbflI0lUllNVKH2UcsKi/tPvAzOg==
+"@types/ember@*", "@types/ember@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-4.0.3.tgz#dde52a88e3b41eb73c80063ddfad35f751893e32"
+  integrity sha512-lRhIsa05KxPctv2mhVS/3lOwM8xnppEDsZu595Y+lE3IJhmhnXTjl3Ek+HMOPf53We2DFps+YeXSLm/UFiCILQ==
   dependencies:
     "@types/ember__application" "*"
     "@types/ember__array" "*"
