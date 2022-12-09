@@ -54,7 +54,7 @@
     "@embroider/addon-dev": "^3.0.0",
     "@tsconfig/ember": "^1.1.0",
     "@types/ember-resolver": "^5.0.13",
-    "@types/ember__application": "^4.0.4",
+    "@types/ember__application": "^4.0.5",
     "@types/ember__debug": "^4.0.3",
     "@types/ember__destroyable": "^4.0.1",
     "@types/ember__modifier": "^4.0.3",
