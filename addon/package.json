@@ -61,7 +61,7 @@
     "@types/ember__owner": "^4.0.2",
     "@types/rsvp": "^4.0.4",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
-    "@typescript-eslint/parser": "^5.45.1",
+    "@typescript-eslint/parser": "^5.46.0",
     "ember-cli-htmlbars": "^6.1.1",
     "ember-destroyable-polyfill": "^2.0.3",
     "eslint": "^8.29.0",
