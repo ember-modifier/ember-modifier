@@ -12,6 +12,7 @@ on:
 jobs:
   publish:
     name: "NPM Publish"
+    if: "!contains(github.event.commits[0].message, 'dependabot')"
     runs-on: ubuntu-latest
 
     steps:
