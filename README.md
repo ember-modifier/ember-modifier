@@ -8,7 +8,7 @@ function-based modifiers and more complicated class-based modifiers.
 [element modifiers]: https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html
 [helper]: https://octane-guides-preview.emberjs.com/release/templates/writing-helpers
 
-:warning: **NOTE:** this is the README for the v4 release (currently available in beta)! For the v3 README, see [here](https://github.com/ember-modifier/ember-modifier/blob/v3/README.md). :warning:
+**NOTE:** this is the README for the v4 release. For the v3 README, see [here](https://github.com/ember-modifier/ember-modifier/blob/v3/README.md).
 
 - [Compatibility](#compatibility)
   - [TypeScript](#typescript)
