@@ -3,6 +3,27 @@
 
 
 
+
+## v4.0.0 (2022-12-13)
+
+#### :rocket: Enhancement
+* [#498](https://github.com/ember-modifier/ember-modifier/pull/498) Update signature of constructor for class-based modifiers ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#327](https://github.com/ember-modifier/ember-modifier/pull/327) auto-publish unstable packages to NPM ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### :bug: Bug Fix
+* [#372](https://github.com/ember-modifier/ember-modifier/pull/372) Include `blueprints` folder in published tarball ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### :memo: Documentation
+* [#504](https://github.com/ember-modifier/ember-modifier/pull/504) docs: Fix typo in TypeScript class based example ([@HeroicEric](https://github.com/HeroicEric))
+
+#### :house: Internal
+* [#539](https://github.com/ember-modifier/ember-modifier/pull/539) Sync with latest v2 addon and cli-typescript blueprints ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#328](https://github.com/ember-modifier/ember-modifier/pull/328) run `npx ember-cli-update --to=4.3.0` to align with blueprint ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### Committers: 2
+- Eric Kelly ([@HeroicEric](https://github.com/HeroicEric))
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+
 ## v4.0.0-beta.1 (2022-04-22)
 
 #### :boom: Breaking Change
