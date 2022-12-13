@@ -1,4 +1,5 @@
 {
+  "name": "ember-modifier",
   "version": "4.0.0-beta.1",
   "private": true,
   "repository": {
@@ -48,16 +49,6 @@
             "test-app/package.json"
           ]
         }
-      }
-    },
-    "changelog": {
-      "labels": {
-        "breaking": ":boom: Breaking Change",
-        "enhancement": ":rocket: Enhancement",
-        "bug": ":bug: Bug Fix",
-        "documentation": ":memo: Documentation",
-        "internal": ":house: Internal",
-        "deprecation": ":no_entry_sign: Deprecations"
       }
     },
     "git": {
