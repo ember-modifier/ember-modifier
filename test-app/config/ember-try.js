@@ -11,6 +11,8 @@ module.exports = async function () {
         name: 'ember-lts-3.24',
         npm: {
           devDependencies: {
+            '@types/ember-qunit': '^5.0.2',
+            'ember-qunit': '^5.1.5',
             'ember-source': '~3.24.0',
           },
         },
