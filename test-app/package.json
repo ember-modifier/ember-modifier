@@ -73,7 +73,7 @@
     "ember-modifier": "4.0.0",
     "ember-qunit": "^6.1.1",
     "ember-resolver": "^9.0.1",
-    "ember-source": "~4.9.1",
+    "ember-source": "~4.9.3",
     "ember-source-channel-url": "^3.0.0",
     "ember-template-lint": "^5.3.0",
     "ember-try": "^2.0.0",
