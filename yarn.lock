@@ -1811,10 +1811,10 @@
     "@types/ember__object" "*"
     "@types/rsvp" "*"
 
-"@types/ember__owner@*", "@types/ember__owner@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@types/ember__owner/-/ember__owner-4.0.2.tgz#ecad24830ad3f624da402dd6f56ed8881c94a473"
-  integrity sha512-o68xsw62HA269AWebw8VcrPKDDfoNqU+F06hwpIy5vZ5bJY1RAdOp+IFRVaKK+DqpkwQCIpDZVUta5f5QE6jrw==
+"@types/ember__owner@*", "@types/ember__owner@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@types/ember__owner/-/ember__owner-4.0.3.tgz#0e85b4ca84bbf8063c24f7eee0ad8d628c20e0aa"
+  integrity sha512-vwVKdLNYKXMOxJXwMnFQh7TkWfkp6berH6Kc/VK8is1bPgaBB7X/c50rjNmM2o7zI5LJSPm1khxcDidfyXnimg==
 
 "@types/ember__polyfills@*", "@types/ember__polyfills@^4.0.1":
   version "4.0.1"
