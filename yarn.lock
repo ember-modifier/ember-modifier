@@ -10504,10 +10504,10 @@ rollup-plugin-ts@^3.0.2:
     ts-clone-node "^1.0.0"
     tslib "^2.4.0"
 
-rollup@^3.7.4:
-  version "3.7.4"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.7.4.tgz#993c3b30eff1df96f5eafb7c2ef7648960f2fa34"
-  integrity sha512-jN9rx3k5pfg9H9al0r0y1EYKSeiRANZRYX32SuNXAnKzh6cVyf4LZVto1KAuDnbHT03E1CpsgqDKaqQ8FZtgxw==
+rollup@^3.9.0:
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.9.0.tgz#0ff7ab7cd71ce3a6ab140c5cf661f2b35eb6aab8"
+  integrity sha512-nGGylpmblyjTpF4lEUPgmOw6OVxRvnI6Iuuh6Lz4O/X66cVOX1XJSsqP1YamxQ+mPuFE7qJxLFDSCk8rNv5dDw==
   optionalDependencies:
     fsevents "~2.3.2"
 
