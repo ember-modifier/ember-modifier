@@ -1696,13 +1696,12 @@
   dependencies:
     "@types/ms" "*"
 
-"@types/ember-resolver@^5.0.13":
-  version "5.0.13"
-  resolved "https://registry.yarnpkg.com/@types/ember-resolver/-/ember-resolver-5.0.13.tgz#db66678076ca625ed80b629c09619ae85c1c1f7a"
-  integrity sha512-pO964cAPhAaFJoS28M8+b5MzAhQ/tVuNM4GDUIAexheQat36axG2WTG8LQ5ea07MSFPesrRFk2T3z88pfvdYKA==
+"@types/ember-resolver@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@types/ember-resolver/-/ember-resolver-9.0.0.tgz#dd54791af74a692b7ee33d808a572d5c96582b7e"
+  integrity sha512-lEuC2QD8K6rRAbELMejrALFBgelRPt6OQtapny4Oke07ZtK/Lbf9zn5KIDl7PNkirxMD0AStsQTdUqFu6eVbVw==
   dependencies:
-    "@types/ember__object" "*"
-    "@types/ember__owner" "*"
+    ember-resolver "*"
 
 "@types/ember@*", "@types/ember@^4.0.3":
   version "4.0.3"
@@ -5118,7 +5117,7 @@ ember-qunit@^6.1.1:
     silent-error "^1.1.1"
     validate-peer-dependencies "^2.1.0"
 
-ember-resolver@^9.0.1:
+ember-resolver@*, ember-resolver@^9.0.1:
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/ember-resolver/-/ember-resolver-9.0.1.tgz#a4d0e958abdb3b40ef18b120e542765963a5a9be"
   integrity sha512-vFdaxDuwp0xptxa4uhJE8mNLQf6/8Mz+mBohsF4721hz03ieW+zdSSR04fCetFVCLxtNhGmmrIZrClDcA5dB9w==
