@@ -1,9 +1,6 @@
 {
   "extends": "@tsconfig/ember/tsconfig.json",
   "include": [
-    "src/**/*"
-  ],
-  "compilerOptions": {
-    "types": ["@ember/owner"]
-  },
+    "src/**/*", "types/**/*"
+  ]
 }

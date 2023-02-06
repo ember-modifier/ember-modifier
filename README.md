@@ -38,8 +38,8 @@ function-based modifiers and more complicated class-based modifiers.
 Compatibility
 ------------------------------------------------------------------------------
 
-* Ember.js v3.24 or above
-* Ember CLI v3.24 or above
+* Ember.js v4.8 or above
+* Ember CLI v4.8 or above
 * Node.js v14 or above
 * Embroider or ember-auto-import v2
 
@@ -841,7 +841,7 @@ A few things to notice here:
 
     ```ts
     export default modifier((element, _, named) => {
-      // 
+      //
 
       return (interval: number) => clearTimeout(interval);
     });
