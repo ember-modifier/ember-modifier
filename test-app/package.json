@@ -54,7 +54,7 @@
     "@types/ember__utils": "^4.0.2",
     "@types/qunit": "^2.19.3",
     "@types/rsvp": "^4.0.4",
-    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.48.0",
     "broccoli-asset-rev": "^3.0.0",
     "concurrently": "^7.6.0",
