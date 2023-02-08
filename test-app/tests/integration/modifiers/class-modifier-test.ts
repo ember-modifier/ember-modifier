@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, settled } from '@ember/test-helpers';
+import { render, rerender, settled } from '@ember/test-helpers';
 import Service, { inject as service } from '@ember/service';
 import { hbs } from 'ember-cli-htmlbars';
 import Modifier, { ArgsFor } from 'ember-modifier';
@@ -195,7 +195,7 @@ module(
         this.owner.register('service:bar', Bar);
 
         class NativeModifier extends Modifier {
-          @service foo!: Foo;
+          @service declare foo: Foo;
 
           // SAFETY: we're not using the registry here for convenience, because we
           // cannot extend it anywhere but at the top level of the module. The
@@ -217,6 +217,48 @@ module(
         await render(hbs`<h1 {{songbird}}>Hello</h1>`);
 
         assert.true(called, 'constructor called');
+      });
+
+      test('modify is re-run when a service dependency changes', async function (assert) {
+        assert.expect(3);
+
+        let calledCount = 0;
+
+        class Foo extends Service {
+          @tracked age = 0;
+        }
+
+        this.owner.register('service:foo', Foo);
+
+        class NativeModifier extends Modifier<{
+          Element: HTMLDivElement;
+          Args: {
+            Positional: [string];
+          };
+        }> {
+          @service declare foo: Foo;
+
+          modify(element: HTMLDivElement, [name]: [string]): void {
+            calledCount += 1;
+
+            element.addEventListener('click', () => {
+              alert(`${name} is ${this.foo.age}`);
+            });
+          }
+        }
+        this.owner.register('modifier:songbird', NativeModifier);
+
+        await render(hbs`<h1 {{songbird "birdie"}}>Hello</h1>`);
+
+        assert.strictEqual(calledCount, 1, 'modify is called the first time');
+
+        await rerender();
+
+        assert.strictEqual(
+          calledCount,
+          2,
+          'modify is called after tracked state mutation'
+        );
       });
     });
   }
