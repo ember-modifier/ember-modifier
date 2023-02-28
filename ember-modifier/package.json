@@ -95,7 +95,7 @@
     "type": "addon",
     "main": "addon-main.js",
     "versionCompatibility": {
-      "ember": "3.24 || >=4.0"
+      "ember": "3.24 || 3.28 || >=4.0"
     }
   }
 }

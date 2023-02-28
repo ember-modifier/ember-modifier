@@ -29,7 +29,7 @@ jobs:
 
       - name: Lint Addon
         run: yarn lint
-        working-directory: addon
+        working-directory: ember-modifier
 
       - name: Lint Test App
         run: yarn lint
@@ -124,8 +124,8 @@ jobs:
 
       - name: Update TS version
         run: yarn add -D ${{ matrix.typescript-scenario }}
-        working-directory: addon
+        working-directory: ember-modifier
 
       - name: Type checking
         run: tsc --noEmit
-        working-directory: addon
+        working-directory: ember-modifier

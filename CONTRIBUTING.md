@@ -2,7 +2,7 @@
 
 This repo is divided into multiple packages using Yarn workspaces:
 
-- `addon` is the actual ember-modifier addon
+- `ember-modifier` is the actual ember-modifier addon
 - `test-app` is its test suite
 
 ## Installation
@@ -20,13 +20,13 @@ Inside any of the packages you can run:
 
 ## Running tests
 
-* `cd addon && yarn start` – Builds the addon in "watch mode" so changes picked up by test app.
+* `cd ember-modifier && yarn start` – Builds the addon in "watch mode" so changes picked up by test app.
 * `cd test-app && ember test` – Runs the test suite on the current Ember version
 * `cd test-app && ember test --server` – Runs the test suite in "watch mode"
 * `cd test-app && ember try:each` – Runs the test suite against multiple Ember versions
 
 During development, if you'd like test app to pick up changes in the addon, make sure to run both
-`cd addon && yarn start` and `cd test-app && ember test --server` in different terminals.
+`cd ember-modifier && yarn start` and `cd test-app && ember test --server` in different terminals.
 
 ## Running the test application
 
