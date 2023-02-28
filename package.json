@@ -38,7 +38,7 @@
       },
       "@release-it-plugins/workspaces": {
         "workspaces": [
-          "addon"
+          "ember-modifier"
         ],
         "additionalManifests": {
           "dependencyUpdates": [
