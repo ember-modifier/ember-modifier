@@ -3,6 +3,13 @@
 const getChannelURL = require('ember-source-channel-url');
 const { embroiderSafe, embroiderOptimized } = require('@embroider/test-setup');
 
+// These are needed for ember-source < 4.8, when preview types were first shipped
+const emberTypesPackages = {
+  '@types/ember-resolver': '^5.0.13',
+  '@types/ember__application': '^4.0.5',
+  '@types/ember__owner': '^4.0.3',
+};
+
 module.exports = async function () {
   return {
     useYarn: true,
@@ -14,6 +21,7 @@ module.exports = async function () {
             '@types/ember-qunit': '^5.0.2',
             'ember-qunit': '^5.1.5',
             'ember-source': '~3.24.0',
+            ...emberTypesPackages,
           },
         },
       },
@@ -22,6 +30,7 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': '~3.28.0',
+            ...emberTypesPackages,
           },
         },
       },
@@ -30,6 +39,15 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': '~4.4.0',
+            ...emberTypesPackages,
+          },
+        },
+      },
+      {
+        name: 'ember-lts-4.8',
+        npm: {
+          devDependencies: {
+            'ember-source': '~4.8.0',
           },
         },
       },
