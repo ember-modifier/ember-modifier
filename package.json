@@ -7,11 +7,11 @@
     "url": "https://github.com/ember-modifier/ember-modifier.git"
   },
   "workspaces": [
-    "addon",
+    "ember-modifier",
     "test-app"
   ],
   "scripts": {
-    "prepare": "cd addon && yarn build",
+    "prepare": "cd ember-modifier && yarn build",
     "release": "release-it",
     "test": "cd test-app && yarn test:ember"
   },
@@ -29,7 +29,7 @@
   },
   "release-it": {
     "hooks": {
-      "before:init": "cp README.md LICENSE.md addon/"
+      "before:init": "cp README.md LICENSE.md ember-modifier/"
     },
     "plugins": {
       "@release-it-plugins/lerna-changelog": {
