@@ -40,8 +40,7 @@ Compatibility
 
 * Ember.js v3.24 or above
 * Ember CLI v3.24 or above
-* Node.js v14 or above
-* Embroider or ember-auto-import v2
+* Embroider or ember-auto-import v2.0.0 or above (this is [v2 addon](https://emberjs.github.io/rfcs/0507-embroider-v2-package-format.html))
 
 ### TypeScript
 

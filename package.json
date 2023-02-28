@@ -21,7 +21,7 @@
     "release-it": "^15.6.0"
   },
   "volta": {
-    "node": "14.21.1",
+    "node": "16.19.1",
     "yarn": "1.22.19"
   },
   "publishConfig": {
