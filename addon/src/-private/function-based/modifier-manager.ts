@@ -35,7 +35,7 @@ function installElement<S>(
 
 export default class FunctionBasedModifierManager<S> {
   capabilities = capabilities(
-    dependencySatisfies('ember-source', '^3.22.0 || ^4.0.0') ? '3.22' : '3.13'
+    dependencySatisfies('ember-source', '>=3.22.0') ? '3.22' : '3.13'
   );
 
   createModifier(
