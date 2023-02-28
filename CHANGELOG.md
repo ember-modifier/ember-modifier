@@ -4,6 +4,28 @@
 
 
 
+
+## v4.1.0 (2023-02-28)
+
+#### :rocket: Enhancement
+* [#687](https://github.com/ember-modifier/ember-modifier/pull/687) Remove engines field from addon package.json ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#665](https://github.com/ember-modifier/ember-modifier/pull/665) Use the types published from Ember itself ([@gitKrystan](https://github.com/gitKrystan))
+* [#683](https://github.com/ember-modifier/ember-modifier/pull/683) Support Ember v5 ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### :memo: Documentation
+* [#601](https://github.com/ember-modifier/ember-modifier/pull/601) Update compatibility section in README ([@bertdeblock](https://github.com/bertdeblock))
+* [#599](https://github.com/ember-modifier/ember-modifier/pull/599) Remove mention of v4 beta from readme ([@sandstrom](https://github.com/sandstrom))
+
+#### :house: Internal
+* [#686](https://github.com/ember-modifier/ember-modifier/pull/686) Rename addon folder to ember-modifier ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#600](https://github.com/ember-modifier/ember-modifier/pull/600) Skip publish-unstable for dependabot PRs ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### Committers: 4
+- Bert De Block ([@bertdeblock](https://github.com/bertdeblock))
+- Krystan HuffMenne ([@gitKrystan](https://github.com/gitKrystan))
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+- [@sandstrom](https://github.com/sandstrom)
+
 ## v4.0.0 (2022-12-13)
 
 #### :rocket: Enhancement
