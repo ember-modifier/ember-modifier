@@ -71,10 +71,7 @@ module.exports = async function () {
         name: 'ember-canary',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('canary').then((url) => {
-              console.log('canary channel url', url);
-              return url;
-            }),
+            'ember-source': await getChannelURL('canary'),
           },
         },
       },
