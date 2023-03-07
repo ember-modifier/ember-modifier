@@ -55,7 +55,7 @@
     "@embroider/addon-dev": "^3.0.0",
     "@tsconfig/ember": "^2.0.0",
     "@types/rsvp": "^4.0.4",
-    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
     "@typescript-eslint/parser": "^5.54.0",
     "ember-cli-htmlbars": "^6.2.0",
     "ember-destroyable-polyfill": "^2.0.3",
