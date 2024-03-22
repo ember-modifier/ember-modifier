@@ -5,6 +5,7 @@ const useTestFrameworkDetector = require('../test-framework-detector');
 
 module.exports = useTestFrameworkDetector({
   description: 'Generates a helper integration test or a unit test.',
+  shouldTransformTypeScript: true,
 
   fileMapTokens: function () {
     return {
