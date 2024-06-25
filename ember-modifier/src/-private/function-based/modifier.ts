@@ -134,7 +134,7 @@ export default function modifier(
   // type of `setModifierManager` today is `void`; we pretend it actually
   // returns an opaque `Modifier` type so that we can provide a result from this
   // type which is useful to TS-aware tooling (e.g. Glint).
-  fn.name = name;
+  fn.name = name || fn.name;
   return setModifierManager(
     () => MANAGER,
     fn
