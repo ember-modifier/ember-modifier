@@ -121,7 +121,8 @@ export default function modifier(
     element: Element,
     positional: unknown[],
     named: object
-  ) => void | Teardown
+  ) => void | Teardown,
+  name?: string
 ): FunctionBasedModifier<{
   Element: Element;
   Args: {
@@ -133,6 +134,7 @@ export default function modifier(
   // type of `setModifierManager` today is `void`; we pretend it actually
   // returns an opaque `Modifier` type so that we can provide a result from this
   // type which is useful to TS-aware tooling (e.g. Glint).
+  fn.name = name;
   return setModifierManager(
     () => MANAGER,
     fn
