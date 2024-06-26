@@ -74,4 +74,12 @@ export default class FunctionBasedModifierManager<S> {
       state.teardown();
     }
   }
+
+  getDebugName(state: InstalledState<S>) {
+    return state.instance.toString();
+  }
+
+  getDebugInstance(state: InstalledState<S>) {
+    return state.instance;
+  }
 }
