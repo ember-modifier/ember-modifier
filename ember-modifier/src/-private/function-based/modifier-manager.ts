@@ -79,9 +79,7 @@ export default class FunctionBasedModifierManager<S> {
     return state.instance.toString();
   }
 
-  getDebugInstance(
-    state: InstalledState<S>
-  ): FunctionBasedModifierDefinition<S> {
-    return state.instance;
+  getDebugInstance(state: InstalledState<S>): InstalledState<S> {
+    return state;
   }
 }
