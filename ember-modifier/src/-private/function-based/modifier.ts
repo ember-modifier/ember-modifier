@@ -123,7 +123,7 @@ export default function modifier(
     named: object
   ) => void | Teardown,
   options?: {
-    name: string
+    name: string;
   }
 ): FunctionBasedModifier<{
   Element: Element;
