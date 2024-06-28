@@ -10,31 +10,32 @@ function-based modifiers and more complicated class-based modifiers.
 
 **NOTE:** this is the README for the v4 release. For the v3 README, see [here](https://github.com/ember-modifier/ember-modifier/blob/v3/README.md).
 
-- [Compatibility](#compatibility)
-  - [TypeScript](#typescript)
-- [Installation](#installation)
-- [Philosophy](#philosophy)
-  - [Whoa whoa whoa, hold on, what's a _"side effect"_?](#whoa-whoa-whoa-hold-on-whats-a-side-effect)
-  - [Managing "side effects" effectively](#managing-side-effects-effectively)
-- [Usage](#usage)
-  - [Function-Based Modifiers](#function-based-modifiers)
-    - [Generating a Function-Based Modifier](#generating-a-function-based-modifier)
-    - [Example without Cleanup](#example-without-cleanup)
-    - [Example with Cleanup](#example-with-cleanup)
-    - [Ember Inspector Support](#ember-inspector-support)
-  - [Class-Based Modifiers](#class-based-modifiers)
-    - [Generating a Class Modifier](#generating-a-class-modifier)
-    - [Example without Cleanup](#example-without-cleanup-1)
-    - [Example with Cleanup](#example-with-cleanup-1)
-    - [Example with Service Injection](#example-with-service-injection)
-    - [API](#api)
-- [TypeScript](#typescript-1)
-  - [The `Signature` type](#the-signature-type)
-  - [Examples with TypeScript](#examples-with-typescript)
-    - [Function-based modifier](#function-based-modifier)
-    - [Class-based](#class-based)
-- [Contributing](#contributing)
-- [License](#license)
+- [ember-modifier](#ember-modifier)
+  - [Compatibility](#compatibility)
+    - [TypeScript](#typescript)
+  - [Installation](#installation)
+  - [Philosophy](#philosophy)
+    - [Whoa whoa whoa, hold on, what's a _"side effect"_?](#whoa-whoa-whoa-hold-on-whats-a-side-effect)
+    - [Managing "side effects" effectively](#managing-side-effects-effectively)
+  - [Usage](#usage)
+    - [Function-Based Modifiers](#function-based-modifiers)
+      - [Generating a Function-Based Modifier](#generating-a-function-based-modifier)
+      - [Example without Cleanup](#example-without-cleanup)
+      - [Example with Cleanup](#example-with-cleanup)
+      - [Ember Inspector Support](#ember-inspector-support)
+    - [Class-Based Modifiers](#class-based-modifiers)
+      - [Generating a Class Modifier](#generating-a-class-modifier)
+      - [Example without Cleanup](#example-without-cleanup-1)
+      - [Example with Cleanup](#example-with-cleanup-1)
+      - [Example with Service Injection](#example-with-service-injection)
+      - [API](#api)
+  - [TypeScript](#typescript-1)
+    - [The `Signature` type](#the-signature-type)
+    - [Examples with TypeScript](#examples-with-typescript)
+      - [Function-based modifier](#function-based-modifier)
+      - [Class-based](#class-based)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 Compatibility
 ------------------------------------------------------------------------------
@@ -174,7 +175,7 @@ export default modifier((element, [eventName, handler]) => {
   return () => {
     element.removeEventListener(eventName, handler);
   }
-});
+}, { eager: false });
 ```
 
 Here, we setup the event listener using the positional parameters passed to the
@@ -222,7 +223,7 @@ export default modifier((element, [eventName, handler]) => {
   return () => {
     element.removeEventListener(eventName, handler);
   }
-});
+}, { eager: false });
 ```
 
 Function-based modifiers consist of a function that receives:
@@ -268,7 +269,7 @@ import { modifier } from 'ember-modifier';
 
 export default modifier((element, [scrollPosition]) => {
   element.scrollTop = scrollPosition;
-})
+}, { eager: false })
 ```
 ```hbs
 <div class="scroll-container" {{scroll-top @scrollPosition}}>
@@ -299,7 +300,7 @@ export default modifier(element => {
   }, 1000);
 
   return () => clearInterval(id);
-});
+}, { eager: false });
 
 ```
 ```hbs
@@ -315,7 +316,10 @@ By default arrow functions or unamed functions will be shown as \<unknown\>. To 
 ```js
 export default modifier(element => {
   ...
-}, { name: 'my-fn-modifier' });
+}, {
+  name: 'my-fn-modifier',
+  eager: false
+});
 ```
 
 
@@ -823,7 +827,7 @@ export default modifier(
   }, 1000);
 
   return () => clearInterval(id);
-});
+}, { eager: false });
 ```
 
 A few things to notice here:
@@ -839,7 +843,7 @@ A few things to notice here:
       // ...
 
       return id;
-    });
+    }, { eager: false });
     ```
 
     TypeScript will report:
@@ -855,7 +859,7 @@ A few things to notice here:
       // 
 
       return (interval: number) => clearTimeout(interval);
-    });
+    }, { eager: false });
     ```
 
     TypeScript will report:

@@ -103,7 +103,11 @@ export default function modifier<S>(
     element: ElementFor<S>,
     positional: PositionalArgs<S>,
     named: NamedArgs<S>
-  ) => void | Teardown
+  ) => void | Teardown,
+  options?: {
+    name: string;
+    eager: boolean;
+  }
 ): FunctionBasedModifier<{
   Element: ElementFor<S>;
   Args: {
@@ -124,6 +128,7 @@ export default function modifier(
   ) => void | Teardown,
   options?: {
     name: string;
+    eager: boolean;
   }
 ): FunctionBasedModifier<{
   Element: Element;
