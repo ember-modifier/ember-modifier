@@ -21,6 +21,7 @@ function-based modifiers and more complicated class-based modifiers.
     - [Generating a Function-Based Modifier](#generating-a-function-based-modifier)
     - [Example without Cleanup](#example-without-cleanup)
     - [Example with Cleanup](#example-with-cleanup)
+    - [Ember Inspector Support](#ember-inspector-support)
   - [Class-Based Modifiers](#class-based-modifiers)
     - [Generating a Class Modifier](#generating-a-class-modifier)
     - [Example without Cleanup](#example-without-cleanup-1)
@@ -306,6 +307,17 @@ export default modifier(element => {
   {{yield}}
 </button>
 ```
+
+#### Ember Inspector Support
+
+Ember Inspector supports showing modifiers. For Function-Based Modifiers it shows the function name as modifier name.
+By default arrow functions or unamed functions will be shown as \<unknown\>. To have a name shown in the inspector use a named function or pass an extra option.
+```js
+export default modifier(element => {
+  ...
+}, { name: 'my-fn-modifier' });
+```
+
 
 ### Class-Based Modifiers
 

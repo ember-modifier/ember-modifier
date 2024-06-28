@@ -121,7 +121,10 @@ export default function modifier(
     element: Element,
     positional: unknown[],
     named: object
-  ) => void | Teardown
+  ) => void | Teardown,
+  options?: {
+    name: string;
+  }
 ): FunctionBasedModifier<{
   Element: Element;
   Args: {
@@ -129,6 +132,7 @@ export default function modifier(
     Positional: unknown[];
   };
 }> {
+  fn.toString = () => options?.name || fn.name;
   // SAFETY: the cast here is a *lie*, but it is a useful one. The actual return
   // type of `setModifierManager` today is `void`; we pretend it actually
   // returns an opaque `Modifier` type so that we can provide a result from this
