@@ -30,13 +30,13 @@ module(
           assert.strictEqual(
             arguments.length,
             2,
-            'receives exactly two arguments'
+            'receives exactly two arguments',
           );
           assert.true('named' in args, 'the `args` has a `named` field');
           assert.strictEqual(typeof args.named, 'object', 'which is an object');
           assert.true(
             'positional' in args,
-            'the `args` has a `positional` field'
+            'the `args` has a `positional` field',
           );
           assert.true(Array.isArray(args.positional), 'which is an array');
         }
@@ -104,27 +104,27 @@ module(
         modify(
           element: HTMLParagraphElement,
           positional: PositionalArgs<ModifySig>,
-          named: NamedArgs<ModifySig>
+          named: NamedArgs<ModifySig>,
         ): void {
           modifyCallCount += 1;
           assert.true(
             element instanceof HTMLParagraphElement,
-            'receives the element correctly'
+            'receives the element correctly',
           );
           assert.strictEqual(
             positional.length,
             2,
-            'receives all positional args'
+            'receives all positional args',
           );
           assert.strictEqual(
             positional[0],
             state.greet,
-            'receives 1st positional arg'
+            'receives 1st positional arg',
           );
           assert.strictEqual(
             positional[1],
             state.farewell,
-            'receives 2nd positional arg'
+            'receives 2nd positional arg',
           );
 
           // Intentionally do not use `named.age`, so that we can test that
@@ -133,12 +133,12 @@ module(
           assert.strictEqual(
             typeof named,
             'object',
-            'receives a named args object'
+            'receives a named args object',
           );
           assert.strictEqual(
             named.name,
             state.name,
-            'receives correct named args'
+            'receives correct named args',
           );
         }
       }
@@ -167,7 +167,7 @@ module(
       assert.strictEqual(
         modifyCallCount,
         3,
-        'is called once each for installation and each update to args it actually uses'
+        'is called once each for installation and each update to args it actually uses',
       );
       assert.verifySteps([
         'initial render',
@@ -219,5 +219,5 @@ module(
         assert.true(called, 'constructor called');
       });
     });
-  }
+  },
 );

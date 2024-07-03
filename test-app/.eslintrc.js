@@ -2,19 +2,11 @@
 
 module.exports = {
   root: true,
-  parser: '@babel/eslint-parser',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module',
-    ecmaFeatures: {
-      legacyDecorators: true,
-    },
-    requireConfigFile: false,
-    babelOptions: {
-      plugins: [['@babel/plugin-proposal-decorators', { legacy: true }]],
-    },
+    ecmaVersion: 'latest',
   },
-  plugins: ['ember'],
+  plugins: ['ember', '@typescript-eslint'],
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended',
@@ -25,42 +17,12 @@ module.exports = {
   },
   rules: {},
   overrides: [
-    // node files
-    {
-      files: [
-        './.eslintrc.js',
-        './.prettierrc.js',
-        './.template-lintrc.js',
-        './ember-cli-build.js',
-        './testem.js',
-        './blueprints/*/index.js',
-        './config/**/*.js',
-        './lib/*/index.js',
-        './server/**/*.js',
-      ],
-      parserOptions: {
-        sourceType: 'script',
-      },
-      env: {
-        browser: false,
-        node: true,
-      },
-      plugins: ['node'],
-      extends: ['plugin:node/recommended'],
-    },
+    // ts files
     {
       files: ['**/*.ts'],
-      parser: '@typescript-eslint/parser',
-      parserOptions: {
-        // allows eslint from any dir
-        tsconfigRootDir: __dirname,
-        project: ['./tsconfig.json'],
-      },
-      plugins: ['@typescript-eslint', 'ember'],
       extends: [
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
-        'prettier',
       ],
       rules: {
         '@typescript-eslint/explicit-function-return-type': [
@@ -72,10 +34,33 @@ module.exports = {
         ],
       },
     },
+    // node files
+    {
+      files: [
+        './.eslintrc.js',
+        './.prettierrc.js',
+        './.stylelintrc.js',
+        './.template-lintrc.js',
+        './ember-cli-build.js',
+        './testem.js',
+        './blueprints/*/index.js',
+        './config/**/*.js',
+        './lib/*/index.js',
+        './server/**/*.js',
+      ],
+      env: {
+        browser: false,
+        node: true,
+      },
+      extends: ['plugin:n/recommended'],
+    },
     {
       // test files
       files: ['tests/**/*-test.{js,ts}'],
       extends: ['plugin:qunit/recommended'],
+      rules: {
+        'qunit/require-expect': ['error', 'except-simple'],
+      },
     },
   ],
 };

@@ -21,7 +21,7 @@
     "release-it": "^15.10.3"
   },
   "volta": {
-    "node": "16.19.1",
+    "node": "18.20.3",
     "yarn": "1.22.19"
   },
   "publishConfig": {
@@ -60,5 +60,6 @@
       "tokenRef": "GITHUB_AUTH"
     },
     "npm": false
-  }
+  },
+  "dependencies": {}
 }
