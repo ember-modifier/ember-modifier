@@ -2,8 +2,8 @@ import { capabilities } from '@ember/modifier';
 import { destroy } from '@ember/destroyable';
 import type Owner from '@ember/owner';
 
-import ClassBasedModifier from './modifier';
-import { ArgsFor, ElementFor } from '../signature';
+import type ClassBasedModifier from './modifier';
+import type { ArgsFor, ElementFor } from '../signature';
 
 /**
  * The state bucket used throughout the life-cycle of the modifier. Basically a
@@ -39,7 +39,7 @@ interface InstalledState<S> extends State<S> {
 // TS does not yet understand.
 function installElement<S>(
   state: CreatedState<S>,
-  element: ElementFor<S>
+  element: ElementFor<S>,
 ): InstalledState<S> {
   // SAFETY: this cast represents how we are actually handling the state machine
   // transition: from this point forward in the lifecycle of the modifier, it
@@ -59,7 +59,7 @@ export default class ClassBasedModifierManager<S> {
 
   createModifier(
     modifierClass: typeof ClassBasedModifier,
-    args: ArgsFor<S>
+    args: ArgsFor<S>,
   ): CreatedState<S> {
     const instance = new modifierClass(this.owner, args);
     return { instance, element: null };
@@ -68,7 +68,7 @@ export default class ClassBasedModifierManager<S> {
   installModifier(
     createdState: CreatedState<S>,
     element: ElementFor<S>,
-    args: ArgsFor<S>
+    args: ArgsFor<S>,
   ): void {
     const state = installElement(createdState, element);
     state.instance.modify(element, args.positional, args.named);

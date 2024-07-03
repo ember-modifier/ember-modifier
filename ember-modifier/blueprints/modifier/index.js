@@ -35,7 +35,7 @@ module.exports = {
     }
 
     return normalizeEntityName(
-      entityName.replace(/\.js$/, '') //Prevent generation of ".js.js" files
+      entityName.replace(/\.js$/, ''), //Prevent generation of ".js.js" files
     );
   },
 

@@ -20,7 +20,7 @@ interface InstalledState<S> extends State<S> {
 // TS does not yet understand.
 function installElement<S>(
   state: CreatedState<S>,
-  element: ElementFor<S>
+  element: ElementFor<S>,
 ): InstalledState<S> {
   // SAFETY: this cast represents how we are actually handling the state machine
   // transition: from this point forward in the lifecycle of the modifier, it
@@ -35,11 +35,11 @@ function installElement<S>(
 
 export default class FunctionBasedModifierManager<S> {
   capabilities = capabilities(
-    dependencySatisfies('ember-source', '>=3.22.0') ? '3.22' : '3.13'
+    dependencySatisfies('ember-source', '>=3.22.0') ? '3.22' : '3.13',
   );
 
   createModifier(
-    instance: FunctionBasedModifierDefinition<S>
+    instance: FunctionBasedModifierDefinition<S>,
   ): CreatedState<S> {
     return { element: null, instance };
   }
@@ -47,7 +47,7 @@ export default class FunctionBasedModifierManager<S> {
   installModifier(
     createdState: CreatedState<S>,
     element: ElementFor<S>,
-    args: ArgsFor<S>
+    args: ArgsFor<S>,
   ): void {
     const state = installElement(createdState, element);
 

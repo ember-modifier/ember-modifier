@@ -18,8 +18,8 @@ expectTypeOf(modifier).toMatchTypeOf<
     fn: (
       element: Element,
       positional: unknown[],
-      named: Record<string, unknown>
-    ) => void | (() => void)
+      named: Record<string, unknown>,
+    ) => void | (() => void),
   ) => FunctionBasedModifier<{
     Args: { Named: Record<string, unknown>; Positional: unknown[] };
     Element: Element;
@@ -45,7 +45,7 @@ const narrowerFn = modifier(
     div.addEventListener('mouseenter', handler);
 
     return () => div.removeEventListener('mouseenter', handler);
-  }
+  },
 );
 
 // Additionally, the type of the resulting modifier should be as we expect.
@@ -67,7 +67,7 @@ const narrowerFnWithEagerFalse = modifier(
     div.addEventListener('mouseenter', handler);
 
     return () => div.removeEventListener('mouseenter', handler);
-  }
+  },
 );
 
 // Additionally, the type of the resulting modifier should be as we expect.
@@ -192,7 +192,7 @@ const uselessForm = modifier<HTMLAnchorElement, [string], { neat: true }>(
     expectTypeOf(el).toEqualTypeOf<HTMLAnchorElement>();
     expectTypeOf(pos).toEqualTypeOf<[string]>();
     expectTypeOf(named).toEqualTypeOf<{ neat: true }>();
-  }
+  },
 );
 
 expectTypeOf(uselessForm).toEqualTypeOf<
@@ -208,7 +208,7 @@ expectTypeOf(uselessForm).toEqualTypeOf<
 const genericModifier = modifier(
   <T>(_: Element, positional: [item: T, callback: (item: T) => void]) => {
     return () => positional[1](positional[0]);
-  }
+  },
 );
 
 expectTypeOf(genericModifier).toEqualTypeOf<
@@ -257,7 +257,7 @@ class ClassBased extends Modifier<ClassBasedSignature> {
   modify(
     element: HTMLIFrameElement,
     [desc]: [string],
-    { onMessage }: { onMessage: (desc: string, data: unknown) => void }
+    { onMessage }: { onMessage: (desc: string, data: unknown) => void },
   ): void {
     this.element = element;
     this.handle = (event) => onMessage(desc, event.data);
@@ -278,7 +278,7 @@ expectTypeOf(classBased.modify).parameters.toEqualTypeOf<
   [
     element: ClassBasedSignature['Element'],
     positional: ClassBasedSignature['Args']['Positional'],
-    named: ClassBasedSignature['Args']['Named']
+    named: ClassBasedSignature['Args']['Named'],
   ]
 >();
 

@@ -1,12 +1,12 @@
 import { setModifierManager } from '@ember/modifier';
-import {
+import type {
   ElementFor,
   EmptyObject,
   NamedArgs,
   PositionalArgs,
 } from '../signature';
-import Modifier from '../class-based/modifier';
-import FunctionBasedModifierManager from './modifier-manager';
+import type Modifier from '../class-based/modifier';
+import FunctionBasedModifierManager from './modifier-manager.ts';
 
 // Provide a singleton manager.
 const MANAGER = new FunctionBasedModifierManager();
@@ -18,7 +18,7 @@ const MANAGER = new FunctionBasedModifierManager();
 // augmentations of the `Modifier` type performed by tools like Glint will
 // also apply to function-based modifiers as well.
 export declare abstract class FunctionBasedModifierInstance<
-  S
+  S,
 > extends Modifier<S> {
   protected abstract __concrete__: never;
 }
@@ -63,9 +63,9 @@ export type Teardown = () => unknown;
 export default function modifier<
   E extends Element,
   P extends unknown[],
-  N = EmptyObject
+  N = EmptyObject,
 >(
-  fn: (element: E, positional: P, named: N) => void | Teardown
+  fn: (element: E, positional: P, named: N) => void | Teardown,
 ): FunctionBasedModifier<{
   Args: {
     Positional: P;
@@ -102,8 +102,8 @@ export default function modifier<S>(
   fn: (
     element: ElementFor<S>,
     positional: PositionalArgs<S>,
-    named: NamedArgs<S>
-  ) => void | Teardown
+    named: NamedArgs<S>,
+  ) => void | Teardown,
 ): FunctionBasedModifier<{
   Element: ElementFor<S>;
   Args: {
@@ -120,11 +120,11 @@ export default function modifier(
   fn: (
     element: Element,
     positional: unknown[],
-    named: object
+    named: object,
   ) => void | Teardown,
   options?: {
     name: string;
-  }
+  },
 ): FunctionBasedModifier<{
   Element: Element;
   Args: {
@@ -139,7 +139,7 @@ export default function modifier(
   // type which is useful to TS-aware tooling (e.g. Glint).
   return setModifierManager(
     () => MANAGER,
-    fn
+    fn,
   ) as unknown as FunctionBasedModifier<{
     Element: Element;
     Args: {
@@ -155,5 +155,5 @@ export default function modifier(
 export type FunctionBasedModifierDefinition<S> = (
   element: ElementFor<S>,
   positional: PositionalArgs<S>,
-  named: NamedArgs<S>
+  named: NamedArgs<S>,
 ) => void | Teardown;

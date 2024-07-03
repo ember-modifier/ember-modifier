@@ -1,17 +1,17 @@
 import { setOwner } from '@ember/application';
 import { setModifierManager } from '@ember/modifier';
 import type Owner from '@ember/owner';
-import Manager from './modifier-manager';
-import {
+import Manager from './modifier-manager.ts';
+import type {
   ElementFor,
   ArgsFor,
   DefaultSignature,
   PositionalArgs,
   NamedArgs,
 } from '../signature';
-import Opaque from '../opaque';
+import type Opaque from '../opaque';
 
-// Preserve the signature on a class-based modifier so it can be plucked off
+// Preserve the signature on a class-based modifier, so it can be plucked off
 // later (by e.g. Glint), using interface merging with an opaque item to
 // preserve it in the type system. The fact that it's an empty interface is
 // actually the point: it *only* hooks the type parameter into the opaque
@@ -37,6 +37,7 @@ export default interface ClassBasedModifier<S = DefaultSignature>
  * values they access will be added to the modifier, and the modifier will
  * update if any of those values change.
  */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export default class ClassBasedModifier<S = DefaultSignature> {
   // `args` is passed here for the sake of subclasses to have access to args in
   // their constructors while having constructors which are properly asssignable
@@ -90,7 +91,7 @@ export default class ClassBasedModifier<S = DefaultSignature> {
     /* eslint-disable @typescript-eslint/no-unused-vars */
     element: ElementFor<S>,
     positional: PositionalArgs<S>,
-    named: NamedArgs<S>
+    named: NamedArgs<S>,
     /* eslint-enable @typescript-eslint/no-unused-vars */
   ): void {
     /* no op, for subclassing */

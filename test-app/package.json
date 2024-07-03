@@ -23,8 +23,7 @@
     "lint:types": "tsc --noEmit",
     "start": "ember serve",
     "test": "concurrently \"yarn:lint\" \"yarn:test:*\" --names \"lint,test:\"",
-    "test:ember": "ember test",
-    "test:watch": "ember test --server"
+    "test:ember": "ember test"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",

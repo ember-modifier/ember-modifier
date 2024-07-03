@@ -18,4 +18,6 @@ declare class _Opaque<T> {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Opaque<T> extends _Opaque<T> {}
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export default Opaque;
