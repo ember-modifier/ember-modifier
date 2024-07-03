@@ -3,8 +3,8 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
 import Service, { inject as service } from '@ember/service';
 import { hbs } from 'ember-cli-htmlbars';
-import Modifier, { ArgsFor } from 'ember-modifier';
-import {
+import Modifier, { type ArgsFor } from 'ember-modifier';
+import type {
   DefaultSignature,
   NamedArgs,
   PositionalArgs,
