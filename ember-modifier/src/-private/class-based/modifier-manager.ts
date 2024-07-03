@@ -1,6 +1,5 @@
 import { capabilities } from '@ember/modifier';
 import { destroy } from '@ember/destroyable';
-import { dependencySatisfies } from '@embroider/macros';
 import type Owner from '@ember/owner';
 
 import ClassBasedModifier from './modifier';
@@ -54,9 +53,7 @@ function installElement<S>(
 }
 
 export default class ClassBasedModifierManager<S> {
-  capabilities = capabilities(
-    dependencySatisfies('ember-source', '>=3.22.0') ? '3.22' : '3.13'
-  );
+  capabilities = capabilities('3.22');
 
   constructor(private owner: Owner) {}
 
