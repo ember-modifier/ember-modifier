@@ -118,5 +118,5 @@ jobs:
         working-directory: ember-modifier
 
       - name: Type checking
-        run: tsc --noEmit
+        run: glint
         working-directory: ember-modifier

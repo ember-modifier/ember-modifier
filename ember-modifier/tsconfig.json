@@ -10,6 +10,7 @@
   "compilerOptions": {
     "allowJs": true,
     "declarationDir": "declarations",
+
     /**
       https://www.typescriptlang.org/tsconfig#noEmit
 
@@ -18,6 +19,7 @@
       @tsconfig/ember is more optimized for apps, which wouldn't emit anything, only type check.
     */
     "noEmit": false,
+
     /**
       https://www.typescriptlang.org/tsconfig#emitDeclarationOnly
       We want to only emit declarations as we use Rollup to emit JavaScript.
