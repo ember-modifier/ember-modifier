@@ -29,7 +29,7 @@ module.exports = useTestFrameworkDetector({
     ].join(' | ');
 
     let dasherizedModulePrefix = dasherize(
-      options.project.config().modulePrefix
+      options.project.config().modulePrefix,
     );
 
     return {

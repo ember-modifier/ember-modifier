@@ -46,7 +46,7 @@ Compatibility
 
 This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] proposal.
 
-- **Currently supported TypeScript versions:** v4.8 - v5.5
+- **Currently supported TypeScript versions:** v5.0 - v5.5
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published types not in a `-private` module are public
 

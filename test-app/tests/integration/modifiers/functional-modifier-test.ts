@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, settled, TestContext } from '@ember/test-helpers';
+import { render, settled, type TestContext } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { modifier } from 'ember-modifier';
 import { tracked } from '@glimmer/tracking';
@@ -18,7 +18,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
 
       this.owner.register(
         'modifier:songbird',
-        modifier((element) => assert.strictEqual(element.tagName, 'H1'))
+        modifier((element) => assert.strictEqual(element.tagName, 'H1')),
       );
 
       await render(hbs`<h1 {{songbird}}>Hello</h1>`);
@@ -32,7 +32,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
         modifier((_, [a, b]) => {
           assert.strictEqual(a, '1');
           assert.strictEqual(b, '2');
-        })
+        }),
       );
 
       await render(hbs`<h1 {{songbird "1" "2"}}>Hey</h1>`);
@@ -46,7 +46,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
         modifier((_, __, { a, b }: Record<string, string>) => {
           assert.strictEqual(a, '1');
           assert.strictEqual(b, '2');
-        })
+        }),
       );
 
       await render(hbs`<h1 {{songbird a="1" b="2"}}>Hey</h1>`);
@@ -66,7 +66,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
 
       this.owner.register(
         'modifier:songbird',
-        modifier(() => () => callCount++)
+        modifier(() => () => callCount++),
       );
 
       await render(hbs`
@@ -97,7 +97,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
         modifier((_, [value]) => {
           value;
           callCount++;
-        })
+        }),
       );
 
       await render(hbs`<h1 {{songbird this.state.value}}>Hello</h1>`);
@@ -124,7 +124,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
         modifier((_, [value]) => {
           value;
           return () => callCount++;
-        })
+        }),
       );
 
       await render(hbs`<h1 {{songbird this.state.value}}>Hello</h1>`);
@@ -151,7 +151,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
         modifier((_, [val]: [string]) => {
           val;
           return () => teardownCalls.push(val);
-        })
+        }),
       );
 
       await render(hbs`
@@ -188,7 +188,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
       modifier((_el: Element, _pos: [], state: State) => {
         state.a;
         callCount++;
-      })
+      }),
     );
 
     await render(hbs`
@@ -208,7 +208,7 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
     assert.strictEqual(
       callCount,
       2,
-      'updating unused arg b does not run the modifier'
+      'updating unused arg b does not run the modifier',
     );
 
     assert.verifySteps(['first render', 'second render', 'third render']);
