@@ -5,6 +5,26 @@
 
 
 
+
+## v4.2.0 (2024-07-04)
+
+#### :rocket: Enhancement
+* [#857](https://github.com/ember-modifier/ember-modifier/pull/857) Remove 3.13 modifier manager capabilities ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#854](https://github.com/ember-modifier/ember-modifier/pull/854) Add name to modifier function for Ember Inspector Support ([@patricklx](https://github.com/patricklx))
+* [#853](https://github.com/ember-modifier/ember-modifier/pull/853) Add TS support for the `modifier` and `modifier-test` blueprints ([@bertdeblock](https://github.com/bertdeblock))
+
+#### :house: Internal
+* [#880](https://github.com/ember-modifier/ember-modifier/pull/880) Switch from yarn to pnpm ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#873](https://github.com/ember-modifier/ember-modifier/pull/873) Remove dependabot from v3 branch ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#856](https://github.com/ember-modifier/ember-modifier/pull/856) Sync with latest addon blueprint ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#859](https://github.com/ember-modifier/ember-modifier/pull/859) Adjust TypeScript compat testing to 4.8+ to match glint ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### Committers: 4
+- Bert De Block ([@bertdeblock](https://github.com/bertdeblock))
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+- [@BoussonKarel](https://github.com/BoussonKarel)
+
 ## v4.1.0 (2023-02-28)
 
 #### :rocket: Enhancement
