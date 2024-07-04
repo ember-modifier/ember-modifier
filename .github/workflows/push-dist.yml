@@ -33,3 +33,4 @@ jobs:
           branch: dist
           token: ${{ secrets.GITHUB_TOKEN }}
           working-directory: 'ember-modifier'
+          pack-command: pnpm pack
