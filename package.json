@@ -35,6 +35,7 @@
   },
   "release-it": {
     "hooks": {
+      "after:bump": "pnpm install",
       "before:init": "cp README.md LICENSE.md ember-modifier/"
     },
     "plugins": {
