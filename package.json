@@ -4,21 +4,17 @@
     "type": "git",
     "url": "https://github.com/ember-modifier/ember-modifier.git"
   },
-  "workspaces": [
-    "ember-modifier",
-    "test-app"
-  ],
   "scripts": {
-    "build": "yarn workspace ember-modifier run build",
-    "lint": "yarn workspaces run lint",
-    "lint:fix": "yarn workspaces run lint:fix",
-    "prepare": "yarn build",
+    "build": "pnpm --filter ember-modifier build",
+    "lint": "pnpm --filter '*' lint",
+    "lint:fix": "pnpm --filter '*' lint:fix",
+    "prepare": "pnpm build",
     "release": "release-it",
-    "start": "concurrently 'yarn:start:*' --restart-after 5000 --prefix-colors cyan,white,yellow",
-    "start:addon": "yarn workspace ember-modifier run start",
-    "start:test-app": "yarn workspace test-app run start",
-    "test": "yarn workspaces run test",
-    "test:ember": "yarn workspace test-app run test:ember"
+    "start": "concurrently 'pnpm:start:*' --restart-after 5000 --prefix-colors cyan,white,yellow",
+    "start:addon": "pnpm --filter ember-modifier start --no-watch.clearScreen",
+    "start:test-app": "pnpm --filter test-app start",
+    "test": "pnpm --filter '*' test",
+    "test:ember": "pnpm --filter '*' test:ember"
   },
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^5.0.0",
@@ -27,11 +23,15 @@
     "release-it": "^15.10.3"
   },
   "volta": {
-    "node": "18.20.3",
-    "yarn": "1.22.19"
+    "node": "18.20.3"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/eslint": "^7.0.0"
+    }
   },
   "release-it": {
     "hooks": {
@@ -45,12 +45,7 @@
       "@release-it-plugins/workspaces": {
         "workspaces": [
           "ember-modifier"
-        ],
-        "additionalManifests": {
-          "dependencyUpdates": [
-            "test-app/package.json"
-          ]
-        }
+        ]
       }
     },
     "git": {
