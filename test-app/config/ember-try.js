@@ -12,7 +12,7 @@ const emberTypesPackages = {
 
 module.exports = async function () {
   return {
-    useYarn: true,
+    usePnpm: true,
     scenarios: [
       {
         name: 'ember-lts-3.24',

@@ -9,7 +9,7 @@ You will need the following things properly installed on your computer.
 
 - [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/)
-- [Yarn](https://yarnpkg.com/)
+- [pnpm](https://pnpm.io/)
 - [Ember CLI](https://cli.emberjs.com/release/)
 - [Google Chrome](https://google.com/chrome/)
 
@@ -17,11 +17,11 @@ You will need the following things properly installed on your computer.
 
 - `git clone https://github.com/ember-modifier/ember-modifier.git` this repository
 - `cd ember-modifier/test-app`
-- `yarn install`
+- `pnpm install`
 
 ## Running / Development
 
-- `yarn start`
+- `pnpm start`
 - Visit your app at [http://localhost:4200](http://localhost:4200).
 - Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
 
@@ -31,18 +31,18 @@ Make use of the many generators for code, try `ember help generate` for more det
 
 ### Running Tests
 
-- `yarn test`
-- `yarn test:ember --server`
+- `pnpm test`
+- `pnpm test:ember --server`
 
 ### Linting
 
-- `yarn lint`
-- `yarn lint:fix`
+- `pnpm lint`
+- `pnpm lint:fix`
 
 ### Building
 
-- `yarn ember build` (development)
-- `yarn build` (production)
+- `pnpm ember build` (development)
+- `pnpm build` (production)
 
 ### Deploying
 
