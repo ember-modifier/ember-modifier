@@ -70,7 +70,7 @@
     "@tsconfig/ember": "^3.0.2",
     "@types/rsvp": "^4.0.9",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
-    "@typescript-eslint/parser": "^7.15.0",
+    "@typescript-eslint/parser": "^7.16.0",
     "babel-plugin-ember-template-compilation": "^2.2.1",
     "concurrently": "^8.2.2",
     "ember-source": "~4.11.0",
