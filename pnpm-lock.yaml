@@ -49,8 +49,8 @@ importers:
         specifier: ^7.17.0
         version: 7.24.7
       '@embroider/addon-dev':
-        specifier: ^4.1.0
-        version: 4.3.1(@glint/template@1.4.0)(rollup@4.18.0)
+        specifier: ^5.0.0
+        version: 5.0.0(@glint/template@1.4.0)(rollup@4.18.0)
       '@glimmer/component':
         specifier: ^1.1.2
         version: 1.1.2(@babel/core@7.24.7)
@@ -1788,16 +1788,22 @@ packages:
       - supports-color
     dev: true
 
-  /@embroider/addon-dev@4.3.1(@glint/template@1.4.0)(rollup@4.18.0):
-    resolution: {integrity: sha512-CNZ4Y69PPIZAAGGoERjvDcrwOwWTuUmnRYu+XnmqKk0opdlu/PTssO9YWyxp8AnvGd2l7iLCjEn5mpLFvifstA==}
+  /@embroider/addon-dev@5.0.0(@glint/template@1.4.0)(rollup@4.18.0):
+    resolution: {integrity: sha512-cEaPnhNJBqb+1Mp/1iDsfZjXU/odQ+vYqtqg19qh/28KBbbL5do1TzFPfXuGjzuDHiTIagklpGoNGkMwU/bJtw==}
     engines: {node: 12.* || 14.* || >= 16}
     hasBin: true
+    peerDependencies:
+      rollup: ^4.6.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
     dependencies:
       '@embroider/core': 3.4.14(@glint/template@1.4.0)
       '@rollup/pluginutils': 4.2.1
       content-tag: 2.0.1
       fs-extra: 10.1.0
       minimatch: 3.1.2
+      rollup: 4.18.0
       rollup-plugin-copy-assets: 2.0.3(rollup@4.18.0)
       rollup-plugin-delete: 2.0.0
       walk-sync: 3.0.0
@@ -1806,7 +1812,6 @@ packages:
       - '@glint/template'
       - bufferutil
       - canvas
-      - rollup
       - supports-color
       - utf-8-validate
     dev: true
@@ -5005,7 +5010,7 @@ packages:
     dev: true
 
   /concat-map@0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   /concurrently@8.2.2:
     resolution: {integrity: sha512-1dP4gpXFhei8IOtlXRE/T/4H88ElHgTiUzh71YUmtjTEHMSRS2Z/fgOxHSxxusGHogsRfxNq1vyAwxSC+EVyDg==}
