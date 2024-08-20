@@ -181,8 +181,8 @@ importers:
         specifier: ^2.7.3
         version: 2.7.4(@glint/template@1.4.0)(webpack@5.93.0)
       ember-cli:
-        specifier: ~5.9.0
-        version: 5.9.0
+        specifier: ~5.11.0
+        version: 5.11.0
       ember-cli-app-version:
         specifier: ^7.0.0
         version: 7.0.0(ember-source@4.11.0)
@@ -194,7 +194,7 @@ importers:
         version: 3.0.0
       ember-cli-dependency-checker:
         specifier: ^3.3.2
-        version: 3.3.2(ember-cli@5.9.0)
+        version: 3.3.2(ember-cli@5.11.0)
       ember-cli-htmlbars:
         specifier: ^6.3.0
         version: 6.3.0
@@ -3571,7 +3571,7 @@ packages:
     resolution: {integrity: sha512-gUHx76KtnhEgB3HOuFYiCm3FIdEs6ocM2asHvNTkfu/Y09qQVrrVVaOKENmS2KkSaGoxgXNqC+ZVtR/n0MOkSA==}
 
   /array-flatten@1.1.1:
-    resolution: {integrity: sha1-ml9pkFGx5wczKPKgCJaLZOopVdI=}
+    resolution: {integrity: sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==}
     dev: true
 
   /array-includes@3.1.8:
@@ -5330,7 +5330,7 @@ packages:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
   /cookie-signature@1.0.6:
-    resolution: {integrity: sha1-4wOogrNCzD7oylE6eZmXNNqzriw=}
+    resolution: {integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==}
     dev: true
 
   /cookie@0.4.2:
@@ -5867,7 +5867,7 @@ packages:
     dev: true
 
   /ee-first@1.1.1:
-    resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
+    resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
     dev: true
 
   /electron-to-chromium@1.4.816:
@@ -6022,14 +6022,14 @@ packages:
       - supports-color
     dev: true
 
-  /ember-cli-dependency-checker@3.3.2(ember-cli@5.9.0):
+  /ember-cli-dependency-checker@3.3.2(ember-cli@5.11.0):
     resolution: {integrity: sha512-PwkrW5oYsdPWwt+0Tojufmv/hxVETTjkrEdK7ANQB2VSnqpA5UcYubwpQM9ONuR2J8wyNDMwEHlqIrk/FYtBsQ==}
     engines: {node: '>= 6'}
     peerDependencies:
       ember-cli: ^3.2.0 || >=4.0.0
     dependencies:
       chalk: 2.4.2
-      ember-cli: 5.9.0
+      ember-cli: 5.11.0
       find-yarn-workspace-root: 1.2.1
       is-git-url: 1.0.0
       resolve: 1.22.8
@@ -6254,8 +6254,8 @@ packages:
       - supports-color
     dev: true
 
-  /ember-cli@5.9.0:
-    resolution: {integrity: sha512-3+4F9STw4yRttzMCCrbpAwwQLtUqIwVug/Ve6rvUFvcpK//n8Q6N7iaPBHhYOFGwwok8Nr0jfkINxLWTl6WrlA==}
+  /ember-cli@5.11.0:
+    resolution: {integrity: sha512-G+Fp194KLZy6NHC9c2i1ZlCB2SurxAMd5Hg61o9kRH4rogjDeoVUC3uiQ/mmrdn5DWRSnS0bfXV+i7+W4wu1Ug==}
     engines: {node: '>= 18'}
     hasBin: true
     dependencies:
@@ -6281,7 +6281,7 @@ packages:
       compression: 1.7.4
       configstore: 5.0.1
       console-ui: 3.1.2
-      content-tag: 1.2.2
+      content-tag: 2.0.1
       core-object: 3.1.5
       dag-map: 2.0.2
       diff: 5.2.0
@@ -7845,7 +7845,7 @@ packages:
     dev: true
 
   /fresh@0.5.2:
-    resolution: {integrity: sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=}
+    resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -9192,7 +9192,7 @@ packages:
     dev: true
 
   /is-type@0.0.1:
-    resolution: {integrity: sha1-9lHYXDZdRJVdFKUdjXBh8/a0d5w=}
+    resolution: {integrity: sha512-YwJh/zBVrcJ90aAnPBM0CbHvm7lG9ao7lIFeqTZ1UQj4iFLpM5CikdaU+dGGesrMJwxLqPGmjjrUrQ6Kn3Zh+w==}
     dependencies:
       core-util-is: 1.0.3
     dev: true
@@ -9983,7 +9983,7 @@ packages:
     dev: true
 
   /media-typer@0.3.0:
-    resolution: {integrity: sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=}
+    resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -10008,7 +10008,7 @@ packages:
     dev: true
 
   /merge-descriptors@1.0.1:
-    resolution: {integrity: sha1-sAqqVW3YtEVoFQ7J0blT8/kMu2E=}
+    resolution: {integrity: sha512-cCi6g3/Zr1iqQi6ySbseM1Xvooa98N0w31jzUYrXPX2xqObmFGHJ0tQ5u74H3mVh7wLouTseZyYIq39g8cNp1w==}
     dev: true
 
   /merge-stream@2.0.0:
@@ -12833,7 +12833,7 @@ packages:
     dev: true
 
   /styled_string@0.0.1:
-    resolution: {integrity: sha1-0ieCvYEpVFm8Tx3xjEutjpTdEko=}
+    resolution: {integrity: sha512-DU2KZiB6VbPkO2tGSqQ9n96ZstUPjW7X4sGO6V2m1myIQluX0p1Ol8BrA/l6/EesqhMqXOIXs3cJNOy1UuU2BA==}
     dev: true
 
   /stylelint-config-recommended@14.0.1(stylelint@16.8.0):
@@ -13700,7 +13700,7 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
   /utils-merge@1.0.1:
-    resolution: {integrity: sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=}
+    resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
     dev: true
 
