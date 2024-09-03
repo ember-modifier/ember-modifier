@@ -84,7 +84,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-ember-template-tag": "^2.0.2",
     "rollup": "^4.21.2",
-    "typescript": "^5.3.3",
+    "typescript": "^5.5.4",
     "webpack": "^5.94.0"
   },
   "peerDependencies": {
