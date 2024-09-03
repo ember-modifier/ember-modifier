@@ -97,8 +97,8 @@ importers:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.57.0)
       eslint-plugin-ember:
-        specifier: ^12.1.1
-        version: 12.1.1(@babel/core@7.24.7)(@typescript-eslint/parser@7.16.0)(eslint@8.57.0)
+        specifier: ^12.2.0
+        version: 12.2.0(@babel/core@7.24.7)(@typescript-eslint/parser@7.16.0)(eslint@8.57.0)
       eslint-plugin-import:
         specifier: ^2.29.1
         version: 2.29.1(@typescript-eslint/parser@7.16.0)(eslint@8.57.0)
@@ -244,8 +244,8 @@ importers:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.57.0)
       eslint-plugin-ember:
-        specifier: ^12.1.1
-        version: 12.1.1(@babel/core@7.24.7)(@typescript-eslint/parser@7.16.0)(eslint@8.57.0)
+        specifier: ^12.2.0
+        version: 12.2.0(@babel/core@7.24.7)(@typescript-eslint/parser@7.16.0)(eslint@8.57.0)
       eslint-plugin-n:
         specifier: ^17.9.0
         version: 17.9.0(eslint@8.57.0)
@@ -6995,8 +6995,8 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-ember@12.1.1(@babel/core@7.24.7)(@typescript-eslint/parser@7.16.0)(eslint@8.57.0):
-    resolution: {integrity: sha512-95YWz2nVWtFHwrNlW8kpBivudieTHkiW3vlG3X1P24IpQLigVtPe14LDcZ/vPtEV92Ccao4xcKPKWWOeG0hSNQ==}
+  /eslint-plugin-ember@12.2.0(@babel/core@7.24.7)(@typescript-eslint/parser@7.16.0)(eslint@8.57.0):
+    resolution: {integrity: sha512-Pf0LB70qzrGqbxrieASFDqxvGu7/xgejM78Kj+VsH27XqkuoluF1M5fBU5xxNB7oRCpA5IFA5jdN9WnnSjLzKA==}
     engines: {node: 18.* || 20.* || >= 21}
     peerDependencies:
       '@typescript-eslint/parser': '*'
