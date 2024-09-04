@@ -57,7 +57,7 @@
     "ember-cli-string-utils": "^1.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.6",
+    "@babel/core": "^7.25.2",
     "@babel/plugin-transform-typescript": "^7.25.2",
     "@babel/runtime": "^7.24.8",
     "@embroider/addon-dev": "^5.0.0",
