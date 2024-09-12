@@ -19,7 +19,7 @@
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^7.0.0",
     "@release-it-plugins/workspaces": "^4.2.0",
-    "concurrently": "^8.2.0",
+    "concurrently": "^9.0.1",
     "release-it": "^17.6.0"
   },
   "volta": {
