@@ -87,14 +87,6 @@
     "typescript": "^5.5.4",
     "webpack": "^5.94.0"
   },
-  "peerDependencies": {
-    "ember-source": "^3.24 || >=4.0"
-  },
-  "peerDependenciesMeta": {
-    "ember-source": {
-      "optional": true
-    }
-  },
   "volta": {
     "extends": "../package.json"
   },
