@@ -114,17 +114,21 @@ module.exports = async function () {
         },
       },
       embroiderSafe({
-        devDependencies: {
-          '@embroider/core': '^3.5.5',
-          '@embroider/compat': '^3.9.0',
-          '@embroider/webpack': '^4.1.0',
+        npm: {
+          devDependencies: {
+            '@embroider/core': '^3.5.5',
+            '@embroider/compat': '^3.9.0',
+            '@embroider/webpack': '^4.1.0',
+          },
         },
       }),
       embroiderOptimized({
-        devDependencies: {
-          '@embroider/core': '^3.5.5',
-          '@embroider/compat': '^3.9.0',
-          '@embroider/webpack': '^4.1.0',
+        npm: {
+          devDependencies: {
+            '@embroider/core': '^3.5.5',
+            '@embroider/compat': '^3.9.0',
+            '@embroider/webpack': '^4.1.0',
+          },
         },
       }),
     ],
