@@ -4,6 +4,7 @@
 node_modules/
 
 # misc
+.log/
 .env*
 .pnp*
 .pnpm-debug.log
