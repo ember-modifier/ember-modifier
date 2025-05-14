@@ -1,6 +1,5 @@
 'use strict';
 
-const getChannelURL = require('ember-source-channel-url');
 const { embroiderSafe, embroiderOptimized } = require('@embroider/test-setup');
 
 // These are needed for ember-source < 4.8, when preview types were first shipped
@@ -91,7 +90,7 @@ module.exports = async function () {
         name: 'ember-release',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('release'),
+            'ember-source': 'latest',
             rsvp: '^4.8.5',
           },
         },
@@ -100,7 +99,7 @@ module.exports = async function () {
         name: 'ember-beta',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('beta'),
+            'ember-source': 'beta',
             rsvp: '^4.8.5',
           },
         },
@@ -109,7 +108,7 @@ module.exports = async function () {
         name: 'ember-canary',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('canary'),
+            'ember-source': 'alpha',
             rsvp: '^4.8.5',
           },
         },
