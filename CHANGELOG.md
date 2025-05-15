@@ -2,6 +2,17 @@
 
 ## Release (2025-05-15)
 
+* ember-modifier 4.2.2 (patch)
+
+#### :memo: Documentation
+* `ember-modifier`
+  * [#957](https://github.com/ember-modifier/ember-modifier/pull/957) Copy readme via rollup plugin ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### Committers: 1
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+
+## Release (2025-05-15)
+
 * ember-modifier 4.2.1 (patch)
 
 #### :bug: Bug Fix
