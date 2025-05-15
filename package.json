@@ -23,7 +23,8 @@
     "release-it": "^17.6.0"
   },
   "volta": {
-    "node": "18.20.3"
+    "node": "18.20.3",
+    "pnpm": "10.11.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -33,7 +34,7 @@
       "@types/eslint": "^7.0.0"
     }
   },
-  "packageManager": "pnpm@8.15.8",
+  "packageManager": "pnpm@10.11.0",
   "release-it": {
     "hooks": {
       "after:bump": "pnpm install",
@@ -59,6 +60,5 @@
       "tokenRef": "GITHUB_AUTH"
     },
     "npm": false
-  },
-  "version": "4.2.0"
+  }
 }
