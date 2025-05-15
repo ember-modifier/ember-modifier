@@ -1,0 +1,22 @@
+{
+  "solution": {
+    "ember-modifier": {
+      "impact": "patch",
+      "oldVersion": "4.2.0",
+      "newVersion": "4.2.1",
+      "tagName": "latest",
+      "constraints": [
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :house: Internal"
+        }
+      ],
+      "pkgJSONPath": "./ember-modifier/package.json"
+    }
+  },
+  "description": "## Release (2025-05-15)\n\n* ember-modifier 4.2.1 (patch)\n\n#### :bug: Bug Fix\n* `ember-modifier`\n  * [#949](https://github.com/ember-modifier/ember-modifier/pull/949) Remove unneeded peers ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* Other\n  * [#952](https://github.com/ember-modifier/ember-modifier/pull/952) Switch from release-it to release-plan ([@SergeAstapov](https://github.com/SergeAstapov))\n  * [#951](https://github.com/ember-modifier/ember-modifier/pull/951) Bump pnpm to v10 ([@SergeAstapov](https://github.com/SergeAstapov))\n  * [#950](https://github.com/ember-modifier/ember-modifier/pull/950) Fix embroider testing ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#881](https://github.com/ember-modifier/ember-modifier/pull/881) Bump release-it to v17 and related plugins ([@SergeAstapov](https://github.com/SergeAstapov))\n* `ember-modifier`\n  * [#889](https://github.com/ember-modifier/ember-modifier/pull/889) Add .npmrc for proper peers handling in CI ([@SergeAstapov](https://github.com/SergeAstapov))\n\n#### Committers: 2\n- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+}

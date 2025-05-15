@@ -1,5 +1,26 @@
 # Changelog
 
+## Release (2025-05-15)
+
+* ember-modifier 4.2.1 (patch)
+
+#### :bug: Bug Fix
+* `ember-modifier`
+  * [#949](https://github.com/ember-modifier/ember-modifier/pull/949) Remove unneeded peers ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* Other
+  * [#952](https://github.com/ember-modifier/ember-modifier/pull/952) Switch from release-it to release-plan ([@SergeAstapov](https://github.com/SergeAstapov))
+  * [#951](https://github.com/ember-modifier/ember-modifier/pull/951) Bump pnpm to v10 ([@SergeAstapov](https://github.com/SergeAstapov))
+  * [#950](https://github.com/ember-modifier/ember-modifier/pull/950) Fix embroider testing ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#881](https://github.com/ember-modifier/ember-modifier/pull/881) Bump release-it to v17 and related plugins ([@SergeAstapov](https://github.com/SergeAstapov))
+* `ember-modifier`
+  * [#889](https://github.com/ember-modifier/ember-modifier/pull/889) Add .npmrc for proper peers handling in CI ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### Committers: 2
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## v4.2.0 (2024-07-04)
 
 #### :rocket: Enhancement
