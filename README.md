@@ -537,7 +537,7 @@ export default class TrackClick extends Modifier {
 
   constructor(owner, args) {
     super(owner, args);
-    registerDestructor(this, this.cleanup);
+    registerDestructor(this, cleanup);
   }
 
   modify(element, [eventName], options) {
@@ -545,7 +545,7 @@ export default class TrackClick extends Modifier {
     this.eventName = eventName;
     this.options = options;
 
-    this.cleanup();
+    cleanup();
     element.addEventListener('click', this.onClick, true);
   }
 
