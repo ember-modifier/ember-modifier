@@ -1,6 +1,5 @@
 'use strict';
 
-const { dasherize } = require('ember-cli-string-utils');
 const useTestFrameworkDetector = require('../test-framework-detector');
 
 module.exports = useTestFrameworkDetector({
@@ -38,3 +37,12 @@ module.exports = useTestFrameworkDetector({
     };
   },
 });
+
+function dasherize(str) {
+  return str
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/[_\s]+/g, '-')
+    .replace(/-+/g, '-')
+    .toLowerCase();
+}
