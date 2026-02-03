@@ -1,5 +1,20 @@
 # Changelog
 
+## Release (2026-02-03)
+
+* ember-modifier 4.3.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-modifier`
+  * [#961](https://github.com/ember-modifier/ember-modifier/pull/961) Remove unused deps ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :memo: Documentation
+* [#959](https://github.com/ember-modifier/ember-modifier/pull/959) Update README.md: Fix "Example with Service Injection" ([@bantic](https://github.com/bantic))
+
+#### Committers: 2
+- Cory Forsyth ([@bantic](https://github.com/bantic))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-05-15)
 
 * ember-modifier 4.2.2 (patch)

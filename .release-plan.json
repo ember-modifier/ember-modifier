@@ -1,18 +1,18 @@
 {
   "solution": {
     "ember-modifier": {
-      "impact": "patch",
-      "oldVersion": "4.2.1",
-      "newVersion": "4.2.2",
+      "impact": "minor",
+      "oldVersion": "4.2.2",
+      "newVersion": "4.3.0",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "patch",
-          "reason": "Appears in changelog section :memo: Documentation"
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
         }
       ],
       "pkgJSONPath": "./ember-modifier/package.json"
     }
   },
-  "description": "## Release (2025-05-15)\n\n* ember-modifier 4.2.2 (patch)\n\n#### :memo: Documentation\n* `ember-modifier`\n  * [#957](https://github.com/ember-modifier/ember-modifier/pull/957) Copy readme via rollup plugin ([@SergeAstapov](https://github.com/SergeAstapov))\n\n#### Committers: 1\n- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))\n"
+  "description": "## Release (2026-02-03)\n\n* ember-modifier 4.3.0 (minor)\n\n#### :rocket: Enhancement\n* `ember-modifier`\n  * [#961](https://github.com/ember-modifier/ember-modifier/pull/961) Remove unused deps ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :memo: Documentation\n* [#959](https://github.com/ember-modifier/ember-modifier/pull/959) Update README.md: Fix \"Example with Service Injection\" ([@bantic](https://github.com/bantic))\n\n#### Committers: 2\n- Cory Forsyth ([@bantic](https://github.com/bantic))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
