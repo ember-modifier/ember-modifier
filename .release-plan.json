@@ -1,18 +1,8 @@
 {
   "solution": {
     "ember-modifier": {
-      "impact": "minor",
-      "oldVersion": "4.2.2",
-      "newVersion": "4.3.0",
-      "tagName": "latest",
-      "constraints": [
-        {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
-        }
-      ],
-      "pkgJSONPath": "./ember-modifier/package.json"
+      "oldVersion": "4.3.0"
     }
   },
-  "description": "## Release (2026-02-03)\n\n* ember-modifier 4.3.0 (minor)\n\n#### :rocket: Enhancement\n* `ember-modifier`\n  * [#961](https://github.com/ember-modifier/ember-modifier/pull/961) Remove unused deps ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :memo: Documentation\n* [#959](https://github.com/ember-modifier/ember-modifier/pull/959) Update README.md: Fix \"Example with Service Injection\" ([@bantic](https://github.com/bantic))\n\n#### Committers: 2\n- Cory Forsyth ([@bantic](https://github.com/bantic))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2026-02-03)\n\n\n\n#### :bug: Bug Fix\n* [#962](https://github.com/ember-modifier/ember-modifier/pull/962) bump release-plan ([@SergeAstapov](https://github.com/SergeAstapov))\n\n#### :house: Internal\n* [#964](https://github.com/ember-modifier/ember-modifier/pull/964) bump Node.js to v22 ([@SergeAstapov](https://github.com/SergeAstapov))\n\n#### Committers: 1\n- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))\n"
 }
