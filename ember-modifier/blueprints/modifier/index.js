@@ -1,7 +1,5 @@
 'use strict';
 
-const normalizeEntityName = require('ember-cli-normalize-entity-name');
-
 module.exports = {
   description: 'Generates a modifier.',
   shouldTransformTypeScript: true,
@@ -34,9 +32,7 @@ module.exports = {
       throw new Error('Please provide a name for the modifier.');
     }
 
-    return normalizeEntityName(
-      entityName.replace(/\.js$/, ''), //Prevent generation of ".js.js" files
-    );
+    return entityName.replace(/\.js$/, '');
   },
 
   locals(options) {
