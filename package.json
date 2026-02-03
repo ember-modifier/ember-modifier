@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "concurrently": "^9.0.1",
-    "release-plan": "^0.16.0"
+    "release-plan": "^0.17.0"
   },
   "packageManager": "pnpm@10.11.0",
   "volta": {
@@ -29,11 +29,11 @@
     "registry": "https://registry.npmjs.org"
   },
   "pnpm": {
-    "overrides": {
-      "@types/eslint": "^7.0.0"
-    },
     "onlyBuiltDependencies": [
       "core-js"
-    ]
+    ],
+    "overrides": {
+      "@types/eslint": "^7.0.0"
+    }
   }
 }
