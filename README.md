@@ -1,8 +1,8 @@
 ember-modifier
 ==============================================================================
 
-This addon provides an API for authoring [element modifiers] in Ember. It
-mirrors Ember's [helper] API, with variations for writing both simple
+This addon provides an API for authoring [element modifiers] in Ember.
+It mirrors Ember's [helper] API, with variations for writing both simple
 function-based modifiers and more complicated class-based modifiers.
 
 [element modifiers]: https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html
