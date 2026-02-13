@@ -1,5 +1,21 @@
 # Changelog
 
+## Release (2026-02-13)
+
+
+
+#### :bug: Bug Fix
+* [#962](https://github.com/ember-modifier/ember-modifier/pull/962) bump release-plan ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### :memo: Documentation
+* [#967](https://github.com/ember-modifier/ember-modifier/pull/967) Fix formatting in README.md ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### :house: Internal
+* [#964](https://github.com/ember-modifier/ember-modifier/pull/964) bump Node.js to v22 ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### Committers: 1
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+
 ## Release (2026-02-03)
 
 * ember-modifier 4.3.0 (minor)
