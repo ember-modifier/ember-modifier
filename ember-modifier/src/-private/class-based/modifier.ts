@@ -20,8 +20,9 @@ import type Opaque from '../opaque';
 // class-based modifier which corresponds to the result of calling `modifier()`
 // with a callback defining a function-based modifier.
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export default interface ClassBasedModifier<S = DefaultSignature>
-  extends Opaque<S> {}
+export default interface ClassBasedModifier<
+  S = DefaultSignature,
+> extends Opaque<S> {}
 
 /**
  * A base class for modifiers which need more capabilities than function-based
