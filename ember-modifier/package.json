@@ -81,7 +81,7 @@
     "expect-type": "^0.20.0",
     "prettier": "^3.3.3",
     "prettier-plugin-ember-template-tag": "^2.0.2",
-    "rollup": "^4.21.2",
+    "rollup": "^4.59.0",
     "rollup-plugin-copy": "^3.5.0",
     "typescript": "^5.5.4",
     "webpack": "^5.104.1"
