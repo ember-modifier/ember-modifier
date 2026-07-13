@@ -168,6 +168,54 @@ module('Integration | Modifiers | functional modifier', function (hooks) {
       assert.ok(teardownCalls.includes('A'));
       assert.ok(teardownCalls.includes('B'));
     });
+
+    test('teardown is invoked for a dynamically applied modifier', async function (this: Context, assert) {
+      const teardownCalls: string[] = [];
+
+      class State {
+        @tracked isRendered = true;
+        songbird = modifier(() => {
+          return () => teardownCalls.push('destroyed');
+        });
+      }
+
+      const state = (this.state = new State());
+
+      await render(hbs`
+        <h1 {{ (if this.state.isRendered this.state.songbird)}}>A</h1>
+      `);
+
+      state.isRendered = false;
+      await settled();
+
+      assert.strictEqual(teardownCalls.length, 1);
+      assert.ok(teardownCalls.includes('destroyed'));
+    });
+
+    test('teardown is invoked for a dynamically curried modifier', async function (this: Context, assert) {
+      const teardownCalls: string[] = [];
+
+      class State {
+        @tracked isRendered = true;
+        songbird = modifier((_, [val]: [string]) => {
+          return () => teardownCalls.push(val);
+        });
+      }
+
+      const state = (this.state = new State());
+
+      await render(hbs`
+        <h1 {{ (if this.state.isRendered (modifier this.state.songbird 'A'))}}>A</h1>
+        <h1 {{ (if this.state.isRendered (modifier this.state.songbird 'B'))}}>B</h1>
+      `);
+
+      state.isRendered = false;
+      await settled();
+
+      assert.strictEqual(teardownCalls.length, 2);
+      assert.ok(teardownCalls.includes('A'));
+      assert.ok(teardownCalls.includes('B'));
+    });
   });
 
   test('auto-tracking behavior', async function (this: Context, assert) {
